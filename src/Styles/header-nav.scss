@@ -1,0 +1,117 @@
+.header-wrap {  
+    /* this div is just to gave its children a position */
+    position: relative;
+  }
+  
+  .nav-bar {
+    min-width: 1200px;
+    width: 80vw;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    display: flex;
+    cursor: pointer;
+    padding-top: 15px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .first-line {
+    display: flex;
+    cursor: pointer;
+  }
+  
+  .first-line p {
+    font-size: 13px;
+    color: rgb(84, 84, 84);
+  }
+  
+  #logo {
+    height: 45px;
+    width: 150px;
+    padding-top: 6px;
+  }
+  
+  .list-nav {
+    margin-top: 8px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    min-height: 50px;
+  }
+  
+  .list-nav-item {
+    /* color: #545454; */
+    color: #fff;
+    font-size: 15px;
+    text-align: center;
+    margin-right: 120px;
+    text-decoration: none;
+    letter-spacing: 2px;
+    font-weight: 500;
+  }
+  .list-nav-item:last-child {
+    margin-right: 0;
+  }
+  
+  .list-nav-item:hover {
+    color: #ec1943;
+  }
+  
+  .sign-in {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .user-avatar img {
+    width: 30px;
+    border-radius: 50%;
+    border: 1px solid #D7DCE3;
+    display: block;
+    height: 100%;
+  }
+  
+  .user-name-text {
+    /* just delete these '!important' =)))) */
+    color: #fff !important;
+    font-size: 15px !important;
+    text-align: center;
+    margin-right: 0 !important;
+    margin-left: 10px;
+    text-decoration: none;
+    letter-spacing: 2px;
+    position: relative;
+  }
+  .user-name-text:hover {
+    color: #ec1943 !important;
+  }
+  
+  .user-menu {
+    background-color: #fff;
+    position: absolute;
+    animation: listGrowth ease 0.3s;
+    transform-origin: 50% top;
+  }
+  
+  .user-menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 10px 15px;
+    width: 100px;
+  }
+  
+  .user-menu-item {
+    text-align: left;
+    padding: 5px;
+  }
+  .user-menu-item:hover {
+    background-color: #f5f4f7;
+    color: #ec1943;
+  }

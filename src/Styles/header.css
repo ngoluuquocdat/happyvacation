@@ -1,0 +1,49 @@
+.header-container {
+  position: relative;
+}
+
+.welcome-container {
+  /* position: absolute;
+  bottom: 45%;
+  left: 10%;
+  right: 0; */
+  width: 90%;
+  margin: 0 auto 20px;
+  color: #fff;
+}
+.welcome-text,
+.sub-welcome-text {
+  text-align: left;
+  margin: 0;
+}
+
+/* Search Bar container */
+
+.search-bar-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 1200px;
+  margin-left: auto; 
+  margin-right: auto; 
+  left:0;
+  right: 0;
+  bottom: 25%;
+}
+.search-bar-container.small {
+  bottom: 10%;
+}
+
+
+@keyframes listGrowth {
+  from {
+      transform: scale(1,0);
+      opacity: 0.8;
+  }
+  to {
+      transform: scale(1,1);
+      opacity: 1;
+  }
+}
