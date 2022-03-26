@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/happyvacation/static/css/main.fa529fee.css",
+    "main.js": "/happyvacation/static/js/main.6a98acfb.js",
+    "static/js/787.df6d6882.chunk.js": "/happyvacation/static/js/787.df6d6882.chunk.js",
+    "static/media/HappyVacation.png": "/happyvacation/static/media/HappyVacation.f224e59d3e5fca59b85b.png",
+    "static/media/instagram-connect.png": "/happyvacation/static/media/instagram-connect.8f09217bb55b4a611989.png",
+    "static/media/slick.svg": "/happyvacation/static/media/slick.2630a3e3eab21c607e21.svg",
+    "static/media/slick.eot": "/happyvacation/static/media/slick.a4e97f5a2a64f0ab1323.eot",
+    "static/media/slick.ttf": "/happyvacation/static/media/slick.c94f7671dcc99dce43e2.ttf",
+    "static/media/slick.woff": "/happyvacation/static/media/slick.295183786cd8a1389865.woff",
+    "index.html": "/happyvacation/index.html",
+    "main.fa529fee.css.map": "/happyvacation/static/css/main.fa529fee.css.map",
+    "main.6a98acfb.js.map": "/happyvacation/static/js/main.6a98acfb.js.map",
+    "787.df6d6882.chunk.js.map": "/happyvacation/static/js/787.df6d6882.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.fa529fee.css",
+    "static/js/main.6a98acfb.js"
+  ]
+}
