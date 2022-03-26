@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../Styles/arrow.css';
+import { FiArrowLeft, FiArrowRight } from 'react-icons/fi'
 
 export const Left = props => {
   const { style, onClick } = props;
@@ -9,7 +10,7 @@ export const Left = props => {
       style={{ ...style, display: 'block' }}
       onClick={onClick}
     >
-      <i className="fas fa-arrow-left left-arrow" />
+      <FiArrowLeft style={{marginTop: "25%"}}/>
     </div>
   );
 };
@@ -22,7 +23,7 @@ export const Right = props => {
       style={{ ...style, display: 'block' }}
       onClick={onClick}
     >
-      <i className="fas fa-arrow-right right-arrow" />
+      <FiArrowRight style={{marginTop: "25%"}}/>
     </div>
   );
 };
