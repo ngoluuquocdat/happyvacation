@@ -61,7 +61,8 @@ class SearchBar extends React.Component {
     state = {
         categories: [],
         listPlaces: [],
-        filter: this.props.filter&&!(Object.keys(this.props.filter).length === 0 && this.props.filter.prototype === Object) ? this.props.filter :  {
+        
+        filter: ((this.props.filter!=null)&&(Object.keys(this.props.filter).length !== 0 && this.props.filter.constructor === Object)) ? this.props.filter :  {
                 selectedPlace: null,
                 startDate: new Date(),
                 endDate: new Date(),

@@ -1,0 +1,47 @@
+
+
+
+.itinerary-item {
+    border: 1px solid #D7DCE3;
+    border-left: 5px solid #2ECC71;
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 30px;
+
+        h5 {
+            text-transform: uppercase;
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+    }
+    .content {
+        box-sizing: border-box;
+        animation: listGrowth ease 0.2s;
+        transform-origin: 50% top;
+        padding: 15px 30px 30px;
+        cursor: default;
+
+        .content-text {
+            font-size: 15px;
+            text-align: left;
+            margin: 0;
+        }
+    }
+}
+
+@keyframes listGrowth {
+    from {
+        transform: scale(1,0);
+        opacity: 0.8;
+    }
+    to {
+        transform: scale(1,1);
+        opacity: 1;
+    }
+}

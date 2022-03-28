@@ -13,6 +13,7 @@ class TourCard extends Component {
       const tour = this.props.tour
       const isSlideItem = this.props.isSlideItem
       const wrapperClassName = isSlideItem ? "tour-card-wrapper slider-item" : "tour-card-wrapper"
+      
       return (
           <div className={wrapperClassName}>
               <Link

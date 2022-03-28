@@ -13,7 +13,6 @@ class ToursPage extends React.Component {
         totalCount: 18,
         page: 1,
         perPage: 12,
-        // initialize filter froom props
       }
     
     filter = this.props.location.state ? this.props.location.state.filter :  {
@@ -45,8 +44,6 @@ class ToursPage extends React.Component {
     componentDidUpdate (prevProps, prevState) {
       // if get a new filter, fetch api with the new filter
       // and set 'page' to 1
-      // 
-      //if (this.filter !== this.props.location.state.filter)
       if(prevProps.location.key !== this.props.location.key)
       {
         // reset the filter
@@ -68,8 +65,9 @@ class ToursPage extends React.Component {
             page: 1
         })
         return;
-      }       
-      if(prevState.page !== this.state.page && this.state.page !== 1) {
+      }
+
+      if(prevState.page !== this.state.page && prevState.tours === this.state.tours ) {
         const {page, perPage} = this.state;
         //console.log('page in state update', page)
          // call api to get tours and set state
@@ -136,7 +134,7 @@ class ToursPage extends React.Component {
                             count={totalPage} 
                             shape="rounded" 
                             siblingCount={1}
-                            page={this.state.page}
+                            page={page}
                             onChange={(event, page) => this.handleOnChangePage(event, page)}
                           />
                         </div>

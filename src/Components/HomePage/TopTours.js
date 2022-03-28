@@ -6,7 +6,6 @@ import 'slick-carousel/slick/slick-theme.css';
 import '../../Styles/top-tours.scss';
 import TourCard from '../TourCard';
 
-
 class TopTours extends Component {
   render() {
     return (

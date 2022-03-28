@@ -196,26 +196,9 @@
             color: #fff;
             border: none;
             cursor: pointer;
-            //background: #a22531;
+            background: #dd2953;
 
-            animation: Gradient ease infinite;
-            //background-size: 400% 400%;
-            background: linear-gradient(
-                -45deg,
-                #eb294b,
-                #dd2953,
-            );
-            @keyframes Gradient {
-                0% {
-                  background-position: 0% 50%;
-                }
-                50% {
-                  background-position: 100% 50%;
-                }
-                100% {
-                  background-position: 0% 50%;
-                }
-            }
+            
         }
     }
 }

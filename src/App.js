@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Home from './Components/HomePage/Home';
 import ToursPage from './Components/ToursPage';
+import TourDetailPage from './Components/TourDetail/TourDetailPage';
 import logo from './Images/HappyVacation.png';
 import Footer from './Components/Footer/Footer';
 import {
@@ -48,8 +49,11 @@ class App extends Component {
               <Route path="/" exact>
                 <Home />
               </Route >
-              <Route path="/tours" >
+              <Route path="/tours" exact >
                 <ToursPage />
+              </Route >
+              <Route path="/tours/:id" >
+                <TourDetailPage />
               </Route >
             </Switch>
             <Footer />

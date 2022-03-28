@@ -1,0 +1,44 @@
+
+.expense-table {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .include,
+    .exclude {
+        width: 50%;
+    }
+    .include {
+        padding-right: 15px;
+        .icon {
+            color: green;
+        }
+    }
+    .exclude {
+        padding-left: 15px;
+        .icon {
+            color: red;
+        }
+    }
+
+    .list {
+        list-style: none;
+        display: block;
+        padding: 0;
+        margin: 0;
+        margin-left: 0;
+        
+
+
+        li {
+            text-align: left;
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 15px;
+
+            .icon {
+                margin-right: 10px;
+            }
+        }
+    }
+}
