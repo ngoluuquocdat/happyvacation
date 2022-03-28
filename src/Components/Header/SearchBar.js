@@ -210,7 +210,7 @@ class SearchBar extends React.Component {
         this.setState({
             checkedStates: checkedStates
         })
-        // add or remove category item in state
+        // add or remove category item in filter
         const selectedCategories = this.state.filter.selectedCategories;
         if(isChecked) {
             this.setState({

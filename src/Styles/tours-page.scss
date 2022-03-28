@@ -9,11 +9,69 @@
         margin: 30px auto 0;
         padding: 20px 15px 0;
 
-        .result-text {
-            margin: 0;
-            padding: 0 0 0 15px;
-            font-size: 28px;
-            font-weight: 400;
+        .header {
+            display: flex;
+            justify-content: space-between;
+            .result-text {
+                margin: 0;
+                padding: 0 0 0 15px;
+                font-size: 28px;
+                font-weight: 400;
+            }
+            .sort-container {
+                width: 165px;
+                position: relative;
+
+                .sort-btn {
+                    display: flex;
+                    align-items: center;
+                    height: 100%;
+                    font-size: 20px;
+                    cursor: pointer;
+                }
+                .sort-option-list {
+                    position: absolute;
+                    z-index: 1;
+                    top: 100%;
+                    left: -30%;
+                    background-color: #fff;
+                    border: 1px solid #D7DCE3;
+                    box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+                    padding: 20px;
+                    text-align: center;
+
+                    .sort-title {
+                        padding: 0;
+                        margin: 0;
+                        margin-bottom: 10px;
+                        font-size: 14px;
+                        font-weight: 500;
+                    }
+                    .sort-sub-title {
+                        margin-bottom: 10px;
+                        color: #9aa0ae;
+                    }
+                    .sort-form {
+                        display: flex;
+                        flex-direction: column;
+                        text-align: left;
+                        .sort-form-group {
+                            margin-bottom: 10px;
+                            display: flex;
+                            align-items: center;
+                            cursor: pointer;
+
+                            label {
+                                margin-left: 5px;
+                                cursor: pointer;
+                            }
+                            input {
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         .list-tours {
@@ -28,6 +86,7 @@
             display: flex;
             justify-content: center;
         }
+        
     }
 }
 

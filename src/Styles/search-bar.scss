@@ -52,6 +52,7 @@
             list-style: none;
             border-radius: 0 0 4px 4px;
             border: 1px solid #dfdfdf;
+            box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
             max-height: 300px;
             overflow: hidden;
             overflow-y: scroll;
@@ -86,6 +87,8 @@
             position: absolute;
             top: 100%;
             left: 0;
+            border: 1px solid #dfdfdf;
+            box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
             animation: listGrowth ease 0.3s;
             transform-origin: 50% top;
         }
@@ -109,6 +112,7 @@
 
             .advance-menu {
                 border: 1px solid #dfdfdf;
+                box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
                 position: absolute;
                 z-index: 3;
                 top: 100%;
