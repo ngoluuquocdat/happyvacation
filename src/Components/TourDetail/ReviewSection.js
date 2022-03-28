@@ -15,6 +15,7 @@ class ReviewSection extends Component {
         content: '',
         hoverLabel: '',
         ratingLabel: '',
+        flag: 1    // this is changed between 1 and 2, to detect if new comment posted or not in componentDidUpdate
     }
     tourId = this.props.tourId ? this.props.tourId : 0
     ratingLabels = ['','Terrible', 'Poor', 'Average', 'Good', 'Excellent']
@@ -44,6 +45,17 @@ class ReviewSection extends Component {
           this.setState({
             reviews: resReviews
           })
+        }
+        // call api again after posting a new review
+        if(prevState.flag !== this.state.flag) {
+            const {perPage} = this.state;
+            const tourId = this.props.tourId;
+            console.log(`request: GET /tours/${tourId}/comments?page=1&perPage=${perPage}`)
+            // fake api res
+            const resReviews = reviews_temp.slice((page-1)*perPage, (page-1)*perPage+perPage);
+            this.setState({
+              reviews: resReviews
+            })
         }
     }
 
@@ -84,18 +96,26 @@ class ReviewSection extends Component {
 
     // review submit
     handleOnSubmitReview = () => {
-        const review = {
-            tourId: this.tourId,
-            content: this.state.content,
-            rating: this.state.rating
+        const {rating, content} = this.state;
+        if(rating !== 0 || content !== '')
+        {
+            const review = {
+                tourId: this.tourId,
+                content: this.state.content,
+                rating: this.state.rating
+            }
+            // post new review to api
+            console.log(`POST tours/${review.tourId}/reviews`, review)
+            // reset state, toggle flag to re-fetch reviews data
+            const flag = this.state.flag;
+            this.setState({
+                rating: 0,
+                content: '',
+                hoverLabel: '',
+                ratingLabel: '',
+                flag: flag!==1 ? 1 : 2  // toggle between 1 and 2
+            })
         }
-        console.log(`POST tours/${review.tourId}/reviews`, review)
-        this.setState({
-            rating: 0,
-            content: '',
-            hoverLabel: '',
-            ratingLabel: ''
-        })
     }
 
     // change page
@@ -103,7 +123,7 @@ class ReviewSection extends Component {
         this.setState({
           page: page
         })
-      }
+    }
 
     render() {
         const currentUser = this.props.reduxData.user;
