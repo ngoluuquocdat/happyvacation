@@ -91,18 +91,18 @@ class ToursPage extends React.Component {
       this.scrollToMainContent(); 
     }
     // when sort option change 
-    if(prevState.sort !== this.state.sort && prevState.tours === this.state.tours) {
-      const { page, perPage, sort } = this.state;
+    if(prevState.sort !== this.state.sort) {
+      const { perPage, sort } = this.state;
       // call api to get tours and set state
       const request = {
         ...this.filter,
-        page: page,
+        page: 1,
         perPage: perPage,
         sort: sort
       };
       console.log("request to api", request);
       // fake api response
-      const resTours = listTours.slice((page - 1) * perPage, (page - 1) * perPage + perPage);
+      const resTours = listTours.slice(0, perPage);
       this.setState({
         tours: resTours,
         page: 1,
@@ -127,7 +127,8 @@ class ToursPage extends React.Component {
   // change sort option
   handleSortOptionChange = (event) => {
     this.setState({
-      sort: event.target.value
+      sort: event.target.value,
+      isShowSortMenu: false
     })
   }
 

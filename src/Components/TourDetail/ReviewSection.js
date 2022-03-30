@@ -52,7 +52,7 @@ class ReviewSection extends Component {
             const tourId = this.props.tourId;
             console.log(`request: GET /tours/${tourId}/comments?page=1&perPage=${perPage}`)
             // fake api res
-            const resReviews = reviews_temp.slice((page-1)*perPage, (page-1)*perPage+perPage);
+            const resReviews = reviews_temp.slice(1, perPage);
             this.setState({
               reviews: resReviews
             })

@@ -35,6 +35,7 @@ class TourDetailPage extends React.Component {
         // call api to get tour, and set state
         const tourId = this.props.match.params.id
         console.log(`GET tours/${tourId}`);
+        // fake api response
         const resTour = tour;
         this.setState({
             tour: resTour,
@@ -131,6 +132,10 @@ class TourDetailPage extends React.Component {
         }
         console.log("POST /orders/", bookingRequest)
     }
+    // visit provider
+    handleVisitProvider = () => {
+        this.props.history.push(`/providers/${this.state.tour.providerId}`)
+    }
     
     
     render() {
@@ -172,7 +177,7 @@ class TourDetailPage extends React.Component {
                                         {
                                             tour.duration<1 ? 
                                             (
-                                                tour.duration==0.5 ?
+                                                tour.duration===0.5 ?
                                                 'Half day'
                                                 :
                                                 `${Math.round(tour.duration*24)} hours`
@@ -218,7 +223,7 @@ class TourDetailPage extends React.Component {
                                         {
                                             tour.duration<1 ? 
                                             (
-                                                tour.duration==0.5 ?
+                                                tour.duration===0.5 ?
                                                 'Half day'
                                                 :
                                                 `${Math.round(tour.duration*24)} hours`
@@ -356,12 +361,10 @@ class TourDetailPage extends React.Component {
                                 <img src={tour.providerThumbnail}></img>
                                 <span className="provider-name">{tour.providerName}</span>
                             </div>
-                            <button className='visit'>VISIT</button>
+                            <button className='visit' onClick={this.handleVisitProvider}>VISIT</button>
                         </div>
-                   </div>
-                   
-              </div>
-              
+                   </div>            
+              </div>           
           </div>
         )
     }

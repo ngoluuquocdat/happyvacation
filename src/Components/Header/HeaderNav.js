@@ -12,13 +12,7 @@ class HeaderNav extends Component {
     };
 
     componentDidMount() {
-      // call api to get user or get user from local storage
-      // fake api response
-      // const currentUser = {
-      //   username: 'quocdat',
-      //   avatarPath: 'https://secure.gravatar.com/avatar/413b990ccd2cf5ba69d609fdba4f0302',
-      //   token: ''
-      // }
+      window.scrollTo(0, 0);
     }
 
     // click open user menu

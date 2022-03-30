@@ -7,28 +7,41 @@ import '../../Styles/top-tours.scss';
 import TourCard from '../TourCard';
 
 class TopTours extends Component {
+
+  state = {
+    topTours: []
+  }
+  
+  componentDidMount() {
+    const providerId = this.props.providerId;
+    // call api to get list top tour
+    if(providerId) {
+      console.log(`GET providers/${providerId}/tours/top`)
+    } else {
+      console.log("GET tours/top")
+    }
+    // fake api response
+    const resTopTours = topTours_temp;
+    // set state
+    this.setState({
+      topTours: resTopTours
+    })
+  }
+
   render() {
+    const topTours = this.state.topTours;
+
+    const isSmall = this.props.isSmall;
+    const className = isSmall ? "top-tours-section small" : "top-tours-section";
+
     return (
-        <div>
+        <div className="top-tours-container">
             <div className="title-section">
                 <h1 className="title">Popular tours</h1>
                 <h3 className="sub-title">Take a look at some most-viewed tours!</h3>
             </div>
-            <div className="top-tours-section">
-                {/* <hr
-                    style={{
-                    backgroundColor: '#ffbb58',
-                    width: '75px',
-                    height: '2px',
-                    border: 'none',
-                    marginTop: '0px',
-                    marginLeft: '0px',
-                    marginBottom: '20px'
-                    }}
-                /> */}
-                <div className="top-tours-slider-wrap">
-                    <TourSlider />
-                </div>
+            <div className={className}>
+                  <TourSlider tours={topTours} />
                 <hr
                     style={{
                     height: '1px',
@@ -38,9 +51,6 @@ class TopTours extends Component {
                     }}
                 />
             </div>
-            <br></br>
-            <br></br>
-            <br></br>
         </div>
     );
   }
@@ -48,28 +58,44 @@ class TopTours extends Component {
 
 class TourSlider extends React.Component {
   render() {
-    const windowWidth = window.innerWidth;
+    const tours = this.props.tours;
+    let slidesToShow = 4;
+    let slidesToScroll = 4;
+    let wrapperClass = "slider-wrap"
+    if(tours.length < 4 && tours.length > 0) {
+      slidesToShow = tours.length;
+      slidesToScroll = tours.length;
+      wrapperClass = tours.length === 1 ? "slider-wrap tiny" : "slider-wrap small"
+    } else {
+      const windowWidth = window.innerWidth;
+      if(windowWidth > 1700) {
+        slidesToShow = 5;
+        slidesToScroll = 5;
+      }
+    }
     var settings = {
         infinite: true,
         speed: 500,
-        slidesToShow: windowWidth>1700 ? 5 : 4,
-        slidesToScroll: windowWidth>1700 ? 5 : 4,
+        slidesToShow: slidesToShow,
+        slidesToScroll: slidesToScroll,
         nextArrow: <Right />,
         prevArrow: <Left />
     };
     return (
-      <Slider {...settings}>
-        {topTours &&
-          topTours.map((item) => (
-              <TourCard tour={item} key={item.id} isSlideItem={true}/>
-          ))}
-      </Slider>
+      <div className={wrapperClass}>
+        <Slider {...settings}>
+          {tours &&
+            tours.map((item) => (
+                <TourCard tour={item} key={item.id} isSlideItem={true}/>
+            ))}
+        </Slider>
+      </div>
     );
   }
 }
 
 
-const topTours = [
+const topTours_temp = [
   {
     id: 1,
     tourName: 'FULL-DAY HAI VAN PASS & LANG CO BEACH & IN HUE CITY',

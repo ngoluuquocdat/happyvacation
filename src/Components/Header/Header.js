@@ -6,14 +6,8 @@ import HeaderNav from './HeaderNav'
 
 class Header extends Component {
   state = {
-    experience: '',
     filter: this.props.filter
   };
-
-  componentDidMount() {
-    window.scrollTo(0, 0);
-    //console.log('filter from header', this.props.filter)
-  }
 
   render() {
     const {

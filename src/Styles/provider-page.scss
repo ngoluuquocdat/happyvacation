@@ -1,0 +1,196 @@
+
+
+.App {
+    text-align: center;
+    .provider-page-container {
+        width: 100%;
+        margin: 0 auto;
+        padding-top: 80px;
+
+        .section-divide-hr {
+            margin-top: 36px;
+        }
+        .provider-section {
+            display: flex;
+            width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+            background-color: #f8f8f8;
+            margin-bottom: 60px;
+
+            .provider-section-left {
+                box-sizing: border-box;
+                width: 25%;
+                padding: 0 15px;
+                display: flex;
+                align-items: center;
+                .provider-avatar {
+                    border-radius: 50%;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position-x: center;
+                    background-position-y: center;
+                    // this will set width = height dynamic
+                    width: 90%;
+                    height: 0;
+                    padding-bottom: 90%;
+                    // ------------------------------------
+                    margin: 0 auto;
+                    border: 1px solid #D7DCE3;
+                }
+            }
+            .provider-section-right {
+                box-sizing: border-box;
+                width: 75%;
+                padding: 15px 15px;
+                
+                .provider-name {
+                    margin: 0;
+                    text-align: left;
+                    padding-left: 15px;
+                    font-size: 32px;
+                    font-weight: 500;
+                }
+                .provider-info {
+                    display: flex;
+
+                    .info-item {
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 18px;
+                        .group {
+                            margin-left: 8px;
+                            .content {
+                                color: #d3224b;
+                                margin-left: 10px;
+                            }
+                        }
+                    }
+                    .provider-main-info,
+                    .provider-contact-info {
+                        box-sizing: border-box;
+                        padding: 0 15px;
+                        padding-top: 18px;
+                        text-align: left;
+                        font-size: 18px;
+                        
+                    }
+                    .provider-main-info {
+                        width: 40%;
+                    }
+                    .provider-contact-info {  
+                        width: 60%;
+                        .info-item:last-child {
+                            align-items: baseline;
+                            .content {
+                                margin: 0;
+                            }
+                        }                   
+                    }
+                }
+            }
+        }
+        .available-tours-section {
+            width: 80%;
+            min-width: 1200px;
+            height: 920px;
+            margin: 0 auto;
+            padding: 0 15px;
+
+            .header {
+                display: flex;
+                justify-content: space-between;
+
+                .title {
+                    font-size: 32px;
+                    padding: 0;
+                    margin: 0;
+                    text-align: left;
+                    font-weight: 400;
+                    padding-left: 15px;
+                }
+                .sort-container {
+                    width: 165px;
+                    position: relative;
+    
+                    .sort-btn {
+                        display: flex;
+                        align-items: center;
+                        height: 100%;
+                        font-size: 20px;
+                        cursor: pointer;
+                        user-select: none;
+                    }
+                    .sort-option-list {
+                        position: absolute;
+                        z-index: 1;
+                        top: 100%;
+                        left: -30%;
+                        background-color: #fff;
+                        border: 1px solid #D7DCE3;
+                        box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+                        padding: 20px;
+                        text-align: center;
+                        animation: listGrowth ease 0.3s;
+                        transform-origin: 50% top;
+    
+                        .sort-title {
+                            padding: 0;
+                            margin: 0;
+                            margin-bottom: 10px;
+                            font-size: 14px;
+                            font-weight: 500;
+                        }
+                        .sort-sub-title {
+                            margin-bottom: 10px;
+                            color: #9aa0ae;
+                        }
+                        .sort-form {
+                            display: flex;
+                            flex-direction: column;
+                            text-align: left;
+                            .sort-form-group {
+                                margin-bottom: 10px;
+                                display: flex;
+                                align-items: center;
+                                cursor: pointer;
+    
+                                label {
+                                    margin-left: 5px;
+                                    cursor: pointer;
+                                }
+                                input {
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .list-tours {
+                margin-top: 25px;
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .pagination-container {
+                margin-top: 60px;
+                display: flex;
+                justify-content: center;
+            }
+        }
+    }
+}
+
+
+
+
+@keyframes listGrowth {
+    from {
+        transform: scale(1,0);
+        opacity: 0.8;
+    }
+    to {
+        transform: scale(1,1);
+        opacity: 1;
+    }
+}

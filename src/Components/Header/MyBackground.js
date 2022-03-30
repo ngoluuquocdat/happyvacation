@@ -7,8 +7,9 @@ import '../../Styles/background.css';
 
 class MyBackgroundCarousel extends React.Component {
   render() {
+    const { backgroundImagesData, isSmall } = this.props;
     var settings = {
-      dots: true,
+      dots: !isSmall,
       fade: true,
       infinite: true,
       speed: 3000,
@@ -17,7 +18,6 @@ class MyBackgroundCarousel extends React.Component {
       autoplay: true,
       autoplaySpeed: 3000,
     };
-    const { backgroundImagesData, isSmall } = this.props;
     return (
       <div className="slider-div">
         <Slider {...settings}>

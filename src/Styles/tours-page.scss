@@ -28,6 +28,7 @@
                     height: 100%;
                     font-size: 20px;
                     cursor: pointer;
+                    user-select: none;
                 }
                 .sort-option-list {
                     position: absolute;
@@ -39,6 +40,8 @@
                     box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
                     padding: 20px;
                     text-align: center;
+                    animation: listGrowth ease 0.3s;
+                    transform-origin: 50% top;
 
                     .sort-title {
                         padding: 0;
@@ -82,7 +85,6 @@
 
         .pagination-container {
             margin-top: 60px;
-            margin-bottom: 30px;
             display: flex;
             justify-content: center;
         }
@@ -90,3 +92,13 @@
     }
 }
 
+@keyframes listGrowth {
+    from {
+        transform: scale(1,0);
+        opacity: 0.8;
+    }
+    to {
+        transform: scale(1,1);
+        opacity: 1;
+    }
+}
