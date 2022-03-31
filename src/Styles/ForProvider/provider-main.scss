@@ -1,0 +1,25 @@
+
+
+
+
+.provider-main-container {
+    display: flex;
+
+    .side-nav-wrap {
+        align-self: stretch;
+        
+    }
+    .content-page-wrap {
+        height: 1200px;
+        width: 100%;
+        margin-left: 250px;
+        background-color: #f6f6f6;
+        .small-header {
+            background-color: #331f1c;
+            height: 90px;
+        }
+        .content-page {
+            padding: 20px;
+        }
+    }
+}

@@ -50,21 +50,25 @@ class App extends Component {
             <Switch>
               <Route path="/" exact>
                 <Home />
+                <Footer />
               </Route >
               <Route path="/tours" exact >
                 <ToursPage />
+                <Footer />
               </Route >
               <Route path="/tours/:id" >
                 <TourDetailPage />
+                <Footer />
               </Route >
               <Route path="/providers/:id" >
                 <ProviderPage />
+                <Footer />
               </Route >
               <Route path="/for-provider">
                 <ProviderMain />
               </Route >
             </Switch>
-            <Footer />
+            
           </>
         </BrowserRouter>
       )
