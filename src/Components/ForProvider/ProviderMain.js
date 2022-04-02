@@ -8,7 +8,8 @@ import SideNav from './SideNav';
 import ProfilePage from './ProfilePage';
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../../Styles/ForProvider/provider-main.scss'
+import '../../Styles/ForProvider/provider-main.scss';
+import CreateTour from './CreateTour';
 
 class ProviderMain extends React.Component {
     render() {
@@ -36,7 +37,7 @@ class ProviderMain extends React.Component {
                                     <div>Your Tours</div>
                                 </Route >
                                 <Route path="/for-provider/tours/new">
-                                    <div>Create New Tour</div>
+                                    <div><CreateTour /></div>
                                 </Route >
                                 <Route path="/for-provider/orders" exact>
                                     <div>Your Orders</div>

@@ -358,7 +358,6 @@ class SearchBar extends React.Component {
                                     </div>
                                     <div className="price-slider">
                                         <Slider
-                                            //getAriaLabel={() => 'Temperature range'}
                                             value={priceRange}
                                             onChange={this.handlePriceRangeChange}
                                             valueLabelDisplay="on"

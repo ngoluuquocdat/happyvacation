@@ -97,6 +97,7 @@ class InformationPage extends React.Component {
 
     // on save click 
     handleOnSave = () => {
+        // add check image file, if not null => there's new image file => include that image file to request
         const {newAddress, newPlace} = this.state;
         const isNewAdressExist = (newAddress!=='' && newPlace!=='') || (newAddress==='' && newPlace==='');
         if(isNewAdressExist === false) {
@@ -117,6 +118,7 @@ class InformationPage extends React.Component {
             phone: this.state.phone,
             address: (newAddress==='' && newPlace==='') ? this.state.address : `${this.removeVietnameseTones(newAddress)}, ${newPlace}`
         }
+        // post to api
         console.log('New profile: ', provider);
         // show toast notify
         toast.success('Update your profile successfully!', {

@@ -116,7 +116,7 @@ class PlacePicker extends React.Component {
                 Name: this.removeVietnameseTones(this.processPlace(item.Name))
             }     
         })
-        let place = `${this.removeVietnameseTones(this.processPlace(item.Name))}, ${this.state.district.Name}, ${this.state.province.Name}, Viet Nam`;
+        let place = `${this.removeVietnameseTones(this.processPlace(item.Name))}, ${this.state.district.Name}, ${this.state.province.Name}`;
         //console.log('place', place);
         this.props.onPlacePick(place);
     }
