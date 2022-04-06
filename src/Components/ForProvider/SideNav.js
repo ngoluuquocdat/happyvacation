@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { FaCaretDown } from 'react-icons/fa';
 import { RiFileList3Line } from 'react-icons/ri'
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import '../../Styles/ForProvider/side-nav.scss'
 
 class SideNav extends React.Component {
@@ -10,17 +10,17 @@ class SideNav extends React.Component {
     SideNavMenuRef = React.createRef();
 
     handleItemSelect = (event) => {
-        // remove active of other link
-        var item_links = this.SideNavMenuRef.current.getElementsByClassName('item-link');
-        for(let i = 0; i < item_links.length; i++){
-            item_links[i].classList.remove('active');
-        } 
-        // add active to this link
-        if(event.target.className === 'submenu-item') {
-            event.target.getElementsByClassName('item-link')[0].classList.add('active');
-        } else {
-            event.target.classList.add('active');
-        }
+        // // remove active of other link
+        // var item_links = this.SideNavMenuRef.current.getElementsByClassName('item-link');
+        // for(let i = 0; i < item_links.length; i++){
+        //     item_links[i].classList.remove('active');
+        // } 
+        // // add active to this link
+        // if(event.target.className === 'submenu-item') {
+        //     event.target.getElementsByClassName('item-link')[0].classList.add('active');
+        // } else {
+        //     event.target.classList.add('active');
+        // }
     }
 
     render() {
@@ -36,19 +36,19 @@ class SideNav extends React.Component {
                         </div>
                         <ul className='side-nav-submenu'>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <Link className="item-link" to="/for-provider/orders">
+                                <NavLink className="item-link" to="/for-provider/orders">
                                     Your Orders
-                                </Link>
+                                </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <Link className="item-link" to="/for-provider/orders/pending">
+                                <NavLink className="item-link" to="/for-provider/orders/pending">
                                     Pending
-                                </Link>
+                                </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <Link className="item-link" to="/for-provider/orders/processed">
+                                <NavLink className="item-link" to="/for-provider/orders/processed">
                                     Processed
-                                </Link>
+                                </NavLink>
                             </li>
                         </ul>
                     </li>
@@ -60,19 +60,19 @@ class SideNav extends React.Component {
                         </div>
                         <ul className='side-nav-submenu'>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <Link className="item-link" to="/for-provider/tours">
+                                <NavLink className="item-link" to="/for-provider/tours" exact={true}>
                                     Your Tours
-                                </Link>
+                                </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <Link className="item-link" to="/for-provider/tours/new">
+                                <NavLink className="item-link" to="/for-provider/tours/new">
                                     Create new tour
-                                </Link>
+                                </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <Link className="item-link" to="/for-provider/tours/new">
+                                <NavLink className="item-link" to="/for-provider/tours/processed">
                                     Processed
-                                </Link>
+                                </NavLink>
                             </li>
                         </ul>
                     </li>
@@ -84,19 +84,19 @@ class SideNav extends React.Component {
                         </div>
                         <ul className='side-nav-submenu'>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <Link className="item-link" to="/for-provider/profile">
+                                <NavLink className="item-link" to="/for-provider/profile">
                                     Profile
-                                </Link>
+                                </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <Link className="item-link" to="/for-provider/tours/new">
+                                <NavLink className="item-link" to="/for-provider/pending">
                                     Pending
-                                </Link>
+                                </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <Link className="item-link" to="/for-provider/tours/new">
+                                <NavLink className="item-link" to="/for-provider/processed">
                                     Processed
-                                </Link>
+                                </NavLink>
                             </li>
                         </ul>
                     </li>
