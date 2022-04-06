@@ -12,6 +12,7 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import { ToastContainer} from 'react-toastify';
 
 class App extends Component {
   state = { width: 0, height: 0 };
@@ -47,6 +48,14 @@ class App extends Component {
       return (
         <BrowserRouter>
           <>
+            <ToastContainer
+              position="top-right"
+              autoClose={2500}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+            />
             <Switch>
               <Route path="/" exact>
                 <Home />

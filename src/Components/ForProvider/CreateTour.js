@@ -1,6 +1,9 @@
 import React from 'react';
-import PlacePicker from '../PlacePicker'
+import axios from 'axios';
+import PlacePicker from '../PlacePicker';
+import ReactLoading from "react-loading";
 import { toast } from 'react-toastify';
+import { connect } from 'react-redux';
 import { BsTrash } from 'react-icons/bs'
 import { GrClose } from 'react-icons/gr'
 import { VscAdd } from 'react-icons/vsc'
@@ -9,6 +12,8 @@ import '../../Styles/ForProvider/create-tour.scss'
 class CreateTour extends React.Component {
 
     state = {
+        tourName: '',
+        overview: '',
         isPrivate: false,
         selectedCategories: [],
         selectedPlace: null,
@@ -20,13 +25,17 @@ class CreateTour extends React.Component {
         durationUnit: 'Days',
         groupSize: 1,
         minAdults: 1,
+        pricePerAdult: 0,
+        pricePerChild: 0,
         itineraries: [ { title: '', content: ''} ],
         expenses: [ { content: '', isIncluded: true } ],
-        images: [ { url: '', file: null } ]    
+        images: [ { url: '', file: null } ],
+        isCreating: false   
     }
 
     listPlaces = [];
     categories =  [];
+    baseUrl = this.props.reduxData.baseUrl;
 
     componentDidMount() {
         // call api to get list categories, list places
@@ -46,6 +55,14 @@ class CreateTour extends React.Component {
         this.listPlaces = resPlaces;
         this.setState({          
             checkedStates: checkedStates
+        })
+    }
+
+    // input text change
+    handleInputText = (event) => {
+        const key = event.target.name;
+        this.setState({
+            [key]: event.target.value
         })
     }
 
@@ -207,7 +224,6 @@ class CreateTour extends React.Component {
 
     // on image change
     onImageChange = (event, index) => {
-        console.log('image index', index);
         if (event.target.files && event.target.files[0]) {
             let images = this.state.images;
             images[index].url = URL.createObjectURL(event.target.files[0]);
@@ -230,15 +246,17 @@ class CreateTour extends React.Component {
     }     
 
     // handle on submit 
-    handleOnSave = () => {
+    handleOnSave = async() => {
+        const { tourName, overview} = this.state;
         const {selectedCategories, selectedPlace, startingLocation, destinationLocation} = this.state;
-        const {isPrivate, duration, groupSize, minAdults} = this.state;
+        const {isPrivate, duration, groupSize, minAdults, pricePerAdult, pricePerChild} = this.state;
         let {itineraries, expenses, images} = this.state;
         itineraries = itineraries.filter(element => (element.title !== '') && (element.content !== ''));
         expenses = expenses.filter(element => element.content !== '');
         images = images.filter(element => element.file !== null);
 
-        const isValid = (selectedCategories.length > 0) && (selectedPlace !== null) &&
+        const isValid = (tourName !== '') && (overview !== '') &&
+                        (selectedCategories.length > 0) && (selectedPlace !== null) &&
                         (startingLocation !== '') && (destinationLocation !== '') &&
                         (itineraries.length > 0) && (expenses.length > 0) && (images.length > 0);
         
@@ -253,55 +271,116 @@ class CreateTour extends React.Component {
             });
             return;
         }
+        this.setState({
+            isCreating: true
+        })
         const newTour = {
+            tourName: tourName,
+            overview: overview,
             isPrivate: isPrivate,
             duration: duration,
             groupSize: groupSize,
             minAdults: minAdults,
-            selectedCategories: selectedCategories.map(item => item.id),
-            selectedPlace: selectedPlace.id,
-            startingLocation: startingLocation,
-            destinationLocation: destinationLocation,
+            pricePerAdult: pricePerAdult,
+            pricePerChild: pricePerChild,
+            categoryIds: selectedCategories.map(item => item.id),
+            placeId: selectedPlace.id,
+            location: startingLocation,
+            destination: destinationLocation,
             itineraries: itineraries,
             expenses: expenses,
             images: images.map(item => item.file)
         }
         // post to api
         console.log('New tour: ', newTour);
-        // show toast notify
-        toast.success('Create your tour successfully!', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            progress: undefined,
-        });
+        let data = new FormData();
+        data.append('tourName', tourName);
+        data.append('overview', overview);
+        data.append('isPrivate', isPrivate);
+        data.append('duration', duration);
+        data.append('groupSize', groupSize);
+        data.append('minAdults', minAdults);
+        data.append('pricePerAdult', pricePerAdult);
+        data.append('pricePerChild', pricePerChild);
+        data.append('placeId', selectedPlace.id);   
+        data.append('location', startingLocation);     
+        data.append('destination', destinationLocation);     
+        selectedCategories.map((item, index) => {
+            data.append(`categoryIds[${index}]`, item.id); 
+        })
+        itineraries.forEach((item, index) => {
+            data.append(`itineraries[${index}].title`, item.title);
+            data.append(`itineraries[${index}].content`, item.content);
+        })  
+        expenses.forEach((item, index) => {
+            data.append(`expenses[${index}].content`, item.content);
+            data.append(`expenses[${index}].isIncluded`, item.isIncluded);
+        }) 
+        images.map(item => {
+            data.append('images', item.file);
+        })
+        
+        try {
+            let res = await axios.post(
+              `${this.baseUrl}/api/Tours`,
+              data
+            );          
+            //console.log(res);
+
+            // show toast notify
+            toast.success('Create your tour successfully!', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                progress: undefined,
+            });
+        } catch (error) {
+            if (!error.response) {
+              toast.error("Network error");
+              return;
+            }
+            if (error.response.status === 400) {
+              console.log(error)
+            }
+        } finally {
+            this.setState({
+                isCreating: false
+            })
+        }   
     }
 
     render() {
         const categories = this.categories;
         const listPlaces = this.listPlaces;
+        const { tourName, overview} = this.state;
         const { isPrivate, checkedStates, showListPlace } = this.state;
         const { duration, durationUnit } = this.state;
-        const { groupSize, minAdults} = this.state;
+        const { groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
         const { selectedPlace } = this.state;
         const { itineraries, expenses, images } = this.state;
         const isPlaceSelected =  selectedPlace && selectedPlace !== 'null' && selectedPlace !== 'undefined';
+        const { isCreating } = this.state;
         return (
             <div className='create-tour-container'>
+                
                 <div className='create-tour-header'>
                     <div className='title'>Create new tour</div>
                     <div className='sub-title'>Create your new tour with detailed information</div>
                 </div>
                 <div className='create-tour-body'>
+                    {
+                        isCreating &&
+                        <div className="loading-modal"></div>
+                    }
                     <div className='form-group'>
                         <label className="form-title tour-name">Tour name</label>
-                        <input className="input-field tour-name" name='name' type='text'/>
+                        <input className="input-field tour-name" name='tourName' type='text' value={tourName} onChange={this.handleInputText}/>
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Overview</label>
-                        <textarea className="input-area" name='overview'/>
+                        <textarea className="input-area" name='overview' value={overview} onChange={this.handleInputText}/>
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Tour Type</label>
@@ -435,6 +514,30 @@ class CreateTour extends React.Component {
                             />
                         </div> 
                     </div>
+                    <div className='price'>
+                        <div className='form-group'>
+                            <label className="form-title">Price per Adult</label>
+                            <input 
+                                className="input-number" 
+                                type="number" 
+                                name='pricePerAdult'  
+                                min="1"
+                                value={pricePerAdult}
+                                onChange={(event)=>this.onChangeInputNumber(event)}
+                            />
+                        </div>
+                        <div className='form-group'>
+                            <label className="form-title">Price per Child</label>
+                            <input 
+                                className="input-number" 
+                                type="number" 
+                                name='pricePerChild'  
+                                min="1"
+                                value={pricePerChild}
+                                onChange={(event)=>this.onChangeInputNumber(event)}
+                            />
+                        </div> 
+                    </div>
                     <div className='form-group'>
                         <label className="form-title">Itinerary</label>
                         {
@@ -518,8 +621,20 @@ class CreateTour extends React.Component {
                             }
                         </div>
                         <p className="more-btn" onClick={this.handleMoreImageClick}>More...</p>
-                    </div>                     
-                    <button className="save-btn" onClick={this.handleOnSave}>CREATE</button>
+                    </div>   
+                    <div className="save-btn-wrapper">
+                        <button className="save-btn" onClick={this.handleOnSave}>CREATE</button>
+                        {
+                            isCreating &&
+                            <ReactLoading
+                                className="loading-component"
+                                type={"spin"}
+                                color={"#df385f"}
+                                height={30}
+                                width={30}
+                            />
+                        }
+                    </div>                  
                 </div>
                 <br></br>
                 <br></br>
@@ -580,4 +695,10 @@ const listPlaces = [
     { id: 15, placeName: 'Trang An' }
 ];
 
-export default CreateTour;
+const mapStateToProps = (state) => {
+    return {
+        reduxData: state
+    }
+}
+
+export default connect(mapStateToProps)(CreateTour);
