@@ -16,8 +16,9 @@ class CreateTour extends React.Component {
         overview: '',
         isPrivate: false,
         selectedCategories: [],
-        selectedPlace: null,
-        checkedStates: [],
+        selectedPlaces: [],
+        checkedCategoryStates: [],
+        checkedPlaceStates: [],
         showListPlace: false,
         startingLocation: '',
         destinationLocation: '',
@@ -76,11 +77,11 @@ class CreateTour extends React.Component {
     // category checkbox click
     handleCategorySelect = (event, item, index) => {
         const isChecked = event.target.checked;
-        // set state checkedStates
-        const checkedStates = this.state.checkedStates;
-        checkedStates[index] = isChecked;
+        // set state checked category States
+        const checkedCategoryStates = this.state.checkedCategoryStates;
+        checkedCategoryStates[index] = isChecked;
         this.setState({
-            checkedStates: checkedStates
+            checkedCategoryStates: checkedCategoryStates
         })
         // add or remove category item in filter
         const selectedCategories = this.state.selectedCategories;
@@ -95,20 +96,26 @@ class CreateTour extends React.Component {
         }
     }
 
-    // click places menu toggle
-    handleDestinationClick = () => {
-        let showListPlace = this.state.showListPlace;
+    // handle place checkbox click
+    handlePlaceSelect = (event, item, index) => {
+        const isChecked = event.target.checked;
+        // set state checked place States
+        const checkedPlaceStates = this.state.checkedPlaceStates;
+        checkedPlaceStates[index] = isChecked;
         this.setState({
-            showListPlace: !showListPlace
+            checkedPlaceStates: checkedPlaceStates
         })
-    }
-
-    // select 1 destination
-    handleDestinationItemSelect = (item) => {
-        const selectedPlace = this.listPlaces.filter((element) => element.id === item.id)
-        this.setState({
-            selectedPlace: selectedPlace[0]
-        })
+        // add or remove place item in filter
+        const selectedPlaces = this.state.selectedPlaces;
+        if(isChecked) {
+            this.setState({
+                selectedPlaces: [...selectedPlaces, item]           
+            })
+        } else {
+            this.setState({
+                selectedPlaces: selectedPlaces.filter((element) => element.id !== item.id)
+            })
+        }
     }
 
     // handle location picking
@@ -248,15 +255,15 @@ class CreateTour extends React.Component {
     // handle on submit 
     handleOnSave = async() => {
         const { tourName, overview} = this.state;
-        const {selectedCategories, selectedPlace, startingLocation, destinationLocation} = this.state;
-        const {isPrivate, duration, groupSize, minAdults, pricePerAdult, pricePerChild} = this.state;
-        let {itineraries, expenses, images} = this.state;
+        const { selectedCategories, selectedPlaces, startingLocation, destinationLocation } = this.state;
+        const { isPrivate, duration, groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
+        let { itineraries, expenses, images } = this.state;
         itineraries = itineraries.filter(element => (element.title !== '') && (element.content !== ''));
         expenses = expenses.filter(element => element.content !== '');
         images = images.filter(element => element.file !== null);
 
         const isValid = (tourName !== '') && (overview !== '') &&
-                        (selectedCategories.length > 0) && (selectedPlace !== null) &&
+                        (selectedCategories.length > 0) && (selectedPlaces.length > 0) &&
                         (startingLocation !== '') && (destinationLocation !== '') &&
                         (itineraries.length > 0) && (expenses.length > 0) && (images.length > 0);
         
@@ -284,7 +291,7 @@ class CreateTour extends React.Component {
             pricePerAdult: pricePerAdult,
             pricePerChild: pricePerChild,
             categoryIds: selectedCategories.map(item => item.id),
-            placeId: selectedPlace.id,
+            placeIds: selectedPlaces.map(item => item.id),
             location: startingLocation,
             destination: destinationLocation,
             itineraries: itineraries,
@@ -301,12 +308,14 @@ class CreateTour extends React.Component {
         data.append('groupSize', groupSize);
         data.append('minAdults', minAdults);
         data.append('pricePerAdult', pricePerAdult);
-        data.append('pricePerChild', pricePerChild);
-        data.append('placeId', selectedPlace.id);   
+        data.append('pricePerChild', pricePerChild); 
         data.append('location', startingLocation);     
         data.append('destination', destinationLocation);     
         selectedCategories.map((item, index) => {
             data.append(`categoryIds[${index}]`, item.id); 
+        })
+        selectedPlaces.map((item, index) => {
+            data.append(`placeIds[${index}]`, item.id); 
         })
         itineraries.forEach((item, index) => {
             data.append(`itineraries[${index}].title`, item.title);
@@ -355,7 +364,8 @@ class CreateTour extends React.Component {
         const categories = this.categories;
         const listPlaces = this.listPlaces;
         const { tourName, overview} = this.state;
-        const { isPrivate, checkedStates, showListPlace } = this.state;
+        const { isPrivate } = this.state;
+        const { checkedCategoryStates, checkedPlaceStates } = this.state;
         const { duration, durationUnit } = this.state;
         const { groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
         const { selectedPlace } = this.state;
@@ -400,16 +410,15 @@ class CreateTour extends React.Component {
                             {
                                 categories.map((item, index) => {
                                     return (
-                                        <div key={item.id} className='item-category'>
+                                        <div key={'category'+item.id} className='item-category'>
                                             <input 
                                                 type="checkbox" 
-                                                id={item.id} 
-                                                name="topping" 
+                                                id={'category'+item.id} 
                                                 value={item.categoryName} 
-                                                checked={checkedStates[index]}
+                                                checked={checkedCategoryStates[index]}
                                                 onChange={(event) => this.handleCategorySelect(event, item, index)}
                                             />
-                                            <label htmlFor={item.id}>{item.categoryName}</label>
+                                            <label htmlFor={'category'+item.id}>{item.categoryName}</label>
                                         </div>
                                     )
                                 })
@@ -417,38 +426,26 @@ class CreateTour extends React.Component {
                         </div>
                     </div>
                     <div className='form-group'>
-                        <label className="form-title">Main Tourist Site</label>
+                        <label className="form-title">Tourist Sites</label>
                         <div 
-                            className="place"
+                            className="places"
                             onClick={() => this.handleDestinationClick()}
                         >
-                            <div>
-                                <label>
-                                {
-                                    isPlaceSelected ?
-                                    selectedPlace.placeName
-                                    :
-                                    'Select place...'
-                                }
-                                </label>
-                            </div>
                             {
-                                showListPlace &&                        
-                                <ul className="destination-menu">
-                                    {
-                                        listPlaces.map((item) => {
-                                            return (
-                                                <li 
-                                                    key={item.id}
-                                                    className="destination-item"
-                                                    onClick={() => this.handleDestinationItemSelect(item)}
-                                                >
-                                                    {item.placeName}
-                                                </li>
-                                            )
-                                        })
-                                    }
-                                </ul>
+                                listPlaces.map((item, index) => {
+                                    return (
+                                        <div key={'place'+item.id} className='item-place'>
+                                            <input 
+                                                type="checkbox" 
+                                                id={'place'+item.id} 
+                                                value={item.placeName} 
+                                                checked={checkedPlaceStates[index]}
+                                                onChange={(event) => this.handlePlaceSelect(event, item, index)}
+                                            />
+                                            <label htmlFor={'place'+item.id}>{item.placeName}</label>
+                                        </div>
+                                    )
+                                })
                             }
                         </div>
                     </div>
