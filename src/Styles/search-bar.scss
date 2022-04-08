@@ -139,7 +139,7 @@
                     .item-title:first-child {
                         display: inline-block;
                         margin-right: 20px;
-                    }
+                    }                   
                     .keyword {
                         display: inline-block;
                         margin-left: auto;
@@ -167,12 +167,21 @@
                             margin-bottom: 0;
                         }
                     }
+                    .match-all {
+                        display: flex;
+                        label {                     
+                            color: #dd2953;
+                        }
+                        margin: 5px 0;
+                    }
                     .tour-categories {
                         display: flex;
                         flex-wrap: wrap;
                         height: 100px;
                         overflow: hidden;
                         overflow-y: scroll;
+                        padding-top: 15px;
+                        border-top: 1px solid #dfdfdf;
 
                         .item-category {
                             width: 33.33333333%;

@@ -70,6 +70,7 @@ class SearchBar extends React.Component {
                 priceRange: [0, 3000],
                 selectedCategories: [],
                 isPrivate: false,
+                matchAll: false
             },
         // filter: {
         //     selectedPlace: null,
@@ -189,8 +190,8 @@ class SearchBar extends React.Component {
     displayPrice = (value) => {
         return `$${value}`;
     }
-    // private tour checkbox click
-    handleTourTypeSelect = (item) => {
+    // private tour only checkbox click
+    handleTourTypeSelect = () => {
         const isPrivate = this.state.filter.isPrivate;
         const filter = this.state.filter;
         this.setState({
@@ -200,6 +201,17 @@ class SearchBar extends React.Component {
             }
         })
     }
+    // handleMatchAllSelect
+    handleMatchAllSelect = (event) => {
+        const filter = this.state.filter;
+        this.setState({
+            filter: {
+                ...filter, 
+                matchAll: event.target.checked
+            }
+        })
+    }
+
     // category checkbox click
     handleCategorySelect = (event, item, index) => {
         const filter = this.state.filter;
@@ -382,12 +394,21 @@ class SearchBar extends React.Component {
                                             checked={this.state.filter.isPrivate} 
                                             onChange={() => this.handleTourTypeSelect()}
                                         />
-                                        <label htmlFor="tour-type">Is Private tour?</label>
+                                        <label htmlFor="tour-type">Is Private only?</label>
                                     </div>
                                 </div>
                                 <div className="advance-menu-section">
                                     <div className="item-title">
                                         <h4>Tour Categories</h4>
+                                    </div>
+                                    <div className='match-all'>
+                                        <input 
+                                            type="checkbox" 
+                                            id="match-all" 
+                                            checked={this.state.filter.matchAll} 
+                                            onChange={(event) => this.handleMatchAllSelect(event)}
+                                        />
+                                        <label htmlFor="match-all">Match All?</label>
                                     </div>
                                     <div className="tour-categories">
                                         {
