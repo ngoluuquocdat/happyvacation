@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import ReviewItem from './ReviewItem';
 import { Pagination, Rating } from '@mui/material';
 import {connect} from 'react-redux';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import '../../Styles/review-section.scss'
 
 class ReviewSection extends Component {
@@ -10,27 +12,58 @@ class ReviewSection extends Component {
         totalPage: 2,
         totalCount: 12,
         page: 1,
-        perPage: 6,
+        perPage: 4,
         rating: 0,
         content: '',
         hoverLabel: '',
         ratingLabel: '',
-        flag: 1    // this is changed between 1 and 2, to detect if new comment posted or not in componentDidUpdate
+        flag: 1,    // this is changed between 1 and 2, to detect if new review posted or not in componentDidUpdate
+        networkFailed: false
     }
-    tourId = this.props.tourId ? this.props.tourId : 0
-    ratingLabels = ['','Terrible', 'Poor', 'Average', 'Good', 'Excellent']
+    tourId = this.props.tourId ? this.props.tourId : 0;
+    ratingLabels = ['','Terrible', 'Poor', 'Average', 'Good', 'Excellent'];
 
-    componentDidMount() {
+    baseUrl = this.props.reduxData.baseUrl;
+
+    async componentDidMount() {
         // call api to get list of comments, then set state
         const {page, perPage} = this.state;
         const tourId = this.tourId;
         if(tourId) {
-            console.log(`request: GET /tours/${tourId}/comments?page=${page}&perPage=${perPage}`)
-            // fake api res
-            const resComments = reviews_temp.slice((page-1)*perPage, (page-1)*perPage+perPage);
-            this.setState({
-                reviews: resComments
-            })
+            //console.log(`request: GET api/tours/${tourId}/reviews?page=${page}&perPage=${perPage}`)
+            try {
+                let res = await axios.get(
+                    `${this.baseUrl}/api/tours/${tourId}/reviews?page=${page}&perPage=${perPage}`
+                );       
+                //console.log(res);
+                this.setState({
+                    totalCount: res.data.totalCount,
+                    totalPage: res.data.totalPage,
+                    reviews: res.data.items
+                })
+                
+            } catch (error) {
+                if (!error.response) {
+                    toast.error("Network error");
+                    console.log(error)
+                    // fake api res
+                    const resComments = reviews_temp.slice((page-1)*perPage, (page-1)*perPage+perPage);
+                    this.setState({
+                        reviews: resComments,
+                        networkFailed: true
+                    })
+                    return;
+                } 
+                if (error.response.status === 404) {
+                    console.log(error)
+                }
+                if (error.response.status === 400) {
+                  console.log(error)
+                }
+            } finally {
+                
+            }
+            
         }
     }
 
@@ -39,7 +72,7 @@ class ReviewSection extends Component {
         if(prevState.page !== this.state.page) {
           const {page, perPage} = this.state;
           const tourId = this.props.tourId;
-          console.log(`request: GET /tours/${tourId}/comments?page=${page}&perPage=${perPage}`)
+          console.log(`request: GET /tours/${tourId}/reviews?page=${page}&perPage=${perPage}`)
           // fake api res
           const resReviews = reviews_temp.slice((page-1)*perPage, (page-1)*perPage+perPage);
           this.setState({
@@ -50,7 +83,7 @@ class ReviewSection extends Component {
         if(prevState.flag !== this.state.flag) {
             const {perPage} = this.state;
             const tourId = this.props.tourId;
-            console.log(`request: GET /tours/${tourId}/comments?page=1&perPage=${perPage}`)
+            console.log(`request: GET /tours/${tourId}/reviews?page=1&perPage=${perPage}`)
             // fake api res
             const resReviews = reviews_temp.slice(1, perPage);
             this.setState({
@@ -132,6 +165,8 @@ class ReviewSection extends Component {
         const reviews = this.state.reviews;
         const { totalCount, page, totalPage } = this.state;
         const { content, rating, hoverLabel, ratingLabel } = this.state;
+        const baseUrl = this.state.networkFailed ? '' : this.baseUrl;
+
         return (           
             <div className='review-section'>
                 {
@@ -158,11 +193,12 @@ class ReviewSection extends Component {
                     <span className='notify'>Login to leave your review!</span>
                 }
                 <div className='list-reviews'>
-                <span className='review-count'>{totalCount} reviews</span>
+                    <span className='review-count'>{totalCount} reviews</span>
                     {
+                        reviews.length > 0 && 
                         reviews.map((item) => {
                             return (
-                                <ReviewItem key={item.id} comment={item}/>
+                                <ReviewItem key={item.id} review={item} baseUrl={baseUrl}/>
                             )
                         })
                     }

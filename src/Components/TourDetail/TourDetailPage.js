@@ -1,10 +1,13 @@
 import React from 'react';
 import HeaderNav from '../Header/HeaderNav';
+import axios from 'axios';
 import Slider from 'react-slick';
+import { toast } from 'react-toastify';
+import ReactLoading from "react-loading";
 import Itinerary from './Itinerary';
 import ExpenseTable from './ExpenseTable';
 import ReviewSection from './ReviewSection';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { Left, Right } from '../Header/Arrows';
 import { withRouter } from 'react-router-dom';
 import { Calendar } from 'react-date-range';
@@ -12,7 +15,8 @@ import { FaCaretDown } from 'react-icons/fa';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai'
 import { VscLocation } from 'react-icons/vsc';
 import { BsClock, BsPeople, BsTag } from 'react-icons/bs';
-import { FiStar } from 'react-icons/fi'
+import { FiStar } from 'react-icons/fi';
+import { BiCategoryAlt } from 'react-icons/bi';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../../Styles/tour-detail.scss'
@@ -28,20 +32,59 @@ class TourDetailPage extends React.Component {
         showDatePicker: false,
         fullname: this.props.reduxData.user.fullname,
         phone: this.props.reduxData.user.phone,
-        email: this.props.reduxData.user.email
+        email: this.props.reduxData.user.email,
+        isLoading: true,
+        networkFailed: false
     }
 
-    componentDidMount() {
+    baseUrl = this.props.reduxData.baseUrl;
+
+    async componentDidMount() {
         // call api to get tour, and set state
         const tourId = this.props.match.params.id
+        try {
+            this.setState({
+                isLoading: true
+            })
+            let res = await axios.get(
+                `https://localhost:7079/api/Tours/${tourId}`
+            );       
+            //console.log(res);
+            const resTour = res.data;
+            this.setState({
+                tour: resTour,
+                adults: resTour.minAdults,
+                price: resTour.pricePerAdult*resTour.minAdults,
+            })
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                // fake api response
+                const resTour = tour;
+                this.setState({
+                    tour: resTour,
+                    adults: resTour.minAdults,
+                    price: resTour.pricePerAdult*resTour.minAdults,
+                    networkFailed: true,
+                });            
+                return;
+            } 
+            if (error.response.status === 404) {
+                console.log(error)
+            }
+            if (error.response.status === 400) {
+              console.log(error)
+            }
+        } finally {
+            setTimeout(() => {
+                this.setState({
+                    isLoading: false
+                })
+            }, 1000)         
+        }  
+           
         console.log(`GET tours/${tourId}`);
-        // fake api response
-        const resTour = tour;
-        this.setState({
-            tour: resTour,
-            adults: resTour.minAdults,
-            price: resTour.pricePerAdult*resTour.minAdults
-        })
+        
     }
 
     // click date picker toggle
@@ -140,231 +183,258 @@ class TourDetailPage extends React.Component {
     
     render() {
         const showDatePicker = this.state.showDatePicker; 
-        const {date, adults, children, price} = this.state;
-        const {tour} = this.state;
-        const {fullname, phone, email} = this.state;
+        const { date, adults, children, price } = this.state;
+        const { tour } = this.state;
+        const { fullname, phone, email } = this.state;
+        const baseUrl = this.state.networkFailed ? '' : this.baseUrl;
+        const { isLoading } = this.state;
+        
         return (
             <div className="App">
                 <div className="small-header">
                     <HeaderNav />
                 </div>
-              <div className="tour-detail-page-container">
-                    <div className="left-side">
-                        <div className="tour-detail-section">
-                            <div className="tour-detail-heading"> 
-                                <h2 className="tour-name">{tour.tourName}</h2>
-                                <div className='tour-rating'>
-                                    <span className="rating">{tour.rating}&nbsp;<FiStar className="icon"/></span>
-                                    <span className="review">{tour.reviews} reviews</span>
-                                </div>
-                                <div className='tour-location-destination'>
-                                    <div className="tour-location">
-                                        <VscLocation /> From: {tour.tourLocation}
-                                    </div>
-                                    <div className="tour-destination">
-                                        <VscLocation /> To: {tour.tourDestination}
-                                    </div> 
-                                </div>                          
-                            </div>
-                            <div className='tour-feature'>
-                                <div className='tour-feature-item'>
-                                    <div className='logo'>
-                                        <BsClock />
-                                    </div>
-                                    <div className='tour-feature-content'>
-                                        <label className='title'>Duration</label>
-                                        <span className='feature-text'>
+                {
+                    isLoading ? 
+                    <div className="loading-container">
+                        <ReactLoading
+                            className="loading-component"
+                            type={"spin"}
+                            color={"#df385f"}
+                            height={50}
+                            width={50}
+                        />
+                    </div>
+                    :
+                    <div className="tour-detail-page-container">
+                        <div className="left-side">
+                            <div className="tour-detail-section">
+                                <div className="tour-detail-heading"> 
+                                    <h2 className="tour-name">{tour.tourName}</h2>
+                                    <div className='tour-rating'>
                                         {
-                                            tour.duration<1 ? 
-                                            (
-                                                tour.duration===0.5 ?
-                                                'Half day'
-                                                :
-                                                `${Math.round(tour.duration*24)} hours`
-                                            )                                    
-                                            : 
-                                            `${tour.duration} days`
-                                        }
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className='tour-feature-item'>
-                                    <div className='logo'>
-                                        <BsTag />
-                                    </div>
-                                    <div className='tour-feature-content'>
-                                        <label className='title'>Tour Type</label>
-                                        <span className='feature-text'>
-                                        {
-                                            tour.isPrivate ?
-                                            'Private'
+                                            tour.rating > 0 ?
+                                            <span className="rating">{Number.isInteger(tour.rating) ? `${tour.rating}.0` : tour.rating}&nbsp;<FiStar className="icon"/></span>
                                             :
-                                            'Shared'
+                                            <span className='not-rated-label'>Not rated</span>
                                         }
-                                        </span>
+                                        <span className="review">{tour.reviews} reviews</span>
                                     </div>
+                                    <div className='tour-location-destination'>
+                                        <div className="tour-location">
+                                            <VscLocation /> Start: {tour.location}
+                                        </div>
+                                        <div className="tour-destination">
+                                            <VscLocation /> End: {tour.destination}
+                                        </div> 
+                                    </div>   
+                                    <div className='tour-categories'>
+                                            <BsTag /> 
+                                            {
+                                                tour.categories.map((item) => ` ${item.categoryName},`)
+                                            }                               
+                                    </div>                        
                                 </div>
-                                <div className='tour-feature-item'>
-                                    <div className='logo'>
-                                        <BsPeople />
+                                <div className='tour-feature'>
+                                    <div className='tour-feature-item'>
+                                        <div className='logo'>
+                                            <BsClock />
+                                        </div>
+                                        <div className='tour-feature-content'>
+                                            <label className='title'>Duration</label>
+                                            <span className='feature-text'>
+                                            {
+                                                tour.duration<1 ? 
+                                                (
+                                                    tour.duration===0.5 ?
+                                                    'Half day'
+                                                    :
+                                                    `${Math.round(tour.duration*24)} hours`
+                                                )                                    
+                                                : 
+                                                `${tour.duration} days`
+                                            }
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className='tour-feature-content'>
-                                        <label className='title'>Group Size</label>
-                                        <span className='feature-text'>{tour.groupSize}</span>
-                                    </div>
-                                </div>
-                                <div className='tour-feature-item'>
-                                    <div className='logo'>
-                                        <BsClock />
-                                    </div>
-                                    <div className='tour-feature-content'>
-                                        <label className='title'>Duration</label>
-                                        <span className='feature-text'>
-                                        {
-                                            tour.duration<1 ? 
-                                            (
-                                                tour.duration===0.5 ?
-                                                'Half day'
+                                    <div className='tour-feature-item'>
+                                        <div className='logo'>
+                                            <BiCategoryAlt />
+                                        </div>
+                                        <div className='tour-feature-content'>
+                                            <label className='title'>Tour Type</label>
+                                            <span className='feature-text'>
+                                            {
+                                                tour.isPrivate ?
+                                                'Private'
                                                 :
-                                                `${Math.round(tour.duration*24)} hours`
-                                            )                                    
-                                            : 
-                                            `${tour.duration} days`
-                                        }
-                                        </span>
+                                                'Shared'
+                                            }
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className='tour-feature-item'>
+                                        <div className='logo'>
+                                            <BsPeople />
+                                        </div>
+                                        <div className='tour-feature-content'>
+                                            <label className='title'>Group Size</label>
+                                            <span className='feature-text'>{tour.groupSize}</span>
+                                        </div>
+                                    </div>
+                                    <div className='tour-feature-item'>
+                                        <div className='logo'>
+                                            <BsClock />
+                                        </div>
+                                        <div className='tour-feature-content'>
+                                            <label className='title'>Duration</label>
+                                            <span className='feature-text'>
+                                            {
+                                                tour.duration<1 ? 
+                                                (
+                                                    tour.duration===0.5 ?
+                                                    'Half day'
+                                                    :
+                                                    `${Math.round(tour.duration*24)} hours`
+                                                )                                    
+                                                : 
+                                                `${tour.duration} days`
+                                            }
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <ImageSlider backgroundImagesData={tour.images} />
-                            <div className='tour-overview'>
-                                <h3 className="tour-detail-title">Overview</h3>
-                                <p className='tour-overview-content'>
-                                    {tour.overview}
-                                </p>
-                            </div>
-                            <div className='tour-itinerary'>
-                                <h3 className="tour-detail-title">Itinerary</h3>    
-                                <div className="intinerary-content">
+                                <ImageSlider backgroundImagesData={tour.images} baseUrl={baseUrl}/>
+                                <div className='tour-overview'>
+                                    <h3 className="tour-detail-title">Overview</h3>
+                                    <p className='tour-overview-content'>
+                                        {tour.overview}
+                                    </p>
+                                </div>
+                                <div className='tour-itinerary'>
+                                    <h3 className="tour-detail-title">Itinerary</h3>    
+                                    <div className="intinerary-content">
+                                        {
+                                            (tour.itineraries && tour.itineraries.length > 0) &&
+                                            tour.itineraries.map((item) => {
+                                                return (
+                                                    <Itinerary key={item.id} itinerary={item}/>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                                <div className='tour-expense'>
+                                    <h3 className="tour-detail-title">Included/Exclude expenses</h3>
                                     {
-                                        (tour.itineraries && tour.itineraries.length > 0) &&
-                                        tour.itineraries.map((item) => {
-                                            return (
-                                                <Itinerary key={item.id} itinerary={item}/>
-                                            )
-                                        })
+                                        (tour.expenses && tour.expenses.length > 0) &&
+                                        <ExpenseTable expenses={tour.expenses}/>
                                     }
                                 </div>
-                            </div>
-                            <div className='tour-expense'>
-                                <h3 className="tour-detail-title">Included/Exclude expenses</h3>
-                                {
-                                    (tour.expenses && tour.expenses.length > 0) &&
-                                    <ExpenseTable expenses={tour.expenses}/>
-                                }
-                            </div>
-                            <div className='tour-reviews'>
-                                <h3 className="tour-detail-title">Reviews</h3>
-                                <ReviewSection tourId={this.props.match.params.id}/>
-                            </div>
-                        </div>                          
-                    </div>
-                   <div className="right-side">
-                        <div className="booking-section">
-                                <div className="booking-header">
-                                    <div className="price">
-                                        <span className='label'>{price>tour.pricePerAdult*tour.minAdults?'price':'from'}</span>
-                                        <span className='value'>${price},00</span>
-                                    </div>
+                                <div className='tour-reviews'>
+                                    <h3 className="tour-detail-title">Reviews</h3>
+                                    <ReviewSection tourId={this.props.match.params.id}/>
                                 </div>
-                                <div className="booking-body">
-                                    <div className="date-booking" onClick={() => this.handleDateClick()}>
-                                        <div className="date-display">
-                                            <label className='title'>Date</label>
-                                            <span>{`${("0" + date.getDate()).slice(-2)}/${("0" + (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`} <FaCaretDown /></span>
+                            </div>                          
+                        </div>
+                    <div className="right-side">
+                            <div className="booking-section">
+                                    <div className="booking-header">
+                                        <div className="price">
+                                            <span className='label'>{price>tour.pricePerAdult*tour.minAdults?'price':'from'}</span>
+                                            <span className='value'>${price},00</span>
                                         </div>
-                                        {
-                                            showDatePicker && 
-                                            <div className="date-picker" onClick={(event) => event.stopPropagation()}>
-                                                <Calendar
-                                                    date={date}
-                                                    minDate={new Date()}
-                                                    onChange={this.handleDateSelect}
-                                                />
+                                    </div>
+                                    <div className="booking-body">
+                                        <div className="date-booking" onClick={() => this.handleDateClick()}>
+                                            <div className="date-display">
+                                                <label className='title'>Date</label>
+                                                <span>{`${("0" + date.getDate()).slice(-2)}/${("0" + (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`} <FaCaretDown /></span>
                                             </div>
-                                        }
-                                        
-                                    </div>
-                                    <div className="adults-booking">
-                                        <div>
-                                            <label className='title'>Adults</label>                                            
+                                            {
+                                                showDatePicker && 
+                                                <div className="date-picker" onClick={(event) => event.stopPropagation()}>
+                                                    <Calendar
+                                                        date={date}
+                                                        minDate={new Date()}
+                                                        onChange={this.handleDateSelect}
+                                                    />
+                                                </div>
+                                            }
+                                            
                                         </div>
-                                        <div className='quantity-picker-wrap'>
-                                            <div className='quantity-picker'>
-                                                <span className='minus-btn' onClick={() => this.handleAdultsMinus()}><AiOutlineMinus /></span>
-                                                <span className='quantity-value'>{adults}</span>
-                                                <span className='add-btn' onClick={() => this.handleAdultsAdd()}><AiOutlinePlus /></span>
+                                        <div className="adults-booking">
+                                            <div>
+                                                <label className='title'>Adults</label>                                            
+                                            </div>
+                                            <div className='quantity-picker-wrap'>
+                                                <div className='quantity-picker'>
+                                                    <span className='minus-btn' onClick={() => this.handleAdultsMinus()}><AiOutlineMinus /></span>
+                                                    <span className='quantity-value'>{adults}</span>
+                                                    <span className='add-btn' onClick={() => this.handleAdultsAdd()}><AiOutlinePlus /></span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="children-booking">
-                                        <div>
-                                            <label className='title'>Children</label>
-                                        </div>
-                                        <div className='quantity-picker-wrap'>
-                                            <div className='quantity-picker'>
-                                                <span className='minus-btn' onClick={() => this.handleChildrenMinus()}><AiOutlineMinus /></span>
-                                                <span className='quantity-value'>{children}</span>
-                                                <span className='add-btn' onClick={() => this.handleChildrenAdd()}><AiOutlinePlus /></span>
+                                        <div className="children-booking">
+                                            <div>
+                                                <label className='title'>Children</label>
+                                            </div>
+                                            <div className='quantity-picker-wrap'>
+                                                <div className='quantity-picker'>
+                                                    <span className='minus-btn' onClick={() => this.handleChildrenMinus()}><AiOutlineMinus /></span>
+                                                    <span className='quantity-value'>{children}</span>
+                                                    <span className='add-btn' onClick={() => this.handleChildrenAdd()}><AiOutlinePlus /></span>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div className="customer-info-group">
+                                            <label className='title'>Full name</label>
+                                            <input 
+                                                type="text" 
+                                                name="fullname"
+                                                className='input-field' 
+                                                value={fullname} 
+                                                onChange={this.handleInputChange}
+                                            />
+                                        </div>
+                                        <div className="customer-info-group">
+                                            <label className='title'>Phone</label>
+                                            <input 
+                                                type="phone" 
+                                                name="phone"
+                                                className='input-field'
+                                                value={phone}  
+                                                onChange={this.handleInputChange}
+                                            />
+                                        </div>
+                                        <div className="customer-info-group">
+                                            <label className='title'>Email</label>
+                                            <input 
+                                                type="email" 
+                                                name="email"
+                                                className='input-field'
+                                                value={email} 
+                                                onChange={this.handleInputChange}
+                                            />
+                                        </div>
+                                        <div className="submit-booking">
+                                            <button className="submit" onClick={this.handleBookingSubmit}>BOOK NOW</button>
+                                        </div>
                                     </div>
-                                    <div className="customer-info-group">
-                                        <label className='title'>Full name</label>
-                                        <input 
-                                            type="text" 
-                                            name="fullname"
-                                            className='input-field' 
-                                            value={fullname} 
-                                            onChange={this.handleInputChange}
-                                        />
-                                    </div>
-                                    <div className="customer-info-group">
-                                        <label className='title'>Phone</label>
-                                        <input 
-                                            type="phone" 
-                                            name="phone"
-                                            className='input-field'
-                                            value={phone}  
-                                            onChange={this.handleInputChange}
-                                        />
-                                    </div>
-                                    <div className="customer-info-group">
-                                        <label className='title'>Email</label>
-                                        <input 
-                                            type="email" 
-                                            name="email"
-                                            className='input-field'
-                                            value={email} 
-                                            onChange={this.handleInputChange}
-                                        />
-                                    </div>
-                                    <div className="submit-booking">
-                                        <button className="submit" onClick={this.handleBookingSubmit}>BOOK NOW</button>
-                                    </div>
+                            </div>
+                            <div className="provider-section">
+                                <div className="provide-title">
+                                    Provided by
                                 </div>
-                        </div>
-                        <div className="provider-section">
-                            <div className="provide-title">
-                                Provided by
+                                <div className="provider-main-info">
+                                    <img src={baseUrl + tour.providerAvatar}></img>
+                                    <span className="provider-name">{tour.providerName}</span>
+                                </div>
+                                <button className='visit' onClick={this.handleVisitProvider}>VISIT</button>
                             </div>
-                            <div className="provider-main-info">
-                                <img src={tour.providerThumbnail}></img>
-                                <span className="provider-name">{tour.providerName}</span>
-                            </div>
-                            <button className='visit' onClick={this.handleVisitProvider}>VISIT</button>
-                        </div>
-                   </div>            
-              </div>           
+                    </div>            
+                    </div>           
+                }
           </div>
         )
     }
@@ -373,6 +443,7 @@ class TourDetailPage extends React.Component {
 class ImageSlider extends React.Component {
     render() {
       const backgroundImagesData = this.props.backgroundImagesData;
+      const baseUrl = this.props.baseUrl;
       var settings = {
         dots: true,
         fade: true,
@@ -388,7 +459,7 @@ class ImageSlider extends React.Component {
                 backgroundImagesData &&
                 backgroundImagesData.map((item) => {
                     return (                      
-                        <BackgroundImageDiv key={item.id} url={item.url} />
+                        <BackgroundImageDiv key={item.id} url={baseUrl+item.url} />
                     )
                 })
             }
@@ -417,14 +488,20 @@ const tour = {
     overview: 'Take a journey through Hoi An’s culinary history; head out to the beautiful countryside by bicycle'+ 
     'to experience some traditional local food favorites, including the most famous of Hoi An specialties; Cao Lau.'+
     '\n Try the traditional Hoi An specialty, Cao Lau; intoxicating pork noodle broth, featuring sticky rice noodles that must be soaked in water from the oldest well in Hoi An, Ba Le Well.',
-    tourLocation: 'Hội An, Quang Nam Province, Vietnam',
-    tourDestination: 'Hội An, Quang Nam Province, Vietnam',
+    location: 'Hội An, Quang Nam Province, Vietnam',
+    destination: 'Hội An, Quang Nam Province, Vietnam',
     reviews: 12,
     rating: 4.4,
     viewCount: 10,
     isPrivate: false,
     minPrice: 45,
     duration: 0.5,
+    categories: [ 
+        { id: 4, categoryName: 'biking tour' },
+        { id: 7, categoryName: 'classic tour' },
+        { id: 8, categoryName: 'cooking tour' },
+        { id: 11, categoryName: 'culinary tour' }
+    ],
     itineraries: [
         {
             id: 1,
@@ -451,37 +528,37 @@ const tour = {
         {
             id: 1,
             isIncluded: true,
-            expenseContent: 'Hotel pickup and drop-off in Hoi An City Center'
+            content: 'Hotel pickup and drop-off in Hoi An City Center'
         },
         {
             id: 2,
             isIncluded: true,
-            expenseContent: 'Transportation with air-conditioning'
+            content: 'Transportation with air-conditioning'
         },
         {
             id: 3,
             isIncluded: true,
-            expenseContent: 'Bicycle'
+            content: 'Bicycle'
         },
         {
             id: 4,
             isIncluded: true,
-            expenseContent: 'Entrance fees'
+            content: 'Entrance fees'
         },
         {
             id: 5,
             isIncluded: true,
-            expenseContent: 'Foods and Bottled drinking water'
+            content: 'Foods and Bottled drinking water'
         },
         {
             id: 6,
             isIncluded: false,
-            expenseContent: 'Tips and gratuities'
+            content: 'Tips and gratuities'
         },
         {
             id: 5,
             isIncluded: false,
-            expenseContent: 'Personal expenses such as: shopping, telephone, beverage, etc.'
+            content: 'Personal expenses such as: shopping, telephone, beverage, etc.'
         }
     ],
     images:[
@@ -510,7 +587,7 @@ const tour = {
     pricePerChild: 30,
     providerId: 1,
     providerName: "Hoi An Express",
-    providerThumbnail: "https://hoianexpress.com.vn/wp-content/uploads/2020/09/logo-moi.png",
+    providerAvatar: "https://hoianexpress.com.vn/wp-content/uploads/2020/09/logo-moi.png",
 }
 
 const mapStateToProps = (state) => {

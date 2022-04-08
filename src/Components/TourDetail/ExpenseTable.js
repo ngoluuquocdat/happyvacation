@@ -11,13 +11,20 @@ class ExpenseTable extends Component {
         const excludes = expenses.filter((item) => (item.isIncluded === false));
 
         return (           
-            <div className='expense-table' onClick={() => this.handleOpenContent()}>
+            <div className='expense-table'>
                 <div className='include'>
                     <ul className='list'>
                         {
-                            includes.map((item) => {
+                            includes.map((item, index) => {
                                 return (
-                                    <li key={item.id}><GiCheckMark className='icon'/> {item.expenseContent}</li>
+                                    <li key={index} className='expense-item'>
+                                        <div className='icon-wrapper'>
+                                            <GiCheckMark className='icon'/> 
+                                        </div>
+                                        <div className='expense-content'>
+                                            {item.content}
+                                        </div>
+                                    </li>
                                 )
                             })
                         }
@@ -26,9 +33,16 @@ class ExpenseTable extends Component {
                 <div className='exclude'>
                     <ul className='list'>
                         {
-                            excludes.map((item) => {
+                            excludes.map((item, index) => {
                                 return (
-                                    <li key={item.id}><CgClose className='icon'/> {item.expenseContent}</li>
+                                    <li key={index} className='expense-item'>
+                                        <div className='icon-wrapper'>
+                                            <CgClose className='icon'/> 
+                                        </div>
+                                        <div className='expense-content'>
+                                            {item.content}
+                                        </div>
+                                    </li>
                                 )
                             })
                         }

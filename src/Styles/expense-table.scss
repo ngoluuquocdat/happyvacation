@@ -26,18 +26,21 @@
         display: block;
         padding: 0;
         margin: 0;
-        margin-left: 0;
-        
+        margin-left: 0;     
 
-
-        li {
+        .expense-item {
             text-align: left;
             display: flex;
             align-items: baseline;
             margin-bottom: 15px;
+            
+            .icon-wrapper {             
+                .icon {
+                    margin-right: 10px;
+                }
+            }
+            .expense-content {
 
-            .icon {
-                margin-right: 10px;
             }
         }
     }
