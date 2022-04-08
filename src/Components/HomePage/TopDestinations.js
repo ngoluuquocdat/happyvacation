@@ -17,7 +17,8 @@ class TopDestinations extends Component {
       keyword: '',
       priceRange: [0, 3000],
       selectedCategories: [],
-      isPrivate: false
+      isPrivate: false,
+      matchAll: false
     }
     this.props.history.push('/tours', {filter: filter});
   }
