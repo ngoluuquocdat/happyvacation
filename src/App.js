@@ -14,6 +14,7 @@ import {
   Link
 } from "react-router-dom";
 import { ToastContainer} from 'react-toastify';
+import Register from './Components/Register/RegisterPage';
 
 class App extends Component {
   state = { width: 0, height: 0 };
@@ -76,6 +77,9 @@ class App extends Component {
               </Route >
               <Route path="/login" >
                 <Login />
+              </Route >
+              <Route path="/register" >
+                <Register />
               </Route >
               <Route path="/for-provider">
                 <ProviderMain />

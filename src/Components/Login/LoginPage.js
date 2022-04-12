@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
+import ReactLoading from "react-loading";
 import axios from 'axios';
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineCloseCircle } from "react-icons/ai";
 import "../../Styles/login-page.scss";
@@ -13,7 +14,8 @@ class Login extends Component {
         showPassword: false,
         isUsernameValid: true,
         isPasswordValid: true,
-        accountValid: true
+        accountValid: true,
+        isCreating: false
     };
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -24,7 +26,7 @@ class Login extends Component {
 
     // toggle show password
     handleTogglePassword = (event) => {
-        event.stopPropagation()
+        event.stopPropagation();
         const showPassword = this.state.showPassword;
         this.setState({
             showPassword: !showPassword
@@ -51,8 +53,10 @@ class Login extends Component {
     handleLogin = async () => {
         let {username, password} = this.state;
         username = username.trim();
-        console.log(username);
-        console.log(password);
+
+        this.setState({
+            isCreating: true
+        })
 
         const data = {
             username: username,
@@ -107,9 +111,11 @@ class Login extends Component {
             })
             }
         } finally {
-            this.setState({
-                isCreating: false
-            })
+            setTimeout(() => {
+                this.setState({
+                    isCreating: false,
+                });
+            }, 1000);
         }  
     }
 
@@ -117,8 +123,21 @@ class Login extends Component {
     render() {
         const { username, password } = this.state;
         const { showPassword, isUsernameValid, isPasswordValid, accountValid } = this.state;
+        const { isCreating } = this.state;
         return (
             <div className="login-page-container">
+                {
+                    isCreating && 
+                    <div className="loading-container">
+                        <ReactLoading
+                            className="loading-component"
+                            type={"spin"}
+                            color={"#df385f"}
+                            height={50}
+                            width={50}
+                        />
+                    </div>
+                }
                 <div className="login-form">
                     <h3 className="form-header">Login</h3>
                     {
