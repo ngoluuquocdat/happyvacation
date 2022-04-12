@@ -118,7 +118,19 @@ class HeaderNav extends Component {
                         </div>
                       </div>
                       :
-                      <Link to={{pathname:"/login", state:{prevPath:this.props.location.pathname}}} exact="true" className="list-nav-item">Login</Link>
+                      <Link 
+                        to={{
+                          pathname:"/login", 
+                          state:{
+                            prevPath:this.props.location.pathname,
+                            filter: this.props.location.state ? this.props.location.state.filter : null
+                          }
+                        }} 
+                        exact="true" 
+                        className="list-nav-item"
+                      >
+                        Login
+                      </Link>
                   }                                    
                 </div>
               

@@ -81,7 +81,11 @@ class Login extends Component {
                 const prevPath = this.props.location.state.prevPath;
                 console.log(prevPath)
                 if(prevPath && prevPath.length > 0) {
-                    this.props.history.push(this.props.location.state.prevPath);
+                    if(this.props.location.state.filter) {
+                        this.props.history.push(this.props.location.state.prevPath, {filter: this.props.location.state.filter});
+                    } else {
+                        this.props.history.push(this.props.location.state.prevPath);
+                    }
                 }
             } else {
                 this.props.history.push('/');
