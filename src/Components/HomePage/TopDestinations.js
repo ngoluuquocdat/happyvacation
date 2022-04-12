@@ -66,7 +66,7 @@ const topDestinations = [
     {
         id: 2,
         placeName: 'Hue',
-        thumbnailPath: 'https://cdn.vietnammoi.vn/stores/news_dataimages/linhnguyenthi/082018/11/19/4728_37910677_2016005361777770_2000930546292621312_o.jpg'
+        thumbnailPath: 'https://owa.bestprice.vn/images/destinations/uploads/kinh-thanh-hue-5ffd6e0fc7d1c.jpg'
     },
     {
         id: 3,

@@ -4,6 +4,7 @@ import ToursPage from './Components/ToursPage';
 import TourDetailPage from './Components/TourDetail/TourDetailPage';
 import ProviderPage from './Components/ProviderPage';
 import ProviderMain from './Components/ForProvider/ProviderMain';
+import Login from './Components/Login/LoginPage';
 import logo from './Images/HappyVacation.png';
 import Footer from './Components/Footer/Footer';
 import {
@@ -72,6 +73,9 @@ class App extends Component {
               <Route path="/providers/:id" >
                 <ProviderPage />
                 <Footer />
+              </Route >
+              <Route path="/login" >
+                <Login />
               </Route >
               <Route path="/for-provider">
                 <ProviderMain />

@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import { withRouter } from 'react-router-dom';
 import { FaCaretDown } from 'react-icons/fa';
 import HappyVacationLogo from '../../Images/HappyVacation.png';
 import '../../Styles/header-nav.scss';
@@ -11,17 +14,65 @@ class HeaderNav extends Component {
       isShowUserMenu: false
     };
 
-    componentDidMount() {
+    baseUrl = this.props.reduxData.baseUrl;
+
+    async componentDidMount() {
       window.scrollTo(0, 0);
+      console.log("call get user info")
+      const token = localStorage.getItem('user-token');
+      if(!token) {
+        return;
+      }
+      try {
+        let res = await axios.get(
+          `${this.baseUrl}/api/Users/me`,
+          {
+            headers: { Authorization:`Bearer ${token}` }
+          }
+        );          
+        console.log(res);
+        const user = {
+            username: res.data.username,
+            fullName: res.data.fullName,
+            phone: res.data.phone,
+            email: res.data.email,
+            avatarUrl: res.data.avatarUrl
+        }
+        // set current user in redux
+        this.props.saveUserRedux(user);
+
+      } catch (error) {
+        if (!error.response) {
+          toast.error("Network error");
+          console.log(error)
+          return;
+        }
+        if (error.response.status === 400) {
+          console.log(error)
+        }
+        if (error.response.status === 401) {
+          console.log(error);
+          // redirect to login page or show notification
+          this.props.history.push('/login', {prevPath: this.props.location.pathname});
+        }
+      } finally {
+        
+      }  
     }
 
     // click open user menu
     handleClickUserMenu = () => {
-      const isShowUserMenu = this.state.isShowUserMenu;
-      
+      const isShowUserMenu = this.state.isShowUserMenu;     
       this.setState({
         isShowUserMenu: !isShowUserMenu
       })
+    }
+
+    // sign out
+    signOut = () => {
+      localStorage.removeItem('user-token');
+      // set current user in redux to null
+      this.props.saveUserRedux(null);
     }
 
   render() {
@@ -39,7 +90,7 @@ class HeaderNav extends Component {
                 </Link>
                 <div className="list-nav">
                   <Link to="/" exact="true" className="list-nav-item">Home</Link>
-                  <Link to="/" exact="true" className="list-nav-item">Best Sellers</Link>
+                  <Link to="/" exact="true" className="list-nav-item">Destinations</Link>
                   <Link to="/" exact="true" className="list-nav-item">Comnunity Blog</Link>
                   <Link to="/" exact="true" className="list-nav-item">Policy</Link>
                   {
@@ -47,8 +98,8 @@ class HeaderNav extends Component {
                       <div className="sign-in" onClick={() => this.handleClickUserMenu()}>
                         <div className="user-avatar">
                           <img
-                            src={currentUser.avatarPath}
-                            alt="lastnamearya"
+                            src={this.baseUrl + currentUser.avatarUrl}
+                            alt="avatar"
                           />
                         </div>
                         <div className="user-name">
@@ -60,14 +111,14 @@ class HeaderNav extends Component {
                             <div className="user-menu">
                               <ul className="user-menu-list">
                                 <li className="user-menu-item">Profile</li>
-                                <li className="user-menu-item">Sign out</li>
+                                <li className="user-menu-item" onClick={this.signOut}>Sign out</li>
                               </ul>
                             </div>
                           }
                         </div>
                       </div>
                       :
-                      <Link to="/" exact="true" className="list-nav-item">Login</Link>
+                      <Link to={{pathname:"/login", state:{prevPath:this.props.location.pathname}}} exact="true" className="list-nav-item">Login</Link>
                   }                                    
                 </div>
               
@@ -89,4 +140,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HeaderNav);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(HeaderNav));

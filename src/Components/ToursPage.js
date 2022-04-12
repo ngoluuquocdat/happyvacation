@@ -159,9 +159,10 @@ class ToursPage extends React.Component {
     };
 
     render() {
-        console.log("filter: ", this.props.location.state.filter);
+        //console.log("filter: ", this.props.location.state.filter);
         const { tours, totalCount, page, totalPage } = this.state;
         const filter = this.filter;
+        console.log('filter', filter)
         const selectedPlace = filter.selectedPlace;
         const { sort, isShowSortMenu, isLoading } = this.state;
 		const baseUrl = this.baseUrl;

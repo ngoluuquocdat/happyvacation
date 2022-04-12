@@ -30,9 +30,9 @@ class TourDetailPage extends React.Component {
         price: 0,
         tour: {},
         showDatePicker: false,
-        fullname: this.props.reduxData.user.fullname,
-        phone: this.props.reduxData.user.phone,
-        email: this.props.reduxData.user.email,
+        fullname: this.props.reduxData.user ? this.props.reduxData.user.fullName : '',
+        phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
+        email: this.props.reduxData.user ? this.props.reduxData.user.email : '',
         isLoading: true,
         networkFailed: false
     }
@@ -40,6 +40,12 @@ class TourDetailPage extends React.Component {
     baseUrl = this.props.reduxData.baseUrl;
 
     async componentDidMount() {
+        this.setState({
+            fullname: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
+            phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
+            email: this.props.reduxData.user ? this.props.reduxData.user.email : ''
+        })
+        console.log('fullname', this.state.fullname)
         // call api to get tour, and set state
         const tourId = this.props.match.params.id
         try {
@@ -82,9 +88,16 @@ class TourDetailPage extends React.Component {
                 })
             }, 1000)         
         }  
-           
-        console.log(`GET tours/${tourId}`);
-        
+    }
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps.reduxData.user !== this.props.reduxData.user){
+            // set state if new user data save in redux
+            this.setState({
+                fullname: this.props.reduxData.user ? this.props.reduxData.user.fullName : '',
+                phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
+                email: this.props.reduxData.user ? this.props.reduxData.user.email : ''
+            })
+        }
     }
 
     // click date picker toggle
