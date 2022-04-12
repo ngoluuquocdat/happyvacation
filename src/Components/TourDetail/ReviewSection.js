@@ -18,7 +18,8 @@ class ReviewSection extends Component {
         hoverLabel: '',
         ratingLabel: '',
         flag: 1,    // this is changed between 1 and 2, to detect if new review posted or not in componentDidUpdate
-        networkFailed: false
+        networkFailed: false,
+        isPosting: false
     }
     tourId = this.props.tourId ? this.props.tourId : 0;
     ratingLabels = ['','Terrible', 'Poor', 'Average', 'Good', 'Excellent'];
@@ -67,7 +68,7 @@ class ReviewSection extends Component {
         }
     }
 
-    componentDidUpdate (prevProps, prevState) {
+    async componentDidUpdate (prevProps, prevState) {
         // call api again if page change
         if(prevState.page !== this.state.page) {
           const {page, perPage} = this.state;
@@ -83,12 +84,39 @@ class ReviewSection extends Component {
         if(prevState.flag !== this.state.flag) {
             const {perPage} = this.state;
             const tourId = this.props.tourId;
-            console.log(`request: GET /tours/${tourId}/reviews?page=1&perPage=${perPage}`)
-            // fake api res
-            const resReviews = reviews_temp.slice(1, perPage);
-            this.setState({
-              reviews: resReviews
-            })
+            //console.log(`request: GET /tours/${tourId}/reviews?page=1&perPage=${perPage}`)
+            try {
+                let res = await axios.get(
+                    `${this.baseUrl}/api/tours/${tourId}/reviews?page=1&perPage=${perPage}`
+                );       
+                //console.log(res);
+                this.setState({
+                    totalCount: res.data.totalCount,
+                    totalPage: res.data.totalPage,
+                    reviews: res.data.items
+                })
+                
+            } catch (error) {
+                if (!error.response) {
+                    toast.error("Network error");
+                    console.log(error)
+                    // fake api res
+                    const resComments = reviews_temp.slice(1*perPage, (1-1)*perPage+perPage);
+                    this.setState({
+                        reviews: resComments,
+                        networkFailed: true
+                    })
+                    return;
+                } 
+                if (error.response.status === 404) {
+                    console.log(error)
+                }
+                if (error.response.status === 400) {
+                  console.log(error)
+                }
+            } finally {
+                
+            }
         }
     }
 
@@ -128,8 +156,9 @@ class ReviewSection extends Component {
     }
 
     // review submit
-    handleOnSubmitReview = () => {
+    handleOnSubmitReview = async () => {
         const {rating, content} = this.state;
+        const token = localStorage.getItem('user-token');
         if(rating !== 0 || content !== '')
         {
             const review = {
@@ -139,15 +168,45 @@ class ReviewSection extends Component {
             }
             // post new review to api
             console.log(`POST tours/${review.tourId}/reviews`, review)
-            // reset state, toggle flag to re-fetch reviews data
-            const flag = this.state.flag;
-            this.setState({
-                rating: 0,
-                content: '',
-                hoverLabel: '',
-                ratingLabel: '',
-                flag: flag!==1 ? 1 : 2  // toggle between 1 and 2
-            })
+            try {
+                let res = await axios.post(
+                  `${this.baseUrl}/api/tours/${review.tourId}/reviews`,
+                  review,
+                  {
+                    headers: { Authorization:`Bearer ${token}` }
+                  }
+                );          
+                console.log(res);
+                // reset state, toggle flag to re-fetch reviews data
+                const flag = this.state.flag;
+                this.setState({
+                    rating: 0,
+                    content: '',
+                    hoverLabel: '',
+                    ratingLabel: '',
+                    flag: flag!==1 ? 1 : 2  // toggle between 1 and 2
+                })     
+            } catch (error) {
+                if (!error.response) {
+                  toast.error("Network error");
+                  console.log(error)
+                  return;
+                }
+                if (error.response.status === 400) {
+                  console.log(error)
+                }
+                if (error.response.status === 401) {
+                  console.log(error);
+                  // redirect to login page or show notification
+                  this.props.history.push('/login');
+                }
+            } finally {
+                this.setState({
+                    isPosting: false
+                })
+            }  
+
+            
         }
     }
 
@@ -159,9 +218,9 @@ class ReviewSection extends Component {
     }
 
     render() {
-        const currentUser = this.props.reduxData.user;
-        const isCurrentUserExist = ((currentUser!=null)&&(Object.keys(currentUser).length !== 0 && currentUser.constructor === Object));
-        //const isCurrentUserExist = false;
+        //const currentUser = this.props.reduxData.user;
+        // const isCurrentUserExist = ((currentUser!=null)&&(Object.keys(currentUser).length !== 0 && currentUser.constructor === Object));
+        const isCurrentUserExist = localStorage.getItem('user-token') && localStorage.getItem('user-token').length > 0;
         const reviews = this.state.reviews;
         const { totalCount, page, totalPage } = this.state;
         const { content, rating, hoverLabel, ratingLabel } = this.state;
