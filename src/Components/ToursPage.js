@@ -43,7 +43,7 @@ class ToursPage extends React.Component {
                 isLoading: true,
             });
             var params = new URLSearchParams();
-            params.append("placeId", filter.selectedPlace.id);
+            params.append("placeId", filter.selectedPlace ? filter.selectedPlace.id : 0);
             params.append("privateOnly", filter.isPrivate);
             params.append("keyword", filter.keyword);
             params.append("duration", Math.ceil(Math.abs(filter.endDate - filter.startDate) / (1000 * 60 * 60 * 24)));
@@ -159,6 +159,7 @@ class ToursPage extends React.Component {
     };
 
     render() {
+        console.log("filter: ", this.props.location.state.filter);
         const { tours, totalCount, page, totalPage } = this.state;
         const filter = this.filter;
         const selectedPlace = filter.selectedPlace;
