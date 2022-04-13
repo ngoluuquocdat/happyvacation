@@ -33,7 +33,7 @@ class HeaderNav extends Component {
         console.log(res);
         const user = {
             username: res.data.username,
-            fullName: res.data.fullName,
+            fullName: `${res.data.firstName} ${res.data.lastName}`,
             phone: res.data.phone,
             email: res.data.email,
             avatarUrl: res.data.avatarUrl
@@ -66,6 +66,11 @@ class HeaderNav extends Component {
       this.setState({
         isShowUserMenu: !isShowUserMenu
       })
+    }
+
+    // go to profile
+    toProfile = () => {
+      this.props.history.push('/user/profile');
     }
 
     // sign out
@@ -110,7 +115,7 @@ class HeaderNav extends Component {
                             isShowUserMenu &&
                             <div className="user-menu">
                               <ul className="user-menu-list">
-                                <li className="user-menu-item">Profile</li>
+                                <li className="user-menu-item" onClick={this.toProfile}>Profile</li>
                                 <li className="user-menu-item" onClick={this.signOut}>Sign out</li>
                               </ul>
                             </div>

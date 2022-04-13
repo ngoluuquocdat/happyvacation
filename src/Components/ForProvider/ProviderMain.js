@@ -8,8 +8,8 @@ import SideNav from './SideNav';
 import ProfilePage from './ProfilePage';
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../../Styles/ForProvider/provider-main.scss';
 import CreateTour from './CreateTour';
+import '../../Styles/ForProvider/provider-main.scss';
 
 class ProviderMain extends React.Component {
     render() {

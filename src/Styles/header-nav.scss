@@ -68,15 +68,15 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+    .user-avatar img {
+      width: 30px;
+      border-radius: 50%;
+      border: 1px solid #D7DCE3;
+      display: block;
+      height: 30px;
+    }
   }
   
-  .user-avatar img {
-    width: 30px;
-    border-radius: 50%;
-    border: 1px solid #D7DCE3;
-    display: block;
-    height: 100%;
-  }
   
   .user-name-text {
     /* just delete these '!important' =)))) */

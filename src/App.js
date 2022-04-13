@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import Home from './Components/HomePage/Home';
 import ToursPage from './Components/ToursPage';
 import TourDetailPage from './Components/TourDetail/TourDetailPage';
-import ProviderPage from './Components/ProviderPage';
+import ProviderPage from './Components/TourProviderPage';
+import UserMain from './Components/User/UserMain';
 import ProviderMain from './Components/ForProvider/ProviderMain';
 import Login from './Components/Login/LoginPage';
 import logo from './Images/HappyVacation.png';
@@ -80,6 +81,9 @@ class App extends Component {
               </Route >
               <Route path="/register" >
                 <Register />
+              </Route >
+              <Route path="/user" >
+                <UserMain />
               </Route >
               <Route path="/for-provider">
                 <ProviderMain />

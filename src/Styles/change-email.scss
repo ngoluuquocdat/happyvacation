@@ -1,0 +1,84 @@
+
+
+.change-email-container {
+    background-color: #fff;
+    padding: 20px;
+
+    .change-email-header {
+        padding-bottom: 20px;
+        border-bottom: 1px solid #D7DCE3;
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .sub-title {
+            font-size: 16px;
+            color: #6A6A6A;
+        }
+    }
+    .change-email-body {
+        padding-top: 15px;
+        .confirm-password,
+        .new-email {
+            padding-top: 40px;
+            width: 65%;
+            margin: 0 auto;
+
+            .title {
+                display: block;
+                min-width: 20%;
+                padding-right: 20px;
+                color: rgba(85,85,85,.8);
+                text-align: right;
+            }
+            .content {
+                width: 80%;
+            }
+            .input-field {
+                width: 40%;
+                padding: 10px;
+                border: 1px solid rgba(0,0,0,.14);
+                outline-width: thin;
+                outline-color: #df385f;
+                border-radius: 5px;
+            }
+
+            .email-display,
+            .input-section {
+                display: flex;
+                align-items: center;
+                margin-bottom: 30px;
+            }
+            .submit-wrapper {
+                padding-left: calc(20% + 20px);
+                margin-bottom: 60px;
+                display: flex;            
+                .save-btn,
+                .back-btn {
+                    box-sizing: border-box;
+                    display: block;
+                    padding: 12px 20px;
+                    background-color: #df385f;  
+                    color: #fff;
+                    border: none;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    font-size: 14px;
+                    text-transform: uppercase;
+                }
+                .back-btn {
+                    background-color: #fff;  
+                    color: #000;
+                    border: 1px solid rgba(0,0,0,.34);
+                    margin-left: 40px;
+                }
+            }
+
+            
+        }
+    }
+    
+        
+    
+}

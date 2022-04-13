@@ -3,16 +3,18 @@
 
 
 .provider-main-container {
-    display: flex;
+    //display: flex;
+    overflow: hidden;
 
     .side-nav-wrap {
-        align-self: stretch;
-        
+        align-self: stretch;       
     }
+
     .content-page-wrap {
-        width: 100%;
+        width: calc(100% - 250px);
         margin-left: 250px;
         background-color: #f6f6f6;
+
         .small-header {
             background-color: #331f1c;
             height: 90px;

@@ -1,0 +1,107 @@
+
+
+
+.order-card {
+    width: 100%;
+
+    .provider-info {
+        margin-bottom: 10px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    .link {
+        text-decoration: none;
+        color: #000;
+    }
+    .link:hover {
+        color: #df385f;
+    }
+    .order-content {
+        display: flex;
+        width: 100%;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #dfdfdf;
+        margin-bottom: 20px;
+
+        .left {
+            width: 33.33333333%;
+            padding-right: 15px;
+            .tour-thumbnail {
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position-x: center;
+                background-position-y: center;
+                width: 90%;
+                height: 0;
+                padding-bottom: 90%;
+            }
+        }
+        .right {
+            width: 66.66666666%;
+            //padding-left: 15px;
+            
+            .tour-order-title {
+                padding: 0;
+                margin: 0;
+                font-weight: 400;
+                font-size: 18px;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+                cursor: pointer;
+            }
+            .tour-order-title:hover {
+                color: #df385f;
+            }
+
+            .tour-order-info {
+                display: flex;
+                justify-content: space-between;
+                .tour-order-description-wrap {
+                    width: 50%;
+                    .tour-order-description {
+                        margin: 0;
+                        margin-bottom: 10px;
+
+                        .order-state {
+                            font-weight: 500;
+                            // must be inline-block for ::first-letter to work
+                            display: inline-block;  
+                        }
+                        .order-state::first-letter {
+                            text-transform: uppercase;
+                        }
+                        .order-state.pending {
+                            color: #ffcc00;
+                        }
+                        .order-state.confirmed {
+                            color: #64b450;
+                        }
+                        .order-state.canceled {
+                            color: #cc3300;
+                        }
+                    }
+                }
+                .booking-detail-wrap {
+                    width: 50%;
+                    small {
+                        color: #df385f;
+                    }
+                    .tour-order-price {
+                        margin: 0;
+                        margin-bottom: 10px;
+                        .arrow-icon {
+                            margin: 0 5px;
+                        }
+                    }
+                    .tour-order-total-price {
+                        margin: 0;
+                        margin-bottom: 10px;
+                        span {
+                            font-weight: 500;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

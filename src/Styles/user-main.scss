@@ -1,0 +1,26 @@
+
+
+
+
+.small-header {
+    background-color: #331f1c;
+    height: 90px;
+}
+
+.user-main-container {
+    display: flex;
+    .side-nav-wrap {
+        align-self: stretch;  
+    }
+    
+    .content-page-wrap {
+        //width: calc(100% - 250px);
+        //margin-left: 250px;
+        width: 100%;
+        background-color: #f6f6f6;
+
+        .content-page {
+            padding: 20px;
+        }
+    }
+}
