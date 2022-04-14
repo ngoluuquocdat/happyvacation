@@ -21,6 +21,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../../Styles/tour-detail.scss'
 
+
 class TourDetailPage extends React.Component {
 
     state = {
@@ -33,7 +34,8 @@ class TourDetailPage extends React.Component {
         fullname: this.props.reduxData.user ? this.props.reduxData.user.fullName : '',
         phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
         email: this.props.reduxData.user ? this.props.reduxData.user.email : '',
-        isLoading: true,
+        isLoading: true,    // must be true
+        isBooking: false,
         networkFailed: false
     }
 
@@ -45,7 +47,7 @@ class TourDetailPage extends React.Component {
             phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
             email: this.props.reduxData.user ? this.props.reduxData.user.email : ''
         })
-        console.log('fullname', this.state.fullname)
+
         // call api to get tour, and set state
         const tourId = this.props.match.params.id
         try {
@@ -55,6 +57,7 @@ class TourDetailPage extends React.Component {
             let res = await axios.get(
                 `https://localhost:7079/api/Tours/${tourId}`
             );       
+            console.log('call api')
             //console.log(res);
             const resTour = res.data;
             this.setState({
@@ -86,7 +89,7 @@ class TourDetailPage extends React.Component {
                 this.setState({
                     isLoading: false
                 })
-            }, 1000)         
+            }, 1000)       
         }  
     }
     componentDidUpdate(prevProps, prevState) {
@@ -175,18 +178,61 @@ class TourDetailPage extends React.Component {
         })
     }
     // booking submit
-    handleBookingSubmit = () => {
+    handleBookingSubmit = async() => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            return;
+        }
         // call api post order
-        const bookingRequest = {
+        console.log('state date type', typeof this.state.date)
+        let bookingRequest = {
             tourId: this.state.tour.id,
-            date: this.state.date,
+            departureDate: `${this.state.date.getFullYear()}-${("0" + (this.state.date.getMonth()+1)).slice(-2)}-${("0" + this.state.date.getDate()).slice(-2)}`,
             adults: this.state.adults,
             children: this.state.children,
-            customerName: this.state.fullname,
-            customerPhone: this.state.phone,
-            customerEmail: this.state.email
+            touristName: this.state.fullname,
+            touristPhone: this.state.phone,
+            touristEmail: this.state.email
         }
-        console.log("POST /orders/", bookingRequest)
+
+        try {
+            this.setState({
+                isBooking: true
+            })
+            let res = await axios.post(
+                `${this.baseUrl}/api/Orders`,
+                bookingRequest,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            )
+
+            // show toast notify
+            setTimeout(() => {
+                toast.success('Booking successful!');
+            }, 1500) 
+            
+        } catch(error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+                return;
+              }
+              if (error.response.status === 400) {
+                console.log(error)
+              }
+              if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login');
+              }
+        } finally {
+            setTimeout(() => {
+                this.setState({
+                    isBooking: false
+                })
+            }, 1500) 
+        } 
     }
     // visit provider
     handleVisitProvider = () => {
@@ -200,8 +246,8 @@ class TourDetailPage extends React.Component {
         const { tour } = this.state;
         const { fullname, phone, email } = this.state;
         const baseUrl = this.state.networkFailed ? '' : this.baseUrl;
-        const { isLoading } = this.state;
-        
+        const { isLoading, isBooking } = this.state;
+        console.log('tour', tour)
         return (
             <div className="App">
                 <div className="small-header">
@@ -431,7 +477,19 @@ class TourDetailPage extends React.Component {
                                             />
                                         </div>
                                         <div className="submit-booking">
-                                            <button className="submit" onClick={this.handleBookingSubmit}>BOOK NOW</button>
+                                            <button className="submit" onClick={this.handleBookingSubmit}>
+                                                BOOK NOW
+                                                {
+                                                    isBooking &&
+                                                    <ReactLoading
+                                                        className="loading-component"
+                                                        type={"spin"}
+                                                        color={"#fff"}
+                                                        height={20}
+                                                        width={20}
+                                                    />
+                                                }
+                                            </button>
                                         </div>
                                     </div>
                             </div>

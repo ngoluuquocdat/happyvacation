@@ -281,10 +281,19 @@
                         padding: 12px 25px;
                         background-color: #df385f;  // a bit lighter than booking header
                         color: #fff;
+                        text-align: center;
                         border: none;
                         border-radius: 3px;
                         cursor: pointer;
                         font-size: 15px;
+                        position: relative;
+
+                        .loading-component {
+                            position: absolute; 
+                            top: 50%;
+                            transform: translateY(-50%);
+                            right: 36px;                                             
+                        }
                     }
                 }
             }
