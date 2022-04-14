@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { FaCaretDown } from 'react-icons/fa';
 import HappyVacationLogo from '../../Images/HappyVacation.png';
 import '../../Styles/header-nav.scss';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 
 class HeaderNav extends Component {
 

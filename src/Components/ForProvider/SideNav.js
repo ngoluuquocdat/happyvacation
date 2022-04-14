@@ -36,7 +36,7 @@ class SideNav extends React.Component {
                         </div>
                         <ul className='side-nav-submenu'>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <NavLink className="item-link" to="/for-provider/orders">
+                                <NavLink className="item-link" to="/for-provider/orders" exact>
                                     Your Orders
                                 </NavLink>
                             </li>

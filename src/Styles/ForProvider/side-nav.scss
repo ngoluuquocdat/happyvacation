@@ -5,18 +5,16 @@
     width: 250px;
     height: 100%;
     border: 1px solid #D7DCE3;
+    border-top: none;
     background-color: #fff;
-    position: fixed;
+    //position: fixed;
     
-
     ul {
         padding: 0;
         margin: 0;
         list-style: none;
     }
-    .logo-section {
-        height: 90px;
-    }
+
     .side-nav-menu {
         padding: 15px;
         .side-nav-item {

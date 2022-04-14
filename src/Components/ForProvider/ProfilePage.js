@@ -1,5 +1,8 @@
-import React from 'react'
-import PlacePicker from '../PlacePicker'
+import React from 'react';
+import PlacePicker from '../PlacePicker';
+import axios from 'axios';
+import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import { VscEdit } from 'react-icons/vsc'
 import { IoIosReturnLeft } from 'react-icons/io'
@@ -12,14 +15,17 @@ class InformationPage extends React.Component {
         phone: '',
         email: '',
         description: '',
-        thumbnailPath: '',
+        avatarUrl: '',
         address: '',
         newPlace: '',
         newAddress: '',
         newUrl: '',
         file: null,
-        openAddressField: false
+        openAddressField: false,
+        isLoading: false
     }
+
+    baseUrl = this.props.reduxData.baseUrl;
 
     removeVietnameseTones = (str) => {
         str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a"); 
@@ -50,15 +56,70 @@ class InformationPage extends React.Component {
         return str;
     }
 
-    componentDidMount() {
-         // call api to get providers     
-         console.log(`GET providers/me`);
-         //fake api response
-         const resProvider = provider_temp;
-         // set state`   
-        this.setState({
-            ...resProvider
-        }); 
+
+
+    async componentDidMount() {
+        // call api to get providers     
+        // check token
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            return;
+        }
+
+        try {
+            this.setState({
+                isLoading: true
+            })
+            let res = await axios.get(
+                `${this.baseUrl}/api/Providers/me`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );         
+            // set state
+            this.setState({
+                ...res.data
+            })           
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+                //fake api response
+                const resProvider = provider_temp;
+                // set state`   
+                this.setState({
+                    ...resProvider
+                }); 
+                return;
+            }
+            if (error.response.status === 400) {
+                console.log(error)
+            }
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
+            if (error.response.status === 403) {
+                console.log(error);
+                // redirect to provider register page or show notification
+                this.props.history.push('/for-provider/register');
+            }
+        } finally {
+            setTimeout(() => {
+                this.setState({
+                    isLoading: false
+                })
+            }, 1500) 
+        }       
+    }
+
+    componentDidUpdate() {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login', {prevPath: this.props.location.pathname});
+        }
     }
 
     // avatar image change
@@ -96,7 +157,13 @@ class InformationPage extends React.Component {
     }
 
     // on save click 
-    handleOnSave = () => {
+    handleOnSave = async() => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            return;
+        }
+
         // add check image file, if not null => there's new image file => include that image file to request
         const {newAddress, newPlace} = this.state;
         const isNewAdressExist = (newAddress!=='' && newPlace!=='') || (newAddress==='' && newPlace==='');
@@ -111,32 +178,61 @@ class InformationPage extends React.Component {
             });
             return;
         }
-        const provider = {
-            name: this.state.name,
-            description: this.state.description,
-            email: this.state.email,
-            phone: this.state.phone,
-            address: (newAddress==='' && newPlace==='') ? this.state.address : `${this.removeVietnameseTones(newAddress)}, ${newPlace}`
-        }
-        // post to api
-        console.log('New profile: ', provider);
-        // show toast notify
-        toast.success('Update your profile successfully!', {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            progress: undefined,
-        });
-    }
 
-    
+        let data = new FormData();
+        data.append('name', this.state.name);
+        data.append('description', this.state.description);
+        data.append('phone', this.state.phone); 
+        data.append('email', this.state.email); 
+        data.append('address', (newAddress==='' && newPlace==='') ? this.state.address : `${this.removeVietnameseTones(newAddress)}, ${newPlace}`); 
+        if(this.state.file != null) {
+            data.append('avatar', this.state.file)
+        }      
+
+        // post to api
+        try {
+            let res = await axios.put(
+                `${this.baseUrl}/api/Providers/me`,
+                data,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );  
+
+            // set state with updated provider profile
+            this.setState({
+                ...res.data,
+                openAddressField: false,
+                file: null,
+                newUrl: ''
+            })     
+            // show toast notify
+            toast.success('Update your profile successfully!');
+        } catch (error) {
+            if (!error.response) {
+              toast.error("Network error");
+              return;
+            }
+            if (error.response.status === 401) {
+                toast.error("Login to continue");
+                console.log(error)
+            }
+            if (error.response.status === 403) {
+                toast.error("Not allowed");
+                // redirect to provider register page or show notification
+                this.props.history.push('/for-provider/register');
+            }
+        } finally {
+            this.setState({
+                isCreating: false
+            })
+        }  
+    }
 
     render() {
         const newUrl = this.state.newUrl;
-        const { name, phone, email, address, description, thumbnailPath} = this.state;
-        const avatarUrl = newUrl.length === 0 ? `url('${thumbnailPath}')` : `url('${newUrl}')`;
+        const { name, phone, email, address, description, avatarUrl} = this.state;
+        const avatarUrl_real = newUrl.length === 0 ? `url('${this.baseUrl+avatarUrl}')` : `url('${newUrl}')`;
         const { openAddressField, newAddress } = this.state;
         return (
             <div className='profile-page-container'>
@@ -146,7 +242,7 @@ class InformationPage extends React.Component {
                 </div>
                 <div className='profile-body'>
                     <div className='body-left'>
-                        <div className="provider-avatar" style={{backgroundImage: avatarUrl}}> 
+                        <div className="provider-avatar" style={{backgroundImage: avatarUrl_real}}> 
                             <div className="avatar-edit">
                                 <label htmlFor='avatar'>Edit</label>
                                 <input id='avatar' type='file' onChange={this.onImageChange}/>
@@ -211,7 +307,13 @@ const provider_temp = {
     averageRating: 4.4,
     tourAvailable: 180,
     description: 'Established in 2002, Hoi An Express is a company specializing in organizing professional tours for foreign visitors to Vietnam to visit tours, conferences, events combined with team building.',
-    thumbnailPath: 'https://pbs.twimg.com/profile_images/721952678016737280/ppDehV3R_400x400.jpg'
+    avatarUrl: 'https://pbs.twimg.com/profile_images/721952678016737280/ppDehV3R_400x400.jpg'
 }
 
-export default InformationPage;
+const mapStateToProps = (state) => {
+    return {
+        reduxData: state
+    }
+}
+
+export default connect(mapStateToProps)(withRouter(InformationPage));

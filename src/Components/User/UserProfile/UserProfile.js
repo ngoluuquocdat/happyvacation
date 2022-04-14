@@ -1,11 +1,9 @@
 import React from 'react'
-import PlacePicker from '../../PlacePicker'
 import { toast } from 'react-toastify';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import { VscEdit } from 'react-icons/vsc'
-import { IoIosReturnLeft } from 'react-icons/io'
 import '../../../Styles/user-profile.scss'
 
 class UserProfile extends React.Component {
@@ -55,10 +53,10 @@ class UserProfile extends React.Component {
                 toast.error("Network error");
                 console.log(error)
                 //fake api response
-                const resProvider = provider_temp;
+                const resUser = user_temp;
                 // set state`   
                 this.setState({
-                    ...resProvider
+                    ...resUser
                 }); 
                 return;
             }
@@ -106,13 +104,6 @@ class UserProfile extends React.Component {
         })
     }
 
-    // place pick
-    onPlacePick = (place) => {
-        this.setState({
-            newPlace: place
-        })
-    }
-
     // on save click 
     handleOnSave = async() => {
         // add check image file, if not null => there's new image file => include that image file to request
@@ -122,15 +113,6 @@ class UserProfile extends React.Component {
             return;
         }
 
-        const user = {
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
-            phone: this.state.phone,
-        }
-
-        // post to api
-        console.log('New profile: ', user);
-
         let data = new FormData();
         data.append('firstName', this.state.firstName);
         data.append('lastName', this.state.lastName);
@@ -138,7 +120,7 @@ class UserProfile extends React.Component {
         if(this.state.file != null) {
             data.append('avatar', this.state.file)
         }
-
+        // post to api
         try {
             let res = await axios.put(
                 `${this.baseUrl}/api/Users/me`,
@@ -233,7 +215,7 @@ class UserProfile extends React.Component {
     }
 }
 
-const provider_temp = {
+const user_temp = {
     id: 3,
     firstName: 'Cong Tai',
     lastName: 'Dinh',

@@ -23,38 +23,40 @@ class ProviderMain extends React.Component {
                     closeOnClick
                     rtl={false}
                 />
-                <div className='provider-main-container'>
-                    <div className='side-nav-wrap'>
-                        <SideNav />
+                <div className='provider-main-wrap'>
+                    <div className="small-header">
+                        <HeaderNav />
                     </div>
-                    <div className='content-page-wrap'>
-                        <div className="small-header">
-                            <HeaderNav />
+                    <div className='provider-main-container'>
+                        <div className='side-nav-wrap'>
+                            <SideNav />
                         </div>
-                        <div className='content-page'>
-                            <Switch>
-                                <Route path="/for-provider/tours" exact>
-                                    <div>Your Tours</div>
-                                </Route >
-                                <Route path="/for-provider/tours/new">
-                                    <div><CreateTour /></div>
-                                </Route >
-                                <Route path="/for-provider/orders" exact>
-                                    <div>Your Orders</div>
-                                </Route >
-                                <Route path="/for-provider/orders/pending" exact>
-                                    <div>Your Pending Orders</div>
-                                </Route >
-                                <Route path="/for-provider/orders/processed" exact>
-                                    <div>Your Processed Orders</div>
-                                </Route >
-                                <Route path="/for-provider/profile" exact>
-                                    <ProfilePage />
-                                </Route >
-                            </Switch>
+                        <div className='content-page-wrap'>
+                            <div className='content-page'>
+                                <Switch>
+                                    <Route path="/for-provider/tours" exact>
+                                        <div>Your Tours</div>
+                                    </Route >
+                                    <Route path="/for-provider/tours/new">
+                                        <div><CreateTour /></div>
+                                    </Route >
+                                    <Route path="/for-provider/orders" exact>
+                                        <div>Your Orders</div>
+                                    </Route >
+                                    <Route path="/for-provider/orders/pending" exact>
+                                        <div>Your Pending Orders</div>
+                                    </Route >
+                                    <Route path="/for-provider/orders/processed" exact>
+                                        <div>Your Processed Orders</div>
+                                    </Route >
+                                    <Route path="/for-provider/profile" exact>
+                                        <ProfilePage />
+                                    </Route >
+                                </Switch>
+                            </div>
                         </div>
-                    </div>
-                </div>        
+                    </div>        
+                </div>
             </>
         )
     }

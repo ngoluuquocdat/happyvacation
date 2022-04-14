@@ -3,7 +3,7 @@
 
 
 .provider-main-container {
-    //display: flex;
+    display: flex;
     overflow: hidden;
 
     .side-nav-wrap {
@@ -11,14 +11,11 @@
     }
 
     .content-page-wrap {
-        width: calc(100% - 250px);
-        margin-left: 250px;
+        // width: calc(100% - 250px);
+        // margin-left: 250px;
+        width: 100%;
         background-color: #f6f6f6;
 
-        .small-header {
-            background-color: #331f1c;
-            height: 90px;
-        }
         .content-page {
             padding: 20px;
         }
