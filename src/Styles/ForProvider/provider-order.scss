@@ -1,0 +1,52 @@
+
+
+
+.provider-order-container {
+    background-color: #fff;
+    padding: 20px;
+    min-height: calc(100vh - 100px);
+
+    .provider-order-header {
+        padding-bottom: 20px;
+        border-bottom: 1px solid #D7DCE3;
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .sub-title {
+            font-size: 16px;
+            color: #6A6A6A;
+        }
+    }
+    .order-task-bar {
+        .order-search-bar {
+
+        }
+    }
+    .provider-order-body {
+        padding-top: 30px;
+        display: flex;
+        position: relative;
+        
+        .loading-container {
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            position: absolute;
+            display: flex;
+        }
+        .list-order {
+            width: 100%;
+        }
+    }
+    .pagination-container {
+        margin-top: 60px;
+        display: flex;
+        justify-content: center;
+    }
+}

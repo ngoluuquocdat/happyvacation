@@ -1,29 +1,38 @@
 import React, { Component } from 'react';
 import { BsArrowRight } from 'react-icons/bs';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import '../Styles/order-card.scss'
+import axios from 'axios';
+import ReactLoading from "react-loading";
+import { toast } from 'react-toastify';
+import '../../Styles/order-card.scss'
 
-class OrderCard extends Component {
+class OrderCardManage extends Component {
 
-    // click order card
-    handleOpenContent = () => {
-
+    state = {
+        openMore: false,
+        isLoading: false
     }
 
     baseUrl = this.props.reduxData.baseUrl;
+
+    // order process click
+    orderProcessClick = (event, orderId) => {
+        this.props.changeOrderState(orderId, event.target.name)
+    }
 
     render() {
         const order = this.props.order;
         const avatarUrl = `url('${this.baseUrl + order.thumbnailUrl}')`;
         //const avatarUrl = `url('${order.thumbnailUrl}')`;
         return (           
-            <div className='order-card' onClick={() => this.handleOpenContent()}>
-                <div className='provider-info'> 
-                    <Link to={`/providers/${order.providerId}`} exact="true" className="link"><span>{order.providerName}</span></Link>             
+            <div className='order-card'>
+                <div className='order-id'> 
+                    <span>Order ID: </span>
+                    <span>{order.id}</span>             
                 </div>
                 <div className='order-content'>
-                    <div className='left'>
+                    <div className='left small'>
                         <div className="tour-thumbnail" style={{backgroundImage: avatarUrl}}></div>
                     </div>
                     <div className='right'>
@@ -32,6 +41,10 @@ class OrderCard extends Component {
                         </h5>
                         <div className='tour-order-info'>
                             <div className='tour-order-description-wrap'>
+                                <p className='tour-order-description'>
+                                    <span>Tour Id: </span>
+                                    {order.tourId}
+                                </p>
                                 <p className='tour-order-description'>
                                     <span>Tour type: </span>
                                     {
@@ -65,7 +78,7 @@ class OrderCard extends Component {
                                     {order.modifiedDate}
                                 </p>
                             </div>
-                            <div className='booking-detail-wrap'>
+                            <div className='booking-detail-wrap'>                               
                                 <p className='tour-order-price'><small>Booking detail</small></p>
                                 <p className='tour-order-price'>
                                     <span>Adults: </span>
@@ -80,9 +93,34 @@ class OrderCard extends Component {
                                     ${order.totalPrice}
                                 </p>
                             </div>
+                            <div className='tourist-information-wrap'>
+                                <p className='tour-order-price'><small>Tourist Information</small></p>
+                                <p className='tour-order-description'>
+                                    {order.touristName}
+                                </p>
+                                <p className='tour-order-description'>
+                                    {order.touristPhone}
+                                </p>
+                                <p className='tour-order-description'>
+                                    {order.touristEmail}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
+                {
+                    order.state !== 'canceled' &&
+                    <div className='order-process'>
+                        {/* <p className='open-more'>MORE</p> */}
+                        <div className='order-process-button-wrap'>
+                            {
+                                order.state === 'pending' &&
+                                <button className='order-confirm' name='confirmed' onClick={(event) => this.orderProcessClick(event, order.id)}>CONFIRM</button>  
+                            }
+                            <button className='order-cancel' name='canceled' onClick={(event) => this.orderProcessClick(event, order.id)}>CANCEL</button>
+                        </div>        
+                    </div>
+                }
             </div>
         );
     }
@@ -94,6 +132,6 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(OrderCard);
+export default connect(mapStateToProps)(OrderCardManage);
 
   

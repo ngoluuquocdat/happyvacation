@@ -6,6 +6,7 @@ import {
 import HeaderNav from '../Header/HeaderNav'
 import SideNav from './SideNav';
 import ProfilePage from './ProfilePage';
+import ProviderOrder from './ProviderOrder';
 import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreateTour from './CreateTour';
@@ -41,13 +42,13 @@ class ProviderMain extends React.Component {
                                         <div><CreateTour /></div>
                                     </Route >
                                     <Route path="/for-provider/orders" exact>
-                                        <div>Your Orders</div>
+                                        <ProviderOrder />
                                     </Route >
-                                    <Route path="/for-provider/orders/pending" exact>
-                                        <div>Your Pending Orders</div>
+                                    <Route path="/for-provider/orders/pending">
+                                        <ProviderOrder />
                                     </Route >
-                                    <Route path="/for-provider/orders/processed" exact>
-                                        <div>Your Processed Orders</div>
+                                    <Route path="/for-provider/orders/processed">
+                                        <ProviderOrder />
                                     </Route >
                                     <Route path="/for-provider/profile" exact>
                                         <ProfilePage />

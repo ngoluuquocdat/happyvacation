@@ -3,6 +3,9 @@
 
 .order-card {
     width: 100%;
+    border-bottom: 1px solid #dfdfdf;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
 
     .provider-info {
         margin-bottom: 10px;
@@ -16,12 +19,14 @@
     .link:hover {
         color: #df385f;
     }
+    .order-id {
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
     .order-content {
         display: flex;
         width: 100%;
-        padding-bottom: 20px;
-        border-bottom: 1px solid #dfdfdf;
-        margin-bottom: 20px;
+        
 
         .left {
             width: 33.33333333%;
@@ -36,6 +41,12 @@
                 padding-bottom: 90%;
             }
         }
+        .left.small {
+            width: 25%;
+        }
+        // .right.small {
+        //     width: 75%;
+        // }
         .right {
             width: 66.66666666%;
             //padding-left: 15px;
@@ -51,6 +62,10 @@
             }
             .tour-order-title:hover {
                 color: #df385f;
+            }
+            .tour-order-description {
+                margin: 0;
+                margin-bottom: 10px;
             }
 
             .tour-order-info {
@@ -81,7 +96,8 @@
                         }
                     }
                 }
-                .booking-detail-wrap {
+                .booking-detail-wrap,
+                .tourist-information-wrap {
                     width: 50%;
                     small {
                         color: #df385f;
@@ -100,7 +116,32 @@
                             font-weight: 500;
                         }
                     }
-                }
+                }        
+            }
+        }
+    }
+    .order-process {
+        width: 66.66666666%;
+        margin-left: auto; 
+        margin-right: 8.33333333%;
+        text-align: center;
+        .order-process-button-wrap {
+            .order-confirm,
+            .order-cancel {
+                padding: 10px 18px;
+                border: none;
+                border-radius: 3px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .order-confirm {
+                margin-right: 60px;
+                color: #fff;
+                background-color: #64b450;
+            }
+            .order-cancel {
+                color: #fff;
+                background-color: #cc3300;
             }
         }
     }

@@ -419,8 +419,7 @@ class TourDetailPage extends React.Component {
                                                         onChange={this.handleDateSelect}
                                                     />
                                                 </div>
-                                            }
-                                            
+                                            }                                        
                                         </div>
                                         <div className="adults-booking">
                                             <div>
