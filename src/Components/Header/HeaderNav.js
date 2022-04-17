@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import {  subscribeToTopic } from '../../firebase';
 import { withRouter } from 'react-router-dom';
 import { FaCaretDown } from 'react-icons/fa';
 import HappyVacationLogo from '../../Images/HappyVacation.png';
@@ -30,17 +31,19 @@ class HeaderNav extends Component {
             headers: { Authorization:`Bearer ${token}` }
           }
         );          
-        console.log(res);
         const user = {
             username: res.data.username,
             fullName: `${res.data.firstName} ${res.data.lastName}`,
             phone: res.data.phone,
             email: res.data.email,
-            avatarUrl: res.data.avatarUrl
+            avatarUrl: res.data.avatarUrl,
+            providerId: res.data.providerId
         }
         // set current user in redux
         this.props.saveUserRedux(user);
-
+        // subscribe topic
+        const topic = `Tour_Provider_${user.providerId}`;
+        subscribeToTopic(topic);
       } catch (error) {
         if (!error.response) {
           toast.error("Network error");
@@ -53,7 +56,7 @@ class HeaderNav extends Component {
         if (error.response.status === 401) {
           console.log(error);
           // redirect to login page or show notification
-          this.props.history.push('/login', {prevPath: this.props.location.pathname});
+          //this.props.history.push('/login', {prevPath: this.props.location.pathname});
         }
       } finally {
         

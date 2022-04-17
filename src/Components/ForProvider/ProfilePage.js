@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import { VscEdit } from 'react-icons/vsc'
 import { IoIosReturnLeft } from 'react-icons/io'
-import '../../Styles/ForProvider/profile-page.scss'
+import '../../Styles/ForProvider/provider-profile.scss'
 
 class InformationPage extends React.Component {
 

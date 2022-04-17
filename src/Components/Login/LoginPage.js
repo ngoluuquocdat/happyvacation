@@ -74,7 +74,8 @@ class Login extends Component {
                 fullName: res.data.fullName,
                 phone: res.data.phone,
                 email: res.data.email,
-                avatarUrl: res.data.avatarUrl
+                avatarUrl: res.data.avatarUrl,
+                providerId: res.data.providerId
             }
             // set token in local storage
             localStorage.setItem('user-token', res.data.token)

@@ -44,18 +44,21 @@ class CreateTour extends React.Component {
         const resCategories = categories_temp;
         const resPlaces = listPlaces;
         // set the checked states
-        var checkedStates;
+        var checkedCategoryStates;
+        var checkedPlaceStates;
         // if(this.state.filter.selectedCategories.length !== 0) {
         //     const selected = this.state.filter.selectedCategories;
         //     checkedStates = resCategories.map((item) => selected.filter((element)=>element.id===item.id).length > 0)
         // } else {
         //     checkedStates = new Array(resCategories.length).fill(false);
         // }
-        checkedStates = new Array(resCategories.length).fill(false);
+        checkedCategoryStates = new Array(resCategories.length).fill(false);
+        checkedPlaceStates = new Array(resPlaces.length).fill(false);
         this.categories = resCategories;
         this.listPlaces = resPlaces;
         this.setState({          
-            checkedStates: checkedStates
+            checkedCategoryStates:  checkedCategoryStates,
+            checkedPlaceStates: checkedPlaceStates
         })
     }
 
@@ -74,7 +77,7 @@ class CreateTour extends React.Component {
         })
     }
 
-    // category checkbox click
+    // handle category checkbox click
     handleCategorySelect = (event, item, index) => {
         const isChecked = event.target.checked;
         // set state checked category States

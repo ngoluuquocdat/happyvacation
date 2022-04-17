@@ -1,4 +1,5 @@
 import React from 'react'
+import { requestForToken, onMessageListener } from '../../firebase';
 import OrderCardManage from '../ForProvider/OrderCardManage'
 import { toast } from 'react-toastify';
 import { withRouter } from 'react-router-dom';
@@ -33,13 +34,32 @@ class ProviderOrder extends React.Component {
         });
     };
 
+    // // get token from firebase messaging
+    // getFCMToken() {       
+    //     requestForToken().then((currentToken) => {
+    //         if (currentToken) {
+    //           console.log('current token for client: ', currentToken);
+    //           // save fcm token to redux 
+    //           this.props.saveFCMTokenRedux(currentToken)
+    //         } else {
+    //           // Show permission request UI
+    //           console.log('No registration token available. Request permission to generate one.');
+    //         }
+    //       })
+    //       .catch((err) => {
+    //         console.log('An error occurred while retrieving token. ', err);
+    //       });
+    // }
+
     async componentDidMount() {
-        // check token
+        // check jwt token
         const token = localStorage.getItem('user-token');
         if(!token) {
             this.props.history.push('/login', {prevPath: this.props.location.pathname});
         }
-
+        // get fcm token
+        //requestForToken();   
+        
         // check the route to get order state
         let orderState = (this.props.location.pathname.split('/').at(-1)).toLowerCase();
         console.log('order state: ', orderState)
@@ -202,6 +222,61 @@ class ProviderOrder extends React.Component {
         }
     } 
 
+    // get orders
+    getOrders = async () => {
+        console.log('Get orders');
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login', {prevPath: this.props.location.pathname});
+        }
+        const { page } = this.state;
+        let orderState = (this.props.location.pathname.split('/').at(-1)).toLowerCase();
+        if(orderState !== "pending" && orderState !== "confirmed" && orderState !== "canceled" && orderState !== "processed") {
+            orderState = '';
+        }     
+        try {          
+            this.setState({
+                isLoading: true
+            })     
+            let res = await axios.get(
+                `${this.baseUrl}/api/Providers/me/orders?state=${orderState}&page=${1}&perPage=3`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );                     
+            // set state
+            this.setState({
+                totalPage: res.data.totalPage,
+                orders: res.data.items,
+                orderState: orderState
+            })
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+                //fake api response
+                const resOrders = orders;
+                // set state`   
+                this.setState({
+                    orders: resOrders
+                }); 
+                return;
+            }
+            if (error.response.status === 400) {
+                console.log(error)
+            }
+            if (error.response.status === 401) {
+                console.log(error);
+             // redirect to login page or show notification
+             this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
+        } finally {
+            this.setState({
+                isLoading: false
+            })
+        }        
+    }
+
     // call api to change state of order
     changeOrderState = async(orderId, orderState) => {
         const token = localStorage.getItem('user-token');
@@ -268,8 +343,6 @@ class ProviderOrder extends React.Component {
         })
     }
 
-
-
     render() {
         const { orders, page, totalPage, isLoading } = this.state;
         const { startDate, endDate, showDatePicker } = this.state;
@@ -278,7 +351,16 @@ class ProviderOrder extends React.Component {
             startDate: startDate,
             endDate: endDate,
             key: 'selection',
-        }
+        }        
+        
+        onMessageListener()
+        .then((payload) => {
+            this.getOrders()
+            .then(() => {
+                toast.success("New pending order.");
+            });         
+        })
+        .catch((err) => console.log('failed: ', err));
 
         return (
             <div className='provider-order-container'>
@@ -392,8 +474,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        saveUserRedux: (user) => dispatch({type: 'SAVE_USER', payload: user})
+        saveFCMTokenRedux: (token) => dispatch({type: 'SAVE_FCM_TOKEN', payload: token})
     }
 }
 
-export default connect(mapStateToProps)(withRouter(ProviderOrder));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ProviderOrder));
