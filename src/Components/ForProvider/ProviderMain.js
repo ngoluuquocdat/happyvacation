@@ -5,9 +5,10 @@ import {
 } from "react-router-dom";
 import HeaderNav from '../Header/HeaderNav'
 import SideNav from './SideNav';
+import ProviderTour from './ProviderTour';
 import ProfilePage from './ProfilePage';
 import ProviderOrder from './ProviderOrder';
-import { ToastContainer} from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreateTour from './CreateTour';
 import '../../Styles/ForProvider/provider-main.scss';
@@ -36,10 +37,13 @@ class ProviderMain extends React.Component {
                             <div className='content-page'>
                                 <Switch>
                                     <Route path="/for-provider/tours" exact>
-                                        <div>Your Tours</div>
+                                        <ProviderTour />
                                     </Route >
                                     <Route path="/for-provider/tours/new">
-                                        <div><CreateTour /></div>
+                                        <CreateTour />
+                                    </Route >
+                                    <Route path="/for-provider/tours/:id/edit">
+                                        <CreateTour />
                                     </Route >
                                     <Route path="/for-provider/orders" exact>
                                         <ProviderOrder />

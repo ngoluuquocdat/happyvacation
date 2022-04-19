@@ -113,7 +113,7 @@ class ProviderOrder extends React.Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
-        //console.log('route', this.props.location.pathname)
+        // check jwt token
         const token = localStorage.getItem('user-token');
         if(!token) {
             this.props.history.push('/login', {prevPath: this.props.location.pathname});
@@ -421,7 +421,7 @@ class ProviderOrder extends React.Component {
                         {
                             orders.map((item) => {
                                 return (
-                                    <OrderCardManage key={item.id} order={item} changeOrderState={this.changeOrderState}/>
+                                    <OrderCardManage key={'order'+item.id} order={item} changeOrderState={this.changeOrderState}/>
                                 )
                             })
                         }
