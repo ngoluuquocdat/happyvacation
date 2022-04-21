@@ -37,6 +37,7 @@ class UpdateTour extends React.Component {
         itineraries: [ { title: '', content: ''} ],
         expenses: [ { content: '', isIncluded: true } ],
         images: [ { id:0, url: '', newUrl: '', file: null , deleted: false} ],
+        isLoading: false,
         isCreating: false   
     }
 
@@ -431,306 +432,322 @@ class UpdateTour extends React.Component {
         const { itineraries, expenses, images } = this.state;
         const { startingLocation, destinationLocation } = this.state;
         const { openStartingLocationField, openDestinationLocationField } = this.state;
-        const { isCreating } = this.state;
+        const { isCreating, isLoading } = this.state;
+        
         return (
             <div className='create-tour-container'>
                 
                 <div className='create-tour-header'>
-                    <div className='title'>Tour Infomation</div>
-                    <div className='sub-title'>Create your new tour with detailed information</div>
+                    <div className='title'>Tour Information</div>
+                    <div className='sub-title'>See and Update your tour information</div>
                 </div>
                 <div className='create-tour-body'>
                     {
-                        isCreating &&
-                        <div className="loading-modal"></div>
-                    }
-                    <div className='form-group'>
-                        <label className="form-title tour-name">Tour name</label>
-                        <input className="input-field tour-name" name='tourName' type='text' value={tourName} onChange={this.handleInputText}/>
-                    </div>
-                    <div className='form-group'>
-                        <label className="form-title">Overview</label>
-                        <textarea className="input-area" name='overview' value={overview} onChange={this.handleInputText}/>
-                    </div>
-                    <div className='form-group'>
-                        <label className="form-title">Tour Type</label>
-                        <input 
-                        id="tour-type" 
-                        className="input-check" 
-                        name='tour-type' 
-                        type='checkbox' 
-                        value={isPrivate}
-                        onChange={(event)=>this.handleTourType(event)}
-                        />
-                        <label htmlFor='tour-type' className='tour-type'>Is Private?</label>
-                    </div>
-                    <div className='form-group'>
-                        <label className="form-title">Category</label>
-                        <div className="tour-categories">
-                            {
-                                categories.map((item, index) => {
-                                    return (
-                                        <div key={'category'+item.id} className='item-category'>
-                                            <input 
-                                                type="checkbox" 
-                                                id={'category'+item.id} 
-                                                value={item.categoryName} 
-                                                checked={checkedCategoryStates[index]}
-                                                onChange={(event) => this.handleCategorySelect(event, item, index)}
-                                            />
-                                            <label htmlFor={'category'+item.id}>{item.categoryName}</label>
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
-                    </div>
-                    <div className='form-group'>
-                        <label className="form-title">Tourist Sites</label>
-                        <div 
-                            className="places"
-                            onClick={() => this.handleDestinationClick()}
-                        >
-                            {
-                                listPlaces.map((item, index) => {
-                                    return (
-                                        <div key={'place'+item.id} className='item-place'>
-                                            <input 
-                                                type="checkbox" 
-                                                id={'place'+item.id} 
-                                                value={item.placeName} 
-                                                checked={checkedPlaceStates[index]}
-                                                onChange={(event) => this.handlePlaceSelect(event, item, index)}
-                                            />
-                                            <label htmlFor={'place'+item.id}>{item.placeName}</label>
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
-                    </div>
-                    <div className='form-group'>
-                        <label className="form-title">Starting Location</label>
-                        {
-                            openStartingLocationField ?
-                            <div className="address-change">
-                                <div className="place-picker-container">
-                                    <PlacePicker onPlacePick={this.onStartingPlacePick}/>
-                                </div>
-                                <span className="back-btn" id='Starting' onClick={this.handleAddressEditClick}><IoIosReturnLeft/> Back</span>
-                            </div>
-                            :
-                            <div className='address-display'>
-                                <input className="input-field address" type='text' value={startingLocation} readOnly/>
-                                <span className="edit-btn" id='Starting' onClick={this.handleAddressEditClick}><VscEdit/> Edit</span>
-                            </div>
-                        }
-                    </div>
-                    <div className='form-group'>
-                        <label className="form-title">Destination</label>
-                        {
-                            openDestinationLocationField ?
-                            <div className="address-change">
-                                <div className="place-picker-container">
-                                    <PlacePicker onPlacePick={this.onDestinationPlacePick}/>
-                                </div>
-                                <span className="back-btn" id='Destination' onClick={this.handleAddressEditClick}><IoIosReturnLeft/> Back</span>
-                            </div>
-                            :
-                            <div className='address-display'>
-                                <input className="input-field address" type='text' value={destinationLocation} readOnly/>
-                                <span className="edit-btn" id='Destination' onClick={this.handleAddressEditClick}><VscEdit/> Edit</span>
-                            </div>
-                        }
-                    </div>
-                    <div className='form-group'>
-                        <label className="form-title">Duration</label>
-                        {
-                            durationUnit==="Days" ?
-                            <input 
-                                className="input-number" 
-                                type="number" 
-                                name='duration' 
-                                min="1"
-                                value={duration}
-                                onChange={(event)=>this.onChangeInputNumber(event)}
-                            />
-                            :
-                            <input 
-                                className="input-number" 
-                                type="number" 
-                                name='duration' 
-                                min="1" 
-                                max="24"
-                                value={duration*24}
-                                onChange={(event)=>this.onChangeInputNumber(event)}
-                            />
-                        }
-                        <span className="duration-unit">{durationUnit}</span>
-                        <span className="change-unit" onClick={this.toggleUnit}>Change unit</span>
-                    </div>
-                    <div className='tourist-number'>
-                        <div className='form-group'>
-                            <label className="form-title">Group Size</label>
-                            <input 
-                                className="input-number" 
-                                type="number" 
-                                name='groupSize'  
-                                min="1"
-                                value={groupSize}
-                                onChange={(event)=>this.onChangeInputNumber(event)}
-                            />
-                        </div>
-                        <div className='form-group'>
-                            <label className="form-title">Minimum Adults amount</label>
-                            <input 
-                                className="input-number" 
-                                type="number" 
-                                name='minAdults'  
-                                min="1"
-                                value={minAdults}
-                                onChange={(event)=>this.onChangeInputNumber(event)}
-                            />
-                        </div> 
-                    </div>
-                    <div className='price'>
-                        <div className='form-group'>
-                            <label className="form-title">Price per Adult</label>
-                            <input 
-                                className="input-number" 
-                                type="number" 
-                                name='pricePerAdult'  
-                                min="1"
-                                value={pricePerAdult}
-                                onChange={(event)=>this.onChangeInputNumber(event)}
-                            />
-                        </div>
-                        <div className='form-group'>
-                            <label className="form-title">Price per Child</label>
-                            <input 
-                                className="input-number" 
-                                type="number" 
-                                name='pricePerChild'  
-                                min="1"
-                                value={pricePerChild}
-                                onChange={(event)=>this.onChangeInputNumber(event)}
-                            />
-                        </div> 
-                    </div>
-                    <div className='form-group'>
-                        <label className="form-title">Itinerary</label>
-                        {
-                            itineraries.map((item, index) => {
-                                return (
-                                    <div className="itinerary-input" key={'iti'+index}>
-                                        <div className="input-section">
-                                            <input 
-                                                className="input-field itinerary-title" 
-                                                name='title' 
-                                                placeholder='Title...' 
-                                                value={item.title}
-                                                onChange={(event)=>this.handleItineraryInput(event, item, index)}
-                                            />
-                                            <textarea 
-                                                className="input-area itinerary-content" 
-                                                name='content' 
-                                                placeholder='Content...'
-                                                value={item.content}
-                                                onChange={(event)=>this.handleItineraryInput(event, item, index)}
-                                            />
-                                        </div>
-                                        <span className="remove-btn" onClick={() => this.handleRemoveItineraryClick(index)}><BsTrash/></span>
-                                    </div>
-                                )
-                            })
-                        }
-                        <p className="more-btn" onClick={this.handleMoreItineraryClick}>More...</p>
-                    </div>   
-                    <div className='form-group'>
-                        <label className="form-title">Expense</label>
-                        {
-                            expenses.map((item, index) => {
-                                return (
-                                    <div className="expense-input" key={'exp'+index}>
-                                        <div className="input-section">
-                                            <input 
-                                                className="input-field expense-content" 
-                                                name='content' 
-                                                placeholder='Expense...' 
-                                                value={item.content}
-                                                onChange={(event)=>this.handleExpenseInput(event, item, index)}
-                                            />
-                                            <div className='is-included'>
-                                                <input 
-                                                    id={`included-${index}`} 
-                                                    type="checkbox" 
-                                                    className="input-check"
-                                                    name="isIncluded"
-                                                    checked={item.isIncluded}
-                                                    onChange={(event)=>this.handleExpenseIncludedCheck(event, item, index)}
-                                                />
-                                                <label htmlFor={`included-${index}`}>Is included ?</label>
-                                            </div>
-                                        </div>
-                                        <span className="remove-btn" onClick={() => this.handleRemoveExpenseClick(index)}><BsTrash/></span>
-                                    </div>
-                                )
-                            })
-                        }
-                        <p className="more-btn" onClick={this.handleMoreExpenseClick}>More...</p>
-                    </div> 
-                    <div className='form-group'>
-                        <label className="form-title">Tour Images</label>
-                        <div className='tour-images-list'>
-                            {
-                                images.filter((element) => element.deleted==false).map((item, index) => {
-                                    return (
-                                        <div key={'image'+index} className='tour-image-wrapper'>
-                                            <div 
-                                                className='tour-image' 
-                                                style={
-                                                    item.newUrl.length === 0 ?
-                                                    {                                                  
-                                                        backgroundImage: `url('${this.baseUrl+item.url}')`
-                                                    }
-                                                    :
-                                                    {                                                  
-                                                        backgroundImage: `url('${item.newUrl}')`
-                                                    }
-                                                }
-                                            >
-                                                <label className='overlay-click' htmlFor={`image-${index}`}>
-                                                    {item.newUrl.length===0 && item.url.length===0 && <VscAdd/>}
-                                                </label>
-                                                <input className='image-input' id={`image-${index}`} type='file' onChange={(event)=>this.onImageChange(event, item)}/>
-                                                <span className='remove-image' onClick={()=>this.handleRemoveImageClick(item)}><GrClose/></span>
-                                            </div>
-                                            <span className='image-name'>{index===0 ? 'Thumbnail' : `Image ${index}`}</span>
-                                        </div>
-                                    )
-                                })
-                            }
-                        </div>
-                        <p className="more-btn" onClick={this.handleMoreImageClick}>More...</p>
-                    </div>   
-                    <div className="save-btn-wrapper">
-                        <button className="save-btn" onClick={this.handleOnSave}>SAVE</button>
-                        <button className="reset-btn" onClick={this.handleOnSave}>
-                            <Link to={`/for-provider/tours`}>
-                                Reset
-                            </Link>                 
-                        </button>
-                        {
-                            isCreating &&
+                        isLoading ? 
+                        <div className="loading-container">
                             <ReactLoading
                                 className="loading-component"
                                 type={"spin"}
                                 color={"#df385f"}
-                                height={30}
-                                width={30}
+                                height={50}
+                                width={50}
                             />
-                        }
-                    </div>                  
+                        </div>
+                        :
+                        <>
+                            {
+                                isCreating &&
+                                <div className="loading-modal"></div>
+                            }
+                            <div className='form-group'>
+                                <label className="form-title tour-name">Tour name</label>
+                                <input className="input-field tour-name" name='tourName' type='text' value={tourName} onChange={this.handleInputText}/>
+                            </div>
+                            <div className='form-group'>
+                                <label className="form-title">Overview</label>
+                                <textarea className="input-area" name='overview' value={overview} onChange={this.handleInputText}/>
+                            </div>
+                            <div className='form-group'>
+                                <label className="form-title">Tour Type</label>
+                                <input 
+                                id="tour-type" 
+                                className="input-check" 
+                                name='tour-type' 
+                                type='checkbox' 
+                                value={isPrivate}
+                                onChange={(event)=>this.handleTourType(event)}
+                                />
+                                <label htmlFor='tour-type' className='tour-type'>Is Private?</label>
+                            </div>
+                            <div className='form-group'>
+                                <label className="form-title">Category</label>
+                                <div className="tour-categories">
+                                    {
+                                        categories.map((item, index) => {
+                                            return (
+                                                <div key={'category'+item.id} className='item-category'>
+                                                    <input 
+                                                        type="checkbox" 
+                                                        id={'category'+item.id} 
+                                                        value={item.categoryName} 
+                                                        checked={checkedCategoryStates[index]}
+                                                        onChange={(event) => this.handleCategorySelect(event, item, index)}
+                                                    />
+                                                    <label htmlFor={'category'+item.id}>{item.categoryName}</label>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </div>
+                            <div className='form-group'>
+                                <label className="form-title">Tourist Sites</label>
+                                <div 
+                                    className="places"
+                                    onClick={() => this.handleDestinationClick()}
+                                >
+                                    {
+                                        listPlaces.map((item, index) => {
+                                            return (
+                                                <div key={'place'+item.id} className='item-place'>
+                                                    <input 
+                                                        type="checkbox" 
+                                                        id={'place'+item.id} 
+                                                        value={item.placeName} 
+                                                        checked={checkedPlaceStates[index]}
+                                                        onChange={(event) => this.handlePlaceSelect(event, item, index)}
+                                                    />
+                                                    <label htmlFor={'place'+item.id}>{item.placeName}</label>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </div>
+                            <div className='form-group'>
+                                <label className="form-title">Starting Location</label>
+                                {
+                                    openStartingLocationField ?
+                                    <div className="address-change">
+                                        <div className="place-picker-container">
+                                            <PlacePicker onPlacePick={this.onStartingPlacePick}/>
+                                        </div>
+                                        <span className="back-btn" id='Starting' onClick={this.handleAddressEditClick}><IoIosReturnLeft/> Back</span>
+                                    </div>
+                                    :
+                                    <div className='address-display'>
+                                        <input className="input-field address" type='text' value={startingLocation} readOnly/>
+                                        <span className="edit-btn" id='Starting' onClick={this.handleAddressEditClick}><VscEdit/> Edit</span>
+                                    </div>
+                                }
+                            </div>
+                            <div className='form-group'>
+                                <label className="form-title">Destination</label>
+                                {
+                                    openDestinationLocationField ?
+                                    <div className="address-change">
+                                        <div className="place-picker-container">
+                                            <PlacePicker onPlacePick={this.onDestinationPlacePick}/>
+                                        </div>
+                                        <span className="back-btn" id='Destination' onClick={this.handleAddressEditClick}><IoIosReturnLeft/> Back</span>
+                                    </div>
+                                    :
+                                    <div className='address-display'>
+                                        <input className="input-field address" type='text' value={destinationLocation} readOnly/>
+                                        <span className="edit-btn" id='Destination' onClick={this.handleAddressEditClick}><VscEdit/> Edit</span>
+                                    </div>
+                                }
+                            </div>
+                            <div className='form-group'>
+                                <label className="form-title">Duration</label>
+                                {
+                                    durationUnit==="Days" ?
+                                    <input 
+                                        className="input-number" 
+                                        type="number" 
+                                        name='duration' 
+                                        min="1"
+                                        value={duration}
+                                        onChange={(event)=>this.onChangeInputNumber(event)}
+                                    />
+                                    :
+                                    <input 
+                                        className="input-number" 
+                                        type="number" 
+                                        name='duration' 
+                                        min="1" 
+                                        max="24"
+                                        value={duration*24}
+                                        onChange={(event)=>this.onChangeInputNumber(event)}
+                                    />
+                                }
+                                <span className="duration-unit">{durationUnit}</span>
+                                <span className="change-unit" onClick={this.toggleUnit}>Change unit</span>
+                            </div>
+                            <div className='tourist-number'>
+                                <div className='form-group'>
+                                    <label className="form-title">Group Size</label>
+                                    <input 
+                                        className="input-number" 
+                                        type="number" 
+                                        name='groupSize'  
+                                        min="1"
+                                        value={groupSize}
+                                        onChange={(event)=>this.onChangeInputNumber(event)}
+                                    />
+                                </div>
+                                <div className='form-group'>
+                                    <label className="form-title">Minimum Adults amount</label>
+                                    <input 
+                                        className="input-number" 
+                                        type="number" 
+                                        name='minAdults'  
+                                        min="1"
+                                        value={minAdults}
+                                        onChange={(event)=>this.onChangeInputNumber(event)}
+                                    />
+                                </div> 
+                            </div>
+                            <div className='price'>
+                                <div className='form-group'>
+                                    <label className="form-title">Price per Adult</label>
+                                    <input 
+                                        className="input-number" 
+                                        type="number" 
+                                        name='pricePerAdult'  
+                                        min="1"
+                                        value={pricePerAdult}
+                                        onChange={(event)=>this.onChangeInputNumber(event)}
+                                    />
+                                </div>
+                                <div className='form-group'>
+                                    <label className="form-title">Price per Child</label>
+                                    <input 
+                                        className="input-number" 
+                                        type="number" 
+                                        name='pricePerChild'  
+                                        min="1"
+                                        value={pricePerChild}
+                                        onChange={(event)=>this.onChangeInputNumber(event)}
+                                    />
+                                </div> 
+                            </div>
+                            <div className='form-group'>
+                                <label className="form-title">Itinerary</label>
+                                {
+                                    itineraries.map((item, index) => {
+                                        return (
+                                            <div className="itinerary-input" key={'iti'+index}>
+                                                <div className="input-section">
+                                                    <input 
+                                                        className="input-field itinerary-title" 
+                                                        name='title' 
+                                                        placeholder='Title...' 
+                                                        value={item.title}
+                                                        onChange={(event)=>this.handleItineraryInput(event, item, index)}
+                                                    />
+                                                    <textarea 
+                                                        className="input-area itinerary-content" 
+                                                        name='content' 
+                                                        placeholder='Content...'
+                                                        value={item.content}
+                                                        onChange={(event)=>this.handleItineraryInput(event, item, index)}
+                                                    />
+                                                </div>
+                                                <span className="remove-btn" onClick={() => this.handleRemoveItineraryClick(index)}><BsTrash/></span>
+                                            </div>
+                                        )
+                                    })
+                                }
+                                <p className="more-btn" onClick={this.handleMoreItineraryClick}>More...</p>
+                            </div>   
+                            <div className='form-group'>
+                                <label className="form-title">Expense</label>
+                                {
+                                    expenses.map((item, index) => {
+                                        return (
+                                            <div className="expense-input" key={'exp'+index}>
+                                                <div className="input-section">
+                                                    <input 
+                                                        className="input-field expense-content" 
+                                                        name='content' 
+                                                        placeholder='Expense...' 
+                                                        value={item.content}
+                                                        onChange={(event)=>this.handleExpenseInput(event, item, index)}
+                                                    />
+                                                    <div className='is-included'>
+                                                        <input 
+                                                            id={`included-${index}`} 
+                                                            type="checkbox" 
+                                                            className="input-check"
+                                                            name="isIncluded"
+                                                            checked={item.isIncluded}
+                                                            onChange={(event)=>this.handleExpenseIncludedCheck(event, item, index)}
+                                                        />
+                                                        <label htmlFor={`included-${index}`}>Is included ?</label>
+                                                    </div>
+                                                </div>
+                                                <span className="remove-btn" onClick={() => this.handleRemoveExpenseClick(index)}><BsTrash/></span>
+                                            </div>
+                                        )
+                                    })
+                                }
+                                <p className="more-btn" onClick={this.handleMoreExpenseClick}>More...</p>
+                            </div> 
+                            <div className='form-group'>
+                                <label className="form-title">Tour Images</label>
+                                <div className='tour-images-list'>
+                                    {
+                                        images.filter((element) => element.deleted==false).map((item, index) => {
+                                            return (
+                                                <div key={'image'+index} className='tour-image-wrapper'>
+                                                    <div 
+                                                        className='tour-image' 
+                                                        style={
+                                                            item.newUrl.length === 0 ?
+                                                            {                                                  
+                                                                backgroundImage: `url('${this.baseUrl+item.url}')`
+                                                            }
+                                                            :
+                                                            {                                                  
+                                                                backgroundImage: `url('${item.newUrl}')`
+                                                            }
+                                                        }
+                                                    >
+                                                        <label className='overlay-click' htmlFor={`image-${index}`}>
+                                                            {item.newUrl.length===0 && item.url.length===0 && <VscAdd/>}
+                                                        </label>
+                                                        <input className='image-input' id={`image-${index}`} type='file' onChange={(event)=>this.onImageChange(event, item)}/>
+                                                        <span className='remove-image' onClick={()=>this.handleRemoveImageClick(item)}><GrClose/></span>
+                                                    </div>
+                                                    <span className='image-name'>{index===0 ? 'Thumbnail' : `Image ${index}`}</span>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                                <p className="more-btn" onClick={this.handleMoreImageClick}>More...</p>
+                            </div>   
+                            <div className="save-btn-wrapper">
+                                <button className="save-btn" onClick={this.handleOnSave}>SAVE</button>
+                                <button className="reset-btn" onClick={this.handleOnSave}>
+                                    <Link to={`/for-provider/tours`}>
+                                        Reset
+                                    </Link>                 
+                                </button>
+                                {
+                                    isCreating &&
+                                    <ReactLoading
+                                        className="loading-component"
+                                        type={"spin"}
+                                        color={"#df385f"}
+                                        height={30}
+                                        width={30}
+                                    />
+                                }
+                            </div>  
+                        </>
+                    }                            
                 </div>
                 <br></br>
                 <br></br>
