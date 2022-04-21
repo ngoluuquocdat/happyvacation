@@ -21,11 +21,12 @@ class ProviderOrder extends React.Component {
         perPage: 3,
         startDate: new Date(),
         endDate: new Date(),
+        keyword: '',
         showDatePicker: false
     }
 
     baseUrl = this.props.reduxData.baseUrl;
-    broadcast_mes_timestamp='';
+    broadcast_mes_timestamp = '';
 
     // change page
     handleOnChangePage = (event, page) => {
@@ -34,31 +35,12 @@ class ProviderOrder extends React.Component {
         });
     };
 
-    // // get token from firebase messaging
-    // getFCMToken() {       
-    //     requestForToken().then((currentToken) => {
-    //         if (currentToken) {
-    //           console.log('current token for client: ', currentToken);
-    //           // save fcm token to redux 
-    //           this.props.saveFCMTokenRedux(currentToken)
-    //         } else {
-    //           // Show permission request UI
-    //           console.log('No registration token available. Request permission to generate one.');
-    //         }
-    //       })
-    //       .catch((err) => {
-    //         console.log('An error occurred while retrieving token. ', err);
-    //       });
-    // }
-
     async componentDidMount() {
         // check jwt token
         const token = localStorage.getItem('user-token');
         if(!token) {
             this.props.history.push('/login', {prevPath: this.props.location.pathname});
-        }
-        // get fcm token
-        //requestForToken();   
+        } 
         
         // check the route to get order state
         let orderState = (this.props.location.pathname.split('/').at(-1)).toLowerCase();
@@ -174,14 +156,14 @@ class ProviderOrder extends React.Component {
         // when page change
         if (prevState.page !== this.state.page) {
             const { page, perPage } = this.state;
-            const { orderState } = this.state;
+            const { orderState, keyword } = this.state;
             // call api to get orders and set state
             try {
                 this.setState({
                     isLoading: true,
                 });
                 let res = await axios.get(
-                    `${this.baseUrl}/api/Providers/me/orders?state=${orderState}&page=${page}&perPage=${perPage}`,
+                    `${this.baseUrl}/api/Providers/me/orders?state=${orderState}&page=${page}&perPage=${perPage}&keyword=${keyword}`,
                     {
                         headers: { Authorization:`Bearer ${token}` }
                     }
@@ -223,7 +205,8 @@ class ProviderOrder extends React.Component {
     } 
 
     // get orders
-    getOrders = async () => {
+    getOrders = async (keyword) => {
+        let _keyword = keyword ? keyword : '';
         console.log('Get orders');
         const token = localStorage.getItem('user-token');
         if(!token) {
@@ -239,7 +222,7 @@ class ProviderOrder extends React.Component {
                 isLoading: true
             })     
             let res = await axios.get(
-                `${this.baseUrl}/api/Providers/me/orders?state=${orderState}&page=${1}&perPage=3`,
+                `${this.baseUrl}/api/Providers/me/orders?state=${orderState}&page=${1}&perPage=3&keyword=${_keyword}`,
                 {
                     headers: { Authorization:`Bearer ${token}` }
                 }
@@ -333,7 +316,18 @@ class ProviderOrder extends React.Component {
             })
         }
     }
+    // keyword on change
+    keywordInput = (event) => {
+        this.setState({
+            keyword: event.target.value
+        })
+    }
 
+    // search order click
+    searchOrder = () => {
+        const keyword = this.state.keyword;
+        this.getOrders(keyword);
+    }
 
     // click date picker toggle
     handleDateClick = () => {
@@ -343,15 +337,25 @@ class ProviderOrder extends React.Component {
         })
     }
 
+    // handle date range change
+    handleDateRangeChange = (ranges) => {
+        this.setState({
+            startDate: ranges.selection.startDate,
+            endDate: ranges.selection.endDate,
+        })
+    }
+
     render() {
         const { orders, page, totalPage, isLoading } = this.state;
         const { startDate, endDate, showDatePicker } = this.state;
+        const { keyword } = this.state;
 
         const dateSelectionRange = {
             startDate: startDate,
             endDate: endDate,
             key: 'selection',
-        }        
+        }      
+          
         // receive firebase cloud message
         onMessageListener()
         .then((payload) => {
@@ -378,10 +382,10 @@ class ProviderOrder extends React.Component {
                     <div className='title'>Orders for your company</div>
                     <div className='sub-title'>See and process tour orders for your company</div>
                 </div>
-                {/* <div className='order-task-bar'>
+                <div className='order-task-bar'>
                     <div className='order-search-bar'>
-                        <input className='order-input-search'/>
-                        <button className='order-search-btn'>Search</button>
+                        <input className='order-input-search' placeholder='Order ID, Tourist Name, ...' value={keyword} onChange={this.keywordInput}/>
+                        <button className='order-search-btn' onClick={this.searchOrder}>Search</button>
                     </div>
                     <div className='order-export'>
                         <span>Order Date</span>
@@ -406,14 +410,14 @@ class ProviderOrder extends React.Component {
                                         onChange={this.handleDateRangeChange}
                                         moveRangeOnFirstSelection={false}
                                         ranges={[dateSelectionRange]}
-                                        minDate={new Date()}
+                                        maxDate={new Date()}
                                     />
                                 </div>
                             }                                        
                         </div>
                         <button className='export-btn'>Export</button>
                     </div>
-                </div> */}
+                </div>
                 <div className='provider-order-body'>
                     {
                         isLoading && 

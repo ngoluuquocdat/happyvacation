@@ -68,6 +68,8 @@
                     position: absolute;
                     top: calc(100% + 5px);
                     z-index: 1;
+                    animation: listGrowth ease 0.3s;
+                    transform-origin: 50% top;
 
                     .drop-down-item {
                         width: 33.33333333%;
@@ -157,9 +159,11 @@
         .list-tour-wrap {
             width: 100%;
             .tour-number {
-
+                font-size: 20px;
+                font-weight: 500;
             }
             .list-tour {
+                margin-top: 10px;
                 min-height: 300px;
                 //margin: 0 -15px;   
                 box-shadow: 0 0 0 1px #e5e5e5;
@@ -192,13 +196,16 @@
                         width: 16.66666666%;
                     }
                     .list-tour-header-item.tour-price {
-                        width: 12.5%
+                        width: 12.5%;
+                        cursor: pointer;
                     }
                     .list-tour-header-item.rating {
                         width: 6.25%;
+                        cursor: pointer;
                     }
                     .list-tour-header-item.orders {
-                        width: 8.33333333%;                       
+                        width: 8.33333333%;     
+                        cursor: pointer;                  
                     }
                     .list-tour-header-item.tour-action {
                         width: 16.66666666%;
@@ -231,5 +238,16 @@
         margin-top: 60px;
         display: flex;
         justify-content: center;
+    }
+}
+
+@keyframes listGrowth {
+    from {
+        transform: scale(1,0);
+        opacity: 0.8;
+    }
+    to {
+        transform: scale(1,1);
+        opacity: 1;
     }
 }

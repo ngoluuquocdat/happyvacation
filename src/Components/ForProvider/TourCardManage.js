@@ -28,7 +28,7 @@ class TourCardManage extends Component {
         const avatarUrl = `url('${this.baseUrl + tour.thumbnailPath}')`;
         //const avatarUrl = `url('${tour.thumbnailPath}')`;
         return (           
-            <div className='tour-manage-card'>
+            <div className={tour.isAvailable ? 'tour-manage-card' : 'tour-manage-card not-providing'}>
                 <div className='tour-info-item tour-id'>{tour.id}</div>
                 <div className='tour-info-item tour-name'>
                     <div className='info-item-header'>{tour.tourName}</div>
@@ -89,7 +89,9 @@ class TourCardManage extends Component {
                     Child:&nbsp;
                     ${tour.pricePerChild}
                 </div>
-                <div className='tour-info-item rating'>{tour.rating}</div>
+                <div className='tour-info-item rating'>
+                    {tour.rating>0 ? tour.rating : 'Not Rated'}  
+                </div>
                 <div className='tour-info-item orders'>{tour.orderCount}</div>
                 <div className='tour-info-item tour-action'>
                     <Link className='link' to={`/for-provider/tours/${tour.id}/edit`}>

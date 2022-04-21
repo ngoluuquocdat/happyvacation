@@ -66,6 +66,7 @@ class ProviderTour extends React.Component {
             // set state
             this.setState({
                 totalPage: res.data.totalPage,
+                totalCount: res.data.totalCount,
                 tours: res.data.items                
             })
         } catch (error) {
@@ -235,6 +236,18 @@ class ProviderTour extends React.Component {
         this.getTours(token, tourId, tourName, selectedPlaces, selectedCategories, sort, page, perPage)
     }
 
+    // handle reset search tour
+    resetSearch = () => {
+        this.setState({
+            tourId: '',
+            tourName: '',
+            selectedCategories: [],
+            selectedPlaces: [],
+            checkedCategoryStates: new Array(this.categories.length).fill(false),
+            checkedPlaceStates: new Array(this.listPlaces.length).fill(false)
+        })
+    }
+
     // change providing state
     changeProvidingState = async (tourId) => {
         const token = localStorage.getItem('user-token');
@@ -309,8 +322,10 @@ class ProviderTour extends React.Component {
         })
     }
 
+
+
     render() {
-        const { tours, page, totalPage, isLoading } = this.state;
+        const { tours, page, totalPage, totalCount, isLoading } = this.state;
         const { tourId, tourName } = this.state;
         const categories = this.categories;
         const listPlaces = this.listPlaces;
@@ -404,14 +419,14 @@ class ProviderTour extends React.Component {
                     </div>
                     <div className='button-area'>
                         <button className='btn-search' onClick={this.searchTour}>Search</button>
-                        <button className='btn-reset'>Reset</button>
+                        <button className='btn-reset' onClick={this.resetSearch}>Reset</button>
                     </div>
                 </div>
                 <div className='provider-tour-body'>
                     <div className='list-tour-wrap'>
                         <div className='tour-number'>
                             {
-                                isLoading ? ' ' : `${tours.length} Tour`
+                                isLoading ? ' ' : (totalCount > 1 ? `${totalCount} Tours` : `${totalCount} Tour`)
                             }                       
                         </div>
                         <div className='list-tour'>

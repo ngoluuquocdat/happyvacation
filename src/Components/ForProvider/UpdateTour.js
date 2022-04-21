@@ -577,7 +577,7 @@ class UpdateTour extends React.Component {
                                         name='duration' 
                                         min="1" 
                                         max="24"
-                                        value={duration*24}
+                                        value={Math.round(duration*24)}
                                         onChange={(event)=>this.onChangeInputNumber(event)}
                                     />
                                 }
@@ -730,9 +730,9 @@ class UpdateTour extends React.Component {
                             </div>   
                             <div className="save-btn-wrapper">
                                 <button className="save-btn" onClick={this.handleOnSave}>SAVE</button>
-                                <button className="reset-btn" onClick={this.handleOnSave}>
+                                <button className="reset-btn">
                                     <Link to={`/for-provider/tours`}>
-                                        Reset
+                                        Back
                                     </Link>                 
                                 </button>
                                 {

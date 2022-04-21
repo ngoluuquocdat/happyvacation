@@ -1,11 +1,25 @@
 
 
+
+.tour-manage-card.not-providing {
+    content: '';
+    width: 100%;
+    height: 100%;
+    background-color: rgba(121, 121, 121, 0.116);
+    color: rgba(0, 0, 0, 0.6);
+}
+.tour-manage-card.not-providing {
+    .tour-thumbnail {
+        opacity: 0.6;
+    }
+}
 .tour-manage-card {
     width: 100%;
     display: flex;
     justify-content: space-between;
     font-size: 14px;
     border-bottom: 1px solid #dfdfdf;
+    position: relative;
 
     .tour-info-item.tour-id {
         width: 4.16666666%;
@@ -43,11 +57,13 @@
             color: #cc3300;
             border: none;
             font-size: 15px;
-            background-color: #fff;
+            background-color: transparent;
+            opacity: 1;
             cursor: pointer;
         }
         .available-btn.not-providing {
             color: #64b450;
+            opacity: 1;
         }
     }
     .tour-info-item {

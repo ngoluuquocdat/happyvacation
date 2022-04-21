@@ -323,7 +323,8 @@
             align-items: center;
             margin-top: 30px;
 
-            .save-btn {
+            .save-btn,
+            .reset-btn {
                 padding: 12px 20px;
                 margin-right: 30px;
                 background-color: #df385f;  
@@ -332,6 +333,15 @@
                 border-radius: 3px;
                 cursor: pointer;
                 font-size: 14px;
+            }
+            .reset-btn {           
+                background-color: #fff;  
+                border: 1px solid rgba(0,0,0,.34);
+                a {
+                    color: #000;
+                    text-decoration: none;
+                    font-size: 14px;
+                }
             }
         }
     }
