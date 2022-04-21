@@ -40,6 +40,13 @@ export const onMessageListener = () =>
         });
     });
 
+// export const onBackgroundMessageListener = () =>
+// new Promise((resolve) => {
+//     messaging.onBackgroundMessage((payload) => {
+//         resolve(payload);
+//     });
+// });
+
 export const subscribeToTopic = (topicName, handler = () => {}) =>
     messaging.getToken( { vapidKey: "BCi_3lAlaiEN1U2kP-Z8Q65AQ28voEO1lGwipIEwFIjbtebUDFVo4ZhL3h21udY4CwxnSQvJilf2oTm-ofTijcw"})
     .then((currentToken) => {

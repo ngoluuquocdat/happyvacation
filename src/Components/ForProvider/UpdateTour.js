@@ -2,16 +2,20 @@ import React from 'react';
 import axios from 'axios';
 import PlacePicker from '../PlacePicker';
 import ReactLoading from "react-loading";
+import { withRouter, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { connect } from 'react-redux';
+import { connect} from 'react-redux';
 import { BsTrash } from 'react-icons/bs'
 import { GrClose } from 'react-icons/gr'
 import { VscAdd } from 'react-icons/vsc'
-import '../../Styles/ForProvider/create-tour.scss'
+import { VscEdit } from 'react-icons/vsc'
+import { IoIosReturnLeft } from 'react-icons/io'
+import '../../Styles/ForProvider/update-tour.scss'
 
-class CreateTour extends React.Component {
+class UpdateTour extends React.Component {
 
     state = {
+        tourId: 0,
         tourName: '',
         overview: '',
         isPrivate: false,
@@ -20,6 +24,8 @@ class CreateTour extends React.Component {
         checkedCategoryStates: [],
         checkedPlaceStates: [],
         showListPlace: false,
+        openStartingLocationField: false,
+        openDestinationLocationField: false,
         startingLocation: '',
         destinationLocation: '',
         duration: 1,
@@ -30,7 +36,7 @@ class CreateTour extends React.Component {
         pricePerChild: 0,
         itineraries: [ { title: '', content: ''} ],
         expenses: [ { content: '', isIncluded: true } ],
-        images: [ { url: '', file: null } ],
+        images: [ { id:0, url: '', newUrl: '', file: null , deleted: false} ],
         isCreating: false   
     }
 
@@ -38,28 +44,80 @@ class CreateTour extends React.Component {
     categories =  [];
     baseUrl = this.props.reduxData.baseUrl;
 
-    componentDidMount() {
+    async componentDidMount() {
         // call api to get list categories, list places
         // fake api response
         const resCategories = categories_temp;
         const resPlaces = listPlaces;
         // set the checked states
-        var checkedCategoryStates;
-        var checkedPlaceStates;
-        // if(this.state.filter.selectedCategories.length !== 0) {
-        //     const selected = this.state.filter.selectedCategories;
-        //     checkedStates = resCategories.map((item) => selected.filter((element)=>element.id===item.id).length > 0)
-        // } else {
-        //     checkedStates = new Array(resCategories.length).fill(false);
-        // }
-        checkedCategoryStates = new Array(resCategories.length).fill(false);
-        checkedPlaceStates = new Array(resPlaces.length).fill(false);
+        // var checkedCategoryStates;
+        // var checkedPlaceStates;
+        // checkedCategoryStates = new Array(resCategories.length).fill(false);
+        // checkedPlaceStates = new Array(resPlaces.length).fill(false);
         this.categories = resCategories;
         this.listPlaces = resPlaces;
-        this.setState({          
-            checkedCategoryStates:  checkedCategoryStates,
-            checkedPlaceStates: checkedPlaceStates
-        })
+
+        // get the tour by id
+        const tourId = this.props.match.params.id
+        try {
+            this.setState({
+                isLoading: true
+            })
+            let res = await axios.get(
+                `https://localhost:7079/api/Tours/${tourId}`
+            );       
+            console.log('call api')
+            //console.log(res);
+            const resTour = res.data;
+            // set state
+            this.setState({
+                tourId: resTour.id,
+                tourName: resTour.tourName,
+                overview: resTour.overview,
+                isPrivate: resTour.isPrivate,
+                selectedCategories: resTour.categories,
+                selectedPlaces: resTour.places,
+                startingLocation: resTour.location,
+                destinationLocation: resTour.destination,
+                duration: resTour.duration,
+                groupSize: resTour.groupSize,
+                minAdults: resTour.minAdults,
+                pricePerAdult: resTour.pricePerAdult,
+                pricePerChild: resTour.pricePerChild,
+                itineraries: resTour.itineraries,
+                expenses: resTour.expenses,
+                durationUnit: resTour.duration >= 1 ? 'Days' : 'Hours',
+                checkedCategoryStates:  this.categories.map((item) => resTour.categories.filter((element)=>element.id===item.id).length > 0),
+                checkedPlaceStates: this.listPlaces.map((item) => resTour.places.filter((element)=>element.id===item.id).length > 0),
+                images: resTour.images.map((item) => ({ id: item.id, url: item.url, newUrl: '', file: null, deleted: false }))
+            })
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                // fake api response
+                const resTour = tour_temp;
+                this.setState({
+                    tour: resTour,
+                    adults: resTour.minAdults,
+                    price: resTour.pricePerAdult*resTour.minAdults,
+                    networkFailed: true,
+                });            
+                return;
+            } 
+            if (error.response.status === 404) {
+                console.log(error)
+            }
+            if (error.response.status === 400) {
+              console.log(error)
+            }
+        } finally {
+            setTimeout(() => {
+                this.setState({
+                    isLoading: false
+                })
+            }, 1000)       
+        }  
+        
     }
 
     // input text change
@@ -120,16 +178,28 @@ class CreateTour extends React.Component {
             })
         }
     }
-
+    // toggle place picker
+    handleAddressEditClick = (event) => {
+        const key = event.target.id;
+        console.log(key)
+        const value = this.state[`open${key}LocationField`];
+        this.setState({
+            [`open${key}LocationField`]: !value,
+            // startingLocation: '',
+            // destinationLocation: '',
+        })
+    }
     // handle location picking
     onStartingPlacePick = (place) => {
         this.setState({
-            startingLocation: place
+            startingLocation: place,
+            openStartingLocationField: false
         })
     }
     onDestinationPlacePick = (place) => {
         this.setState({
-            destinationLocation: place
+            destinationLocation: place,
+            openDestinationLocationField: false
         })
     }
 
@@ -225,18 +295,20 @@ class CreateTour extends React.Component {
     // more image click 
     handleMoreImageClick = () => {
         const images = this.state.images;
-        if(images.length < 6) {
+        if(images.filter((element) => element.deleted === false).length < 6) {
+            const newId = Math.floor(Math.random()*100) - 100;
             this.setState({
-                images: [...images, { url: '', file: null}]
+                images: [...images, { id:newId, url: '', newUrl: '', file: null, deleted: false }]
             })
         }
     }
 
     // on image change
-    onImageChange = (event, index) => {
+    onImageChange = (event, item) => {    
         if (event.target.files && event.target.files[0]) {
             let images = this.state.images;
-            images[index].url = URL.createObjectURL(event.target.files[0]);
+            let index = images.findIndex(element=>element.id===item.id);
+            images[index].newUrl = URL.createObjectURL(event.target.files[0]);
             images[index].file = event.target.files[0];
             this.setState({
                 images: images
@@ -245,10 +317,11 @@ class CreateTour extends React.Component {
     }
 
     // remove image
-    handleRemoveImageClick = (index) => {
-        let images = this.state.images;
-        if(images.length > 1) {
-            images.splice(index, 1);
+    handleRemoveImageClick = (item) => {
+        let images = this.state.images;    
+        if(images.filter((element) => element.deleted === false).length > 1) {
+            let index = images.findIndex(element=>element.id===item.id);
+            images[index].deleted = true;
             this.setState({
                 images: images
             })
@@ -261,53 +334,29 @@ class CreateTour extends React.Component {
         if(!token) {
             this.props.history.push('/login', {prevPath: this.props.location.pathname});
         }
-
+        
         const { tourName, overview} = this.state;
         const { selectedCategories, selectedPlaces, startingLocation, destinationLocation } = this.state;
         const { isPrivate, duration, groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
         let { itineraries, expenses, images } = this.state;
         itineraries = itineraries.filter(element => (element.title !== '') && (element.content !== ''));
         expenses = expenses.filter(element => element.content !== '');
-        images = images.filter(element => element.file !== null);
-
+        images = images.filter(element => !((element.file == null && element.id < 0) || (element.deleted === true && element.id < 0)));
         const isValid = (tourName !== '') && (overview !== '') &&
                         (selectedCategories.length > 0) && (selectedPlaces.length > 0) &&
                         (startingLocation !== '') && (destinationLocation !== '') &&
                         (itineraries.length > 0) && (expenses.length > 0) && (images.length > 0);
         
         if(!isValid) {
-            toast.warning('Please fill all information!', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                progress: undefined,
-            });
+            toast.warning('Please fill all information!');
             return;
         }
         this.setState({
             isCreating: true
         })
-        const newTour = {
-            tourName: tourName,
-            overview: overview,
-            isPrivate: isPrivate,
-            duration: duration,
-            groupSize: groupSize,
-            minAdults: minAdults,
-            pricePerAdult: pricePerAdult,
-            pricePerChild: pricePerChild,
-            categoryIds: selectedCategories.map(item => item.id),
-            placeIds: selectedPlaces.map(item => item.id),
-            location: startingLocation,
-            destination: destinationLocation,
-            itineraries: itineraries,
-            expenses: expenses,
-            images: images.map(item => item.file)
-        }
+
         // post to api
-        console.log('New tour: ', newTour);
+        const tourId = this.props.match.params.id;
         let data = new FormData();
         data.append('tourName', tourName);
         data.append('overview', overview);
@@ -333,21 +382,24 @@ class CreateTour extends React.Component {
             data.append(`expenses[${index}].content`, item.content);
             data.append(`expenses[${index}].isIncluded`, item.isIncluded);
         }) 
-        images.map(item => {
-            data.append('images', item.file);
+        images.map((item, index) => {
+            data.append(`images[${index}].id`, item.id);
+            data.append(`images[${index}].file`, item.file);
+            data.append(`images[${index}].deleted`, item.deleted);
         })
         
         try {
-            let res = await axios.post(
-              `${this.baseUrl}/api/Tours`,
+            let res = await axios.put(
+              `${this.baseUrl}/api/Tours/${tourId}`,
               data,
               {
                 headers: { Authorization:`Bearer ${token}` }
               }
             );          
+            //console.log(res);
 
             // show toast notify
-            toast.success('Create your tour successfully!');
+            toast.success('Update your tour successfully!');
         } catch (error) {
             if (!error.response) {
               toast.error("Network error");
@@ -376,15 +428,15 @@ class CreateTour extends React.Component {
         const { checkedCategoryStates, checkedPlaceStates } = this.state;
         const { duration, durationUnit } = this.state;
         const { groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
-        const { selectedPlace } = this.state;
         const { itineraries, expenses, images } = this.state;
-        const isPlaceSelected =  selectedPlace && selectedPlace !== 'null' && selectedPlace !== 'undefined';
+        const { startingLocation, destinationLocation } = this.state;
+        const { openStartingLocationField, openDestinationLocationField } = this.state;
         const { isCreating } = this.state;
         return (
             <div className='create-tour-container'>
                 
                 <div className='create-tour-header'>
-                    <div className='title'>Create new tour</div>
+                    <div className='title'>Tour Infomation</div>
                     <div className='sub-title'>Create your new tour with detailed information</div>
                 </div>
                 <div className='create-tour-body'>
@@ -459,15 +511,37 @@ class CreateTour extends React.Component {
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Starting Location</label>
-                        <div className="place-picker-container">
-                            <PlacePicker onPlacePick={this.onStartingPlacePick}/>
-                        </div>
+                        {
+                            openStartingLocationField ?
+                            <div className="address-change">
+                                <div className="place-picker-container">
+                                    <PlacePicker onPlacePick={this.onStartingPlacePick}/>
+                                </div>
+                                <span className="back-btn" id='Starting' onClick={this.handleAddressEditClick}><IoIosReturnLeft/> Back</span>
+                            </div>
+                            :
+                            <div className='address-display'>
+                                <input className="input-field address" type='text' value={startingLocation} readOnly/>
+                                <span className="edit-btn" id='Starting' onClick={this.handleAddressEditClick}><VscEdit/> Edit</span>
+                            </div>
+                        }
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Destination</label>
-                        <div className="place-picker-container">
-                            <PlacePicker onPlacePick={this.onDestinationPlacePick}/>
-                        </div>
+                        {
+                            openDestinationLocationField ?
+                            <div className="address-change">
+                                <div className="place-picker-container">
+                                    <PlacePicker onPlacePick={this.onDestinationPlacePick}/>
+                                </div>
+                                <span className="back-btn" id='Destination' onClick={this.handleAddressEditClick}><IoIosReturnLeft/> Back</span>
+                            </div>
+                            :
+                            <div className='address-display'>
+                                <input className="input-field address" type='text' value={destinationLocation} readOnly/>
+                                <span className="edit-btn" id='Destination' onClick={this.handleAddressEditClick}><VscEdit/> Edit</span>
+                            </div>
+                        }
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Duration</label>
@@ -609,15 +683,27 @@ class CreateTour extends React.Component {
                         <label className="form-title">Tour Images</label>
                         <div className='tour-images-list'>
                             {
-                                images.map((item, index) => {
+                                images.filter((element) => element.deleted==false).map((item, index) => {
                                     return (
                                         <div key={'image'+index} className='tour-image-wrapper'>
-                                            <div className='tour-image' style={{backgroundImage: `url('${item.url}')`}}>
+                                            <div 
+                                                className='tour-image' 
+                                                style={
+                                                    item.newUrl.length === 0 ?
+                                                    {                                                  
+                                                        backgroundImage: `url('${this.baseUrl+item.url}')`
+                                                    }
+                                                    :
+                                                    {                                                  
+                                                        backgroundImage: `url('${item.newUrl}')`
+                                                    }
+                                                }
+                                            >
                                                 <label className='overlay-click' htmlFor={`image-${index}`}>
-                                                    {item.url.length===0 && <VscAdd/>}
+                                                    {item.newUrl.length===0 && item.url.length===0 && <VscAdd/>}
                                                 </label>
-                                                <input className='image-input' id={`image-${index}`} type='file' onChange={(event)=>this.onImageChange(event, index)}/>
-                                                <span className='remove-image' onClick={()=>this.handleRemoveImageClick(index)}><GrClose/></span>
+                                                <input className='image-input' id={`image-${index}`} type='file' onChange={(event)=>this.onImageChange(event, item)}/>
+                                                <span className='remove-image' onClick={()=>this.handleRemoveImageClick(item)}><GrClose/></span>
                                             </div>
                                             <span className='image-name'>{index===0 ? 'Thumbnail' : `Image ${index}`}</span>
                                         </div>
@@ -628,7 +714,12 @@ class CreateTour extends React.Component {
                         <p className="more-btn" onClick={this.handleMoreImageClick}>More...</p>
                     </div>   
                     <div className="save-btn-wrapper">
-                        <button className="save-btn" onClick={this.handleOnSave}>CREATE</button>
+                        <button className="save-btn" onClick={this.handleOnSave}>SAVE</button>
+                        <button className="reset-btn" onClick={this.handleOnSave}>
+                            <Link to={`/for-provider/tours`}>
+                                Reset
+                            </Link>                 
+                        </button>
                         {
                             isCreating &&
                             <ReactLoading
@@ -700,10 +791,118 @@ const listPlaces = [
     { id: 15, placeName: 'Trang An' }
 ];
 
+const tour_temp = {
+    id: 1,
+    tourName: 'HALF-DAY FOODIE TOUR BY BICYCLE & VISIT TRA QUE VEGETABLE VILLAGE',
+    overview: 'Take a journey through Hoi An’s culinary history; head out to the beautiful countryside by bicycle'+ 
+    'to experience some traditional local food favorites, including the most famous of Hoi An specialties; Cao Lau.'+
+    '\n Try the traditional Hoi An specialty, Cao Lau; intoxicating pork noodle broth, featuring sticky rice noodles that must be soaked in water from the oldest well in Hoi An, Ba Le Well.',
+    location: 'Hội An, Quang Nam Province, Vietnam',
+    destination: 'Hội An, Quang Nam Province, Vietnam',
+    reviews: 12,
+    rating: 4.4,
+    viewCount: 10,
+    isPrivate: false,
+    minPrice: 45,
+    duration: 0.5,
+    categories: [ 
+        { id: 4, categoryName: 'biking tour' },
+        { id: 7, categoryName: 'classic tour' },
+        { id: 8, categoryName: 'cooking tour' },
+        { id: 11, categoryName: 'culinary tour' }
+    ],
+    itineraries: [
+        {
+            id: 1,
+            title: 'Part 1',
+            content: 'Discover Hoi An’s countryside and its local foods by bicycle. Local foods in Hoi An are known and enjoyed by the tourists once setting foot here. In Hoi An, these cuisines are very popular and sold everywhere in all streets. Moreover, these cuisines are considered as unique symbols for the culture and introduced to every tourist. We bike through the countryside to a Tra Que Village.'
+        },
+        {
+            id: 2,
+            title: 'Part 2',
+            content: 'Vegetables from this village are distributed to most of the restaurants in town and specially make the Cao Lau to have a perfect taste. Go back to town and learn how to make special “white rose” dumpling cakes with a local family and taste your products.'
+        },
+        {
+            id: 3,
+            title: 'Part 3',
+            content: 'Continue riding to Cam Nam to enjoy the Yin and Yang food such as: Banh Dap (“cracked or smashed rice pancake”), Che Bap (“corn and coconut sweet soup”). We then ride to a famous local restaurant for Hoi An specialty - Cao Lau. Cao Lau is a traditional Hoi An specialty composed of local noodles, pork, fresh vegetables and rice paper.'
+        },
+        {
+            id: 4,
+            title: 'Part 4',
+            content: 'We will ride back to the company at the end of our trip.'
+        }
+    ],
+    expenses: [
+        {
+            id: 1,
+            isIncluded: true,
+            content: 'Hotel pickup and drop-off in Hoi An City Center'
+        },
+        {
+            id: 2,
+            isIncluded: true,
+            content: 'Transportation with air-conditioning'
+        },
+        {
+            id: 3,
+            isIncluded: true,
+            content: 'Bicycle'
+        },
+        {
+            id: 4,
+            isIncluded: true,
+            content: 'Entrance fees'
+        },
+        {
+            id: 5,
+            isIncluded: true,
+            content: 'Foods and Bottled drinking water'
+        },
+        {
+            id: 6,
+            isIncluded: false,
+            content: 'Tips and gratuities'
+        },
+        {
+            id: 5,
+            isIncluded: false,
+            content: 'Personal expenses such as: shopping, telephone, beverage, etc.'
+        }
+    ],
+    images:[
+        {
+            id: 1,
+            url: 'https://hoianexpress.com.vn/wp-content/uploads/2019/12/IMG_9925-870x555.jpg'
+        },
+        {
+            id: 2,
+            url: 'https://hoianexpress.com.vn/wp-content/uploads/2019/12/IMG_3740-870x555.jpg'
+        }
+        ,
+        {
+            id: 3,
+            url: 'https://hoianexpress.com.vn/wp-content/uploads/2019/12/IMG_9892-870x555.jpg'
+        }
+        ,
+        {
+            id: 4,
+            url: 'https://hoianexpress.com.vn/wp-content/uploads/2019/12/z1577810441855_9034cb5e3abd4c3b6fcebb3b2f4c4ce3-870x555.jpg'
+        }
+    ],    
+    groupSize: 15,
+    minAdults: 2,
+    pricePerAdult: 89,
+    pricePerChild: 30,
+    providerId: 1,
+    providerName: "Hoi An Express",
+    providerAvatar: "https://hoianexpress.com.vn/wp-content/uploads/2020/09/logo-moi.png",
+}
+
 const mapStateToProps = (state) => {
     return {
         reduxData: state
     }
 }
 
-export default connect(mapStateToProps)(CreateTour);
+export default connect(mapStateToProps)(withRouter(UpdateTour));

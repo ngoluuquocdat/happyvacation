@@ -181,6 +181,7 @@ class TourDetailPage extends React.Component {
     handleBookingSubmit = async() => {
         const token = localStorage.getItem('user-token');
         if(!token) {
+            toast.info('You need to login to continue.');
             return;
         }
         // call api post order
@@ -233,6 +234,7 @@ class TourDetailPage extends React.Component {
                 })
             }, 1500) 
         } 
+        
     }
     // visit provider
     handleVisitProvider = () => {
@@ -244,6 +246,7 @@ class TourDetailPage extends React.Component {
         const showDatePicker = this.state.showDatePicker; 
         const { date, adults, children, price } = this.state;
         const { tour } = this.state;
+        const user_logged_in = !!localStorage.getItem('user-token');      
         const { fullname, phone, email } = this.state;
         const baseUrl = this.state.networkFailed ? '' : this.baseUrl;
         const { isLoading, isBooking } = this.state;
@@ -445,36 +448,41 @@ class TourDetailPage extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="customer-info-group">
-                                            <label className='title'>Full name</label>
-                                            <input 
-                                                type="text" 
-                                                name="fullname"
-                                                className='input-field' 
-                                                value={fullname} 
-                                                onChange={this.handleInputChange}
-                                            />
-                                        </div>
-                                        <div className="customer-info-group">
-                                            <label className='title'>Phone</label>
-                                            <input 
-                                                type="phone" 
-                                                name="phone"
-                                                className='input-field'
-                                                value={phone}  
-                                                onChange={this.handleInputChange}
-                                            />
-                                        </div>
-                                        <div className="customer-info-group">
-                                            <label className='title'>Email</label>
-                                            <input 
-                                                type="email" 
-                                                name="email"
-                                                className='input-field'
-                                                value={email} 
-                                                onChange={this.handleInputChange}
-                                            />
-                                        </div>
+                                        {
+                                            user_logged_in &&
+                                            <>
+                                                <div className="customer-info-group">
+                                                    <label className='title'>Full name</label>
+                                                    <input 
+                                                        type="text" 
+                                                        name="fullname"
+                                                        className='input-field' 
+                                                        value={fullname} 
+                                                        onChange={this.handleInputChange}
+                                                    />
+                                                </div>
+                                                <div className="customer-info-group">
+                                                    <label className='title'>Phone</label>
+                                                    <input 
+                                                        type="phone" 
+                                                        name="phone"
+                                                        className='input-field'
+                                                        value={phone}  
+                                                        onChange={this.handleInputChange}
+                                                    />
+                                                </div>
+                                                <div className="customer-info-group">
+                                                    <label className='title'>Email</label>
+                                                    <input 
+                                                        type="email" 
+                                                        name="email"
+                                                        className='input-field'
+                                                        value={email} 
+                                                        onChange={this.handleInputChange}
+                                                    />
+                                                </div>
+                                            </>
+                                        }
                                         <div className="submit-booking">
                                             <button className="submit" onClick={this.handleBookingSubmit}>
                                                 BOOK NOW

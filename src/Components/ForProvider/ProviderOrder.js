@@ -1,5 +1,6 @@
 import React from 'react'
 import { requestForToken, onMessageListener } from '../../firebase';
+
 import OrderCardManage from '../ForProvider/OrderCardManage'
 import { toast } from 'react-toastify';
 import { withRouter } from 'react-router-dom';
@@ -25,7 +26,7 @@ class ProviderOrder extends React.Component {
     }
 
     baseUrl = this.props.reduxData.baseUrl;
-    //orderState = this.props.orderState ? this.props.orderState : ""; 
+    broadcast_mes_timestamp='';
 
     // change page
     handleOnChangePage = (event, page) => {
@@ -352,15 +353,25 @@ class ProviderOrder extends React.Component {
             endDate: endDate,
             key: 'selection',
         }        
-        
+        // receive firebase cloud message
         onMessageListener()
         .then((payload) => {
             this.getOrders()
             .then(() => {
                 toast.success("New pending order.");
-            });         
+            });       
         })
         .catch((err) => console.log('failed: ', err));
+        // receive message in background from fm-sw.js
+        const broadcast = new BroadcastChannel('booking-message');       
+        broadcast.onmessage = (event) => {
+            if(event.data != this.broadcast_mes_timestamp)
+            {
+                this.broadcast_mes_timestamp = event.data;
+                console.log('received background message in order page:', event.data);
+                this.getOrders();
+            }
+        };
 
         return (
             <div className='provider-order-container'>

@@ -55,8 +55,10 @@ class HeaderNav extends Component {
         }
         if (error.response.status === 401) {
           console.log(error);
-          // redirect to login page or show notification
-          //this.props.history.push('/login', {prevPath: this.props.location.pathname});
+          // clear expired token
+          localStorage.removeItem('user-token');
+          // set current user in redux to null
+          this.props.saveUserRedux(null);
         }
       } finally {
         

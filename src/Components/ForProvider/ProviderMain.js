@@ -11,6 +11,7 @@ import ProviderOrder from './ProviderOrder';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreateTour from './CreateTour';
+import UpdateTour from './UpdateTour';
 import '../../Styles/ForProvider/provider-main.scss';
 
 class ProviderMain extends React.Component {
@@ -43,7 +44,7 @@ class ProviderMain extends React.Component {
                                         <CreateTour />
                                     </Route >
                                     <Route path="/for-provider/tours/:id/edit">
-                                        <CreateTour />
+                                        <UpdateTour />
                                     </Route >
                                     <Route path="/for-provider/orders" exact>
                                         <ProviderOrder />
