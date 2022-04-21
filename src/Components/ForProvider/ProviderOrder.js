@@ -1,6 +1,5 @@
 import React from 'react'
 import { requestForToken, onMessageListener } from '../../firebase';
-
 import OrderCardManage from '../ForProvider/OrderCardManage'
 import { toast } from 'react-toastify';
 import { withRouter } from 'react-router-dom';

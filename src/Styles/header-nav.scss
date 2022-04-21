@@ -41,10 +41,18 @@
     align-items: center;
     justify-content: end;
     min-height: 50px;
+    .loading-container {
+      width: 48px;
+      height: 100%;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: transparent;
+    }
   }
   
   .list-nav-item {
-    /* color: #545454; */
     color: #fff;
     font-size: 15px;
     text-align: center;

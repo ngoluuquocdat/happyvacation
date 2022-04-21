@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import {  subscribeToTopic } from '../../firebase';
+import ReactLoading from "react-loading";
 import { withRouter } from 'react-router-dom';
 import { FaCaretDown } from 'react-icons/fa';
 import HappyVacationLogo from '../../Images/HappyVacation.png';
@@ -12,7 +13,8 @@ import { connect } from 'react-redux';
 class HeaderNav extends Component {
 
     state = {
-      isShowUserMenu: false
+      isShowUserMenu: false,
+      isLoading: false
     };
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -25,6 +27,9 @@ class HeaderNav extends Component {
         return;
       }
       try {
+        this.setState({
+          isLoading: true
+        })
         let res = await axios.get(
           `${this.baseUrl}/api/Users/me`,
           {
@@ -61,8 +66,10 @@ class HeaderNav extends Component {
           this.props.saveUserRedux(null);
         }
       } finally {
-        
-      }  
+        this.setState({
+          isLoading: false
+        })
+      }
     }
 
     // click open user menu
@@ -89,7 +96,8 @@ class HeaderNav extends Component {
     const currentUser = this.props.reduxData.user;
     const isShowUserMenu = this.state.isShowUserMenu;
     const isCurrentUserExist = ((currentUser!=null)&&(Object.keys(currentUser).length !== 0 && currentUser.constructor === Object));
-
+    const isLoading = this.state.isLoading;
+    //const isLoading = true;
     return (
       <div className="header-wrap">
             <div className="nav-bar">             
@@ -104,44 +112,59 @@ class HeaderNav extends Component {
                   <Link to="/" exact="true" className="list-nav-item">Comnunity Blog</Link>
                   <Link to="/" exact="true" className="list-nav-item">Policy</Link>
                   {
-                    isCurrentUserExist ? // check current user null, maybe check token later
-                      <div className="sign-in" onClick={() => this.handleClickUserMenu()}>
-                        <div className="user-avatar">
-                          <img
-                            src={this.baseUrl + currentUser.avatarUrl}
-                            alt="avatar"
-                          />
+                    isLoading ?
+                    <div className="loading-container list-nav-item">
+                        <ReactLoading
+                            className="loading-component"
+                            type={"spin"}
+                            color={"#df385f"}
+                            height={20}
+                            width={20}
+                        />
+                    </div>
+                    :
+                    <>
+                      {
+                        isCurrentUserExist ? // check current user null, maybe check token later
+                        <div className="sign-in" onClick={() => this.handleClickUserMenu()}>
+                          <div className="user-avatar">
+                            <img
+                              src={this.baseUrl + currentUser.avatarUrl}
+                              alt="avatar"
+                            />
+                          </div>
+                          <div className="user-name">
+                            <p className="user-name-text">
+                              {currentUser.username} <FaCaretDown size="0.8em"/>
+                            </p>
+                            {
+                              isShowUserMenu &&
+                              <div className="user-menu">
+                                <ul className="user-menu-list">
+                                  <li className="user-menu-item" onClick={this.toProfile}>Profile</li>
+                                  <li className="user-menu-item" onClick={this.signOut}>Sign out</li>
+                                </ul>
+                              </div>
+                            }
+                          </div>
                         </div>
-                        <div className="user-name">
-                          <p className="user-name-text">
-                            {currentUser.username} <FaCaretDown size="0.8em"/>
-                          </p>
-                          {
-                            isShowUserMenu &&
-                            <div className="user-menu">
-                              <ul className="user-menu-list">
-                                <li className="user-menu-item" onClick={this.toProfile}>Profile</li>
-                                <li className="user-menu-item" onClick={this.signOut}>Sign out</li>
-                              </ul>
-                            </div>
-                          }
-                        </div>
-                      </div>
-                      :
-                      <Link 
-                        to={{
-                          pathname:"/login", 
-                          state:{
-                            prevPath:this.props.location.pathname,
-                            filter: this.props.location.state ? this.props.location.state.filter : null
-                          }
-                        }} 
-                        exact="true" 
-                        className="list-nav-item"
-                      >
-                        Login
-                      </Link>
-                  }                                    
+                        :
+                        <Link 
+                          to={{
+                            pathname:"/login", 
+                            state:{
+                              prevPath:this.props.location.pathname,
+                              filter: this.props.location.state ? this.props.location.state.filter : null
+                            }
+                          }} 
+                          exact="true" 
+                          className="list-nav-item"
+                        >
+                          Login
+                        </Link>
+                      }
+                    </>
+                  }                                                   
                 </div>
               
             </div>
