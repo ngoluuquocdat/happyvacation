@@ -435,13 +435,13 @@ class UpdateTour extends React.Component {
         const { isCreating, isLoading } = this.state;
         
         return (
-            <div className='create-tour-container'>
+            <div className='update-tour-container'>
                 
-                <div className='create-tour-header'>
+                <div className='update-tour-header'>
                     <div className='title'>Tour Information</div>
                     <div className='sub-title'>See and Update your tour information</div>
                 </div>
-                <div className='create-tour-body'>
+                <div className='update-tour-body'>
                     {
                         isLoading ? 
                         <div className="loading-container">

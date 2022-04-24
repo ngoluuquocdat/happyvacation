@@ -15,8 +15,8 @@ class OrderCard extends Component {
 
     render() {
         const order = this.props.order;
-        //const avatarUrl = `url('${this.baseUrl + order.thumbnailUrl}')`;
-        const avatarUrl = `url('${order.thumbnailUrl}')`;
+        const avatarUrl = `url('${this.baseUrl + order.thumbnailUrl}')`;
+        //const avatarUrl = `url('${order.thumbnailUrl}')`;
         return (           
             <div className='order-card' onClick={() => this.handleOpenContent()}>
                 <div className='provider-info'> 

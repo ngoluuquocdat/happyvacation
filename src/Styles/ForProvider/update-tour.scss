@@ -1,7 +1,7 @@
 
 
 
-.create-tour-container {
+.update-tour-container {
     background-color: #fff;
     padding: 20px;
     min-height: 100vh;
@@ -22,7 +22,7 @@
         opacity: 0.2;
     }
 
-    .create-tour-header {
+    .update-tour-header {
         padding-bottom: 20px;
         border-bottom: 1px solid #D7DCE3;
         .title {
@@ -35,7 +35,7 @@
             color: #6A6A6A;
         }
     }
-    .create-tour-body {
+    .update-tour-body {
         padding-top: 30px;
         .loading-container {
             width: 100%;

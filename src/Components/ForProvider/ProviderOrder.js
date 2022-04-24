@@ -84,8 +84,8 @@ class ProviderOrder extends React.Component {
             }
             if (error.response.status === 401) {
                 console.log(error);
-             // redirect to login page or show notification
-             this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
             }
         } finally {
             this.setState({
@@ -345,6 +345,58 @@ class ProviderOrder extends React.Component {
         })
     }
 
+    // export order report
+    exportOrderReport = async () => {
+        // check jwt token
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login', {prevPath: this.props.location.pathname});
+        }
+        // compose the request
+        let { startDate, endDate } = this.state;
+        startDate = `${startDate.getFullYear()}-${("0" + (startDate.getMonth()+1)).slice(-2)}-${("0" + startDate.getDate()).slice(-2)}`;
+        endDate = `${endDate.getFullYear()}-${("0" + (endDate.getMonth()+1)).slice(-2)}-${("0" + endDate.getDate()).slice(-2)}`;
+        console.log('start date', startDate);
+
+        // call api to get the export file's url
+        try {          
+            this.setState({
+                isLoadingReport: true
+            })     
+            let res = await axios.get(
+                `${this.baseUrl}/api/Providers/me/orders/report?startDate=${startDate}&endDate=${endDate}`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );                     
+            // get file path
+            const filePath = res.data.filePath;
+            // accessing file's url means download it!
+            window.location.href = this.baseUrl+filePath;          
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+                //fake api response
+                window.location.href = `${this.baseUrl}/report/MyFile.xls`; 
+                return;
+            }         
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
+            if (error.response.status === 403) {
+                console.log(error)
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
+        } finally {
+            this.setState({
+                isLoadingReport: false
+            })
+        }         
+    }
+
     render() {
         const { orders, page, totalPage, isLoading } = this.state;
         const { startDate, endDate, showDatePicker } = this.state;
@@ -415,7 +467,7 @@ class ProviderOrder extends React.Component {
                                 </div>
                             }                                        
                         </div>
-                        <button className='export-btn'>Export</button>
+                        <button className='export-btn' onClick={this.exportOrderReport}>Export</button>
                     </div>
                 </div>
                 <div className='provider-order-body'>
