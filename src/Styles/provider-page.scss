@@ -63,6 +63,7 @@
                             .content {
                                 color: #d3224b;
                                 margin-left: 10px;
+                                font-size: 16px;
                             }
                         }
                     }
@@ -72,20 +73,32 @@
                         padding: 0 15px;
                         padding-top: 18px;
                         text-align: left;
-                        font-size: 18px;
+                        font-size: 16px;
                         
                     }
                     .provider-main-info {
-                        width: 40%;
+                        width: 35%;
                     }
                     .provider-contact-info {  
-                        width: 60%;
+                        width: 65%;
                         .info-item:last-child {
                             align-items: baseline;
                             .content {
                                 margin: 0;
                             }
                         }                   
+                    }
+                }
+                .provider-description {
+                    text-align: left;
+                    padding: 0 15px;
+                    span {
+                        font-style: italic;
+                        display: block;
+                        margin-bottom: 8px;
+                    }
+                    p {
+                        margin: 0;
                     }
                 }
             }

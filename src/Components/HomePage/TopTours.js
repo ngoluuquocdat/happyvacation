@@ -18,56 +18,59 @@ class TopTours extends Component {
   
   async componentDidMount() {
     const providerId = this.props.providerId;
+    const count = this.props.count;
     // call api to get list top tour
+    let apiUrl = '';
     if(providerId) {
-      console.log(`GET providers/${providerId}/tours/top`)
+      apiUrl = `${this.baseUrl}/api/Providers/${providerId}/tours`
     } else {
-      try {
-        this.setState({
-            isLoading: true,
-        });
-        var params = new URLSearchParams();
-        params.append("sort", "orders");
-        params.append("page", 1);
-        params.append("perPage", 8);
-
-        let res = await axios.get(`${this.baseUrl}/api/Tours`, {
-            params: params,
-        });
-        //console.log(res);
-        const resTopTours = res.data.items;
-        this.setState({
-          topTours: resTopTours,
-        });
-      } catch (error) {
-          if (!error.response) {
-            // fake api response
-            const resTopTours = topTours_temp;
-            // set state
-            this.setState({
-              topTours: resTopTours
-            })
-            return;
-          }
-          if (error.response.status === 404) {
-              console.log(error);
-          }
-          if (error.response.status === 400) {
-              console.log(error);
-          }
-      } finally {
-          setTimeout(() => {
-              this.setState({
-                  isLoading: false,
-              });
-          }, 1000);
-      }
+      apiUrl = `${this.baseUrl}/api/Tours`;
     }
+    try {
+      this.setState({
+          isLoading: true,
+      });
+      var params = new URLSearchParams();
+      params.append("sort", "orders");
+      params.append("page", 1);
+      params.append("perPage", count);
+
+      let res = await axios.get(apiUrl, {
+          params: params,
+      });
+      //console.log(res);
+      const resTopTours = res.data.items;
+      this.setState({
+        topTours: resTopTours,
+      });
+    } catch (error) {
+        if (!error.response) {
+          // fake api response
+          const resTopTours = topTours_temp;
+          // set state
+          this.setState({
+            topTours: resTopTours
+          })
+          return;
+        }
+        if (error.response.status === 404) {
+            console.log(error);
+        }
+        if (error.response.status === 400) {
+            console.log(error);
+        }
+    } finally {
+        setTimeout(() => {
+            this.setState({
+                isLoading: false,
+            });
+        }, 1000);
+    }   
   }
 
   render() {
     const topTours = this.state.topTours;
-
+    const providerId = this.props.providerId;
     const isSmall = this.props.isSmall;
     const className = isSmall ? "top-tours-section small" : "top-tours-section";
 
@@ -75,7 +78,12 @@ class TopTours extends Component {
         <div className="top-tours-container">
             <div className="title-section">
                 <h1 className="title">Popular tours</h1>
-                <h3 className="sub-title">Take a look at some most-ordered tours!</h3>
+                {
+                  providerId ?
+                  <h3 className="sub-title">Take a look at some most-ordered tours from this provider!</h3>
+                  :
+                  <h3 className="sub-title">Take a look at some most-ordered tours!</h3>
+                }
             </div>
             <div className={className}>
                   <TourSlider tours={topTours} baseUrl={this.baseUrl}/>
@@ -123,8 +131,8 @@ class TourSlider extends React.Component {
       <div className={wrapperClass}>
         <Slider {...settings}>
           {tours &&
-            tours.map((item) => (
-                <TourCard tour={item} key={item.id} isSlideItem={true} baseUrl={baseUrl}/>
+            tours.map((item, index) => (
+                <TourCard tour={item} key={item.id} isSlideItem={true} baseUrl={baseUrl} rank={index+1}/>
             ))}
         </Slider>
       </div>

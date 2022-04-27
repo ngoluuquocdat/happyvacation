@@ -1,10 +1,11 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import Medal from "./Medals/Medal";
+import { BsClock } from "react-icons/bs";
+import { FiStar } from "react-icons/fi";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../Styles/tour-card.scss";
-import { BsClock } from "react-icons/bs";
-import { FiStar } from "react-icons/fi";
 
 class TourCard extends Component {
     render() {
@@ -15,6 +16,7 @@ class TourCard extends Component {
         const wrapperClassName = isSlideItem
             ? "tour-card-wrapper slider-item"
             : "tour-card-wrapper";
+        const rank = this.props.rank;
 
         return (
             <div className={wrapperClassName}>
@@ -28,6 +30,7 @@ class TourCard extends Component {
                             {tour.isPrivate && (
                                 <span className="private-label">Private</span>
                             )}
+                            {rank<4 && <Medal rank={rank} top={'-5px'} left={'-12px'}/>}
                         </div>
                         <div className="tour-card-bottom">
                             <div className="tour-details-top">

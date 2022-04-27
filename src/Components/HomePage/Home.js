@@ -13,7 +13,7 @@ class Home extends Component {
       <div className="App">
         <Header isSmall={false}/>
         <TopDestinations />
-        <TopTours />
+        <TopTours count={8}/>
       </div>
     );
   }

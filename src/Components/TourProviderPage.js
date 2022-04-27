@@ -2,6 +2,8 @@ import React from 'react'
 import HeaderNav from './Header/HeaderNav';
 import TopTours from './HomePage/TopTours';
 import TourCard from './TourCard';
+import axios from "axios";
+import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom'
 import { Pagination } from "@mui/material";
 import { FaCaretDown } from 'react-icons/fa';
@@ -16,32 +18,60 @@ class ProviderPage extends React.Component {
     state = {
         provider: {},
         tours: [],
-        totalPage: 2,
-        totalCount: 18,
+        totalPage: 1,
+        totalCount: 8,
         page: 1,
         perPage: 8,
         sort: 'latest',
-        isShowSortMenu: false
+        isShowSortMenu: false,
+        isLoadingTop: false,
+        isLoadingAvailable: false
     }
 
-    componentDidMount() {
+    baseUrl = this.props.reduxData.baseUrl;
+
+    async componentDidMount() {
         // call api to get providers     
         const providerId = this.props.match.params.id;
         console.log(`GET providers/${providerId}`);
-        //fake api response
-        const resProvider = provider;
+        try {
+            this.setState({
+                isLoadingTop: true,
+            });   
+            let res = await axios.get(`${this.baseUrl}/api/Providers/${providerId}`);
+            //console.log(res);
+            const resProvider = res.data;
+            this.setState({
+                provider: resProvider,
+            });
+        } catch (error) {
+            if (!error.response) {
+            // fake api response
+            // fake api response
+            const resProvider = provider;
+            // set state
+            this.setState({
+                provider: resProvider,
+            });
+            return;
+            }
+            if (error.response.status === 404) {
+                console.log(error);
+            }
+            if (error.response.status === 400) {
+                console.log(error);
+            }
+        } finally {
+            setTimeout(() => {
+                this.setState({
+                    isLoadingTop: false,
+                });
+            }, 1000);
+        }      
 
         // call api to get tours
-        const { page, perPage, sort } = this.state;
-        console.log(`GET providers/${providerId}/tours?page=1&perPage=${perPage}&sort=latest`)
-        // fake api response
-        const resTours = listTours.slice(0, perPage);
-
-        // set state`   
-        this.setState({
-            tours: resTours,
-            provider: resProvider,
-        }); 
+        const { perPage } = this.state;
+        this.fetchData(1, perPage, 'latest') 
     }
 
     componentDidUpdate(prevProps, prevState) { 
@@ -50,26 +80,50 @@ class ProviderPage extends React.Component {
         if(prevState.page !== this.state.page && prevState.tours === this.state.tours) {
             const { page, perPage, sort } = this.state;
             // call api to get tours and set state
-            console.log(`GET providers/${providerId}/tours?page=${page}&perPage=${perPage}&sort=${sort}`);
-            // fake api response
-            const resTours = listTours.slice((page - 1) * perPage, (page - 1) * perPage + perPage);
-            this.setState({
-                tours: resTours
-            });   
+            this.fetchData(page, perPage, sort)  
         }
         // when sort option change 
         if(prevState.sort !== this.state.sort) {
-            const { perPage, sort } = this.state;
+            const { page, perPage, sort } = this.state;
             // call api to get tours and set state
-            console.log(`GET providers/${providerId}/tours?page=1&perPage=${perPage}&sort=${sort}`);
-            // fake api response
-            const resTours = listTours.slice(0, perPage);
-            this.setState({
-                tours: resTours,
-                page: 1,
-            });
+            this.fetchData(page, perPage, sort)
         }
     }
+
+    async fetchData(page, perPage, sort) {
+		try {
+            this.setState({
+                isLoadingAvailable: true,
+            });   
+            let res = await axios.get(`${this.baseUrl}/api/Tours?page=${page}&perPage=${perPage}&sort=${sort}`);
+            this.setState({
+                tours: res.data.items,
+                totalPage: res.data.totalPage
+            });
+        } catch (error) {
+            if (!error.response) {
+            // fake api response
+            const resTours = listTours;
+            // set state
+            this.setState({
+                tours: resTours,
+            });
+            return;
+            }
+            if (error.response.status === 404) {
+                console.log(error);
+            }
+            if (error.response.status === 400) {
+                console.log(error);
+            }
+        } finally {
+            setTimeout(() => {
+                this.setState({
+                    isLoadingAvailable: false,
+                });
+            }, 1000);
+        }
+	}
 
     // toggle sort menu
     handleToggleSortMenu = () => {
@@ -97,9 +151,9 @@ class ProviderPage extends React.Component {
     render() {
         const providerId = this.props.match.params.id;
         const { tours, provider, totalCount, page, totalPage } = this.state;
-        const isToursEmtpy = provider.tourAvailable === 0;
+        const isToursEmpty = provider.tourAvailable === 0;
         const {sort, isShowSortMenu} = this.state;
-        const url = `url('${provider.thumbnailPath}')`;
+        const url = `url('${this.baseUrl+provider.avatarUrl}')`;
 
         return (
             <div className="App">
@@ -135,7 +189,7 @@ class ProviderPage extends React.Component {
                                             Available:
                                             <span className="content">{provider.tourAvailable} tours</span>
                                         </div>
-                                    </div>                               
+                                    </div>                             
                                 </div>
                                 <div className='provider-contact-info'>
                                     <div className='info-item'>
@@ -155,21 +209,24 @@ class ProviderPage extends React.Component {
                                     <div className='info-item'>
                                         <GrLocation/>
                                         <div className="group">
-                                            Address:
-                                            <p className="content">{provider.address}</p>
+                                            <span className="content">{provider.address}</span>
                                         </div>
                                     </div>
-                                </div>
+                                </div>                                
                             </div>
+                            <div className='provider-description'>
+                                <span>Description:</span>
+                                <p>{provider.description}</p>
+                            </div> 
                         </div>
                     </div>
                     <hr className="section-divide-hr"></hr>
                     {
-                        isToursEmtpy ?
+                        isToursEmpty ?
                         <div>This provider doesn't have any available tour now...</div>
                         :
                         <>
-                            <TopTours isSmall={true} providerId={providerId}/>
+                            <TopTours isSmall={true} providerId={providerId} count={4}/>
                             <hr className="section-divide-hr"></hr>
                             <div className="available-tours-section">
                                 <div className="header">
@@ -235,7 +292,7 @@ class ProviderPage extends React.Component {
                                 </div>
                                 <div className="list-tours">
                                     {tours.map((item) => {
-                                        return <TourCard tour={item} key={item.id} isSlideItem={false} />;
+                                        return <TourCard tour={item} key={item.id} isSlideItem={false} baseUrl={this.baseUrl}/>;
                                     })}
                                 </div>
                                 {
@@ -269,7 +326,7 @@ const provider = {
     averageRating: 4.4,
     tourAvailable: 180,
     description: '',
-    thumbnailPath: 'https://pbs.twimg.com/profile_images/721952678016737280/ppDehV3R_400x400.jpg'
+    avatarUrl: 'https://pbs.twimg.com/profile_images/721952678016737280/ppDehV3R_400x400.jpg'
 }
 
 const listTours = [
@@ -507,4 +564,10 @@ const listTours = [
     },
 ];
 
-export default withRouter(ProviderPage)
+const mapStateToProps = (state) => {
+    return {
+        reduxData: state,
+    };
+};
+
+export default connect(mapStateToProps)(withRouter(ProviderPage));
