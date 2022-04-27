@@ -89,6 +89,11 @@ class ProviderTour extends React.Component {
                 // redirect to login page or show notification
                 this.props.history.push('/login', {prevPath: this.props.location.pathname});
             }
+            if (error.response.status === 403) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
         } finally {
             this.setState({
                 isLoading: false

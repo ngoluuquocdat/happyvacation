@@ -135,7 +135,7 @@ class TourDetailPage extends React.Component {
             price: this.priceCalc(adults, children)
         })
     }
-    // handle adult minus
+    // handle adult add
     handleAdultsAdd = () => {
         let {adults, children} = this.state;
         if(adults < this.state.tour.groupSize) {
@@ -157,7 +157,7 @@ class TourDetailPage extends React.Component {
             price: this.priceCalc(adults, children)
         })
     }
-    // handle children minus
+    // handle children add
     handleChildrenAdd = () => {
         let {adults, children} = this.state;
         if(children < this.state.tour.groupSize - this.state.adults) {

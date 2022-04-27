@@ -1,31 +1,68 @@
 import React, { Component } from 'react';
 import Slider from 'react-slick';
+import axios from "axios";
+import { connect } from "react-redux";
 import { Left, Right } from '../Header/Arrows';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import '../../Styles/top-tours.scss';
 import TourCard from '../TourCard';
+import 'slick-carousel/slick/slick-theme.css';
+import 'slick-carousel/slick/slick.css';
+import '../../Styles/top-tours.scss';
 
 class TopTours extends Component {
 
   state = {
     topTours: []
   }
+
+  baseUrl = this.props.reduxData.baseUrl;
   
-  componentDidMount() {
+  async componentDidMount() {
     const providerId = this.props.providerId;
     // call api to get list top tour
     if(providerId) {
       console.log(`GET providers/${providerId}/tours/top`)
     } else {
-      console.log("GET tours/top")
+      try {
+        this.setState({
+            isLoading: true,
+        });
+        var params = new URLSearchParams();
+        params.append("sort", "orders");
+        params.append("page", 1);
+        params.append("perPage", 8);
+
+        let res = await axios.get(`${this.baseUrl}/api/Tours`, {
+            params: params,
+        });
+        //console.log(res);
+        const resTopTours = res.data.items;
+        this.setState({
+          topTours: resTopTours,
+        });
+      } catch (error) {
+          if (!error.response) {
+            // fake api response
+            const resTopTours = topTours_temp;
+            // set state
+            this.setState({
+              topTours: resTopTours
+            })
+            return;
+          }
+          if (error.response.status === 404) {
+              console.log(error);
+          }
+          if (error.response.status === 400) {
+              console.log(error);
+          }
+      } finally {
+          setTimeout(() => {
+              this.setState({
+                  isLoading: false,
+              });
+          }, 1000);
+      }
     }
-    // fake api response
-    const resTopTours = topTours_temp;
-    // set state
-    this.setState({
-      topTours: resTopTours
-    })
   }
 
   render() {
@@ -38,10 +75,10 @@ class TopTours extends Component {
         <div className="top-tours-container">
             <div className="title-section">
                 <h1 className="title">Popular tours</h1>
-                <h3 className="sub-title">Take a look at some most-viewed tours!</h3>
+                <h3 className="sub-title">Take a look at some most-ordered tours!</h3>
             </div>
             <div className={className}>
-                  <TourSlider tours={topTours} />
+                  <TourSlider tours={topTours} baseUrl={this.baseUrl}/>
                 <hr
                     style={{
                     height: '1px',
@@ -59,6 +96,7 @@ class TopTours extends Component {
 class TourSlider extends React.Component {
   render() {
     const tours = this.props.tours;
+    const baseUrl = this.props.baseUrl;
     let slidesToShow = 4;
     let slidesToScroll = 4;
     let wrapperClass = "slider-wrap"
@@ -86,7 +124,7 @@ class TourSlider extends React.Component {
         <Slider {...settings}>
           {tours &&
             tours.map((item) => (
-                <TourCard tour={item} key={item.id} isSlideItem={true}/>
+                <TourCard tour={item} key={item.id} isSlideItem={true} baseUrl={baseUrl}/>
             ))}
         </Slider>
       </div>
@@ -328,4 +366,10 @@ const topTours_temp = [
   }
 ];
 
-export default TopTours;
+const mapStateToProps = (state) => {
+  return {
+      reduxData: state,
+  };
+};
+
+export default connect(mapStateToProps)(TopTours);

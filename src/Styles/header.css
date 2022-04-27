@@ -36,6 +36,31 @@
   bottom: 10%;
 }
 
+.search-option-list {
+  margin: 0 16px;
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  justify-content: start;
+  width: 90%;
+}
+.search-option-item {
+  padding: 7px 30px;
+  border-radius: 3px 3px 0 0;
+  font-size: 14px;
+  border-color: #331e1b;
+  background-color: #331e1b;
+  margin-right: 2px;
+  cursor: pointer;
+}
+.search-option-item.active {
+  border-color: #c51f46;
+  background-color: #c51f46;
+}
+.search-option-name {
+  color: #fff;
+  user-select: none;
+}
 
 @keyframes listGrowth {
   from {

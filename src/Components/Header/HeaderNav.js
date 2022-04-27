@@ -47,8 +47,10 @@ class HeaderNav extends Component {
         // set current user in redux
         this.props.saveUserRedux(user);
         // subscribe topic
-        const topic = `Tour_Provider_${user.providerId}`;
-        subscribeToTopic(topic);
+        if(user.providerId !== 0) {
+          const topic = `Tour_Provider_${user.providerId}`;
+          subscribeToTopic(topic);
+        }
       } catch (error) {
         if (!error.response) {
           toast.error("Network error");

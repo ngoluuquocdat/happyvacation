@@ -1,5 +1,4 @@
 import React from 'react'
-import '../../Styles/search-bar.scss'
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
@@ -7,6 +6,7 @@ import Slider from '@mui/material/Slider';
 import { VscLocation, VscCalendar } from 'react-icons/vsc';
 import { FaCaretDown } from 'react-icons/fa';
 import { withRouter } from 'react-router-dom';
+import '../../Styles/search-bar.scss'
 
 const listPlaces = [
     { id: 1, placeName: 'Da Nang' },
@@ -186,7 +186,7 @@ class SearchBar extends React.Component {
             }
         })
     }
-    // display price
+    // display price label for price range picker
     displayPrice = (value) => {
         return `$${value}`;
     }
@@ -360,7 +360,7 @@ class SearchBar extends React.Component {
                                         className="keyword" 
                                         type="text" 
                                         value={this.state.filter.keyword} 
-                                        placeholder='Search for tour name...'
+                                        placeholder='search for tour name...'
                                         onChange={(event) => this.handleKeywordInput(event)}
                                     />
                                 </div>

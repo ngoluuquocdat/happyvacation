@@ -1,13 +1,23 @@
 import React, { Component } from 'react';
-import MyBackgroundCarousel from './MyBackground';
-import '../../Styles/header.css';
-import SearchBar from './SearchBar';
 import HeaderNav from './HeaderNav'
+import MyBackgroundCarousel from './MyBackground';
+import SearchBar from './SearchBar';
+import SearchBarHotel from './SearchBarHotel';
+import '../../Styles/header.css';
 
 class Header extends Component {
   state = {
-    filter: this.props.filter
+    filter: this.props.filter,
+    search_option: 'tours'
   };
+
+  // handle change search option
+  handleChangeSearchOption = (event) => {
+    const search_option = event.target.id.length > 0 ?  event.target.id : event.target.closest('li').id;
+    this.setState({
+      search_option: search_option
+    })
+  }
 
   render() {
     const {
@@ -15,9 +25,11 @@ class Header extends Component {
       isSmall
     } = this.props;
     const filter = this.state.filter;
+    const search_option = this.state.search_option;
     //console.log('filter from header', filter)
     const className = isSmall ? "search-bar-container small" : "search-bar-container"
     return (
+
       <React.Fragment>
         <div className="header-container">
           <HeaderNav
@@ -33,8 +45,20 @@ class Header extends Component {
                 <p className="sub-welcome-text">Where would you like to go?</p>
               </div>
             }
-            
-            <SearchBar filter={filter}/>
+            <ul className="search-option-list">
+              <li className={search_option === 'tours' ? "search-option-item active" : "search-option-item"} id="tours" onClick={this.handleChangeSearchOption}>
+                <span className="search-option-name" >Tours</span>
+              </li>
+              <li className={search_option === 'hotels' ? "search-option-item active" : "search-option-item"} id="hotels" onClick={this.handleChangeSearchOption}>
+                <span className="search-option-name">Hotels</span>
+              </li>
+            </ul>
+            {
+              search_option === 'tours' ? 
+              <SearchBar filter={filter}/>
+              :
+              <SearchBarHotel filter={filter}/>
+            }
           </div>
         </div>
       </React.Fragment>
@@ -42,7 +66,7 @@ class Header extends Component {
   }
 }
 
-// Caraousel Images for Home
+// Carousel Images for Home
 const backgroundImagesData = [
   {
     id: 1,
