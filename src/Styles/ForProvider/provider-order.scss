@@ -114,7 +114,8 @@
             width: 100%;
         }
     }
-    .loading-container {
+    .loading-container,
+    .loading-container__processing {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -123,6 +124,15 @@
         justify-content: center;
         align-items: center;
         background-color: #fff;      
+    }
+    .loading-container__processing {
+        opacity: 0.4;
+        .loading-component {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
     }
     .pagination-container {
         margin-top: 60px;

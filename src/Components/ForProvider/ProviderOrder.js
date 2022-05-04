@@ -24,6 +24,7 @@ class ProviderOrder extends React.Component {
         keyword: '',
         showDatePicker: false,
         isLoading: false,
+        isProcessingOrder: false,
         isLoadingReport: false
     }
 
@@ -268,10 +269,22 @@ class ProviderOrder extends React.Component {
         if(!token) {
             this.props.history.push('/login', {prevPath: this.props.location.pathname});
         }
+        // get type of tab (all, pending or processed)
+        let tabType = (this.props.location.pathname.split('/').at(-1)).toLowerCase();
+        if(tabType !== "pending" && tabType !== "confirmed" && tabType !== "canceled" && tabType !== "processed") {
+            tabType = '';
+        } 
         // post to api
+        const apiUrl = orderState === 'confirmed' ? 
+                        `${this.baseUrl}/api/Orders/${orderId}/confirm` 
+                        :
+                        `${this.baseUrl}/api/Orders/${orderId}/cancel`;
         try {
+            this.setState({
+                isProcessingOrder: true
+            })   
             let res = await axios.put(
-                `${this.baseUrl}/api/Orders/${orderId}?state=${orderState}`,
+                apiUrl,
                 {
                     state: orderState
                 },
@@ -279,16 +292,22 @@ class ProviderOrder extends React.Component {
                     headers: { Authorization:`Bearer ${token}` }
                 }
             );  
-
-            // set state with updated order
-            const index = this.state.orders.findIndex((element) => element.id === res.data.id);
+            // update UI
             let orders = this.state.orders;
-            orders[index] = res.data
+            if(tabType === "pending") {
+                // remove processed order
+                orders = orders.filter((element) => element.id !== res.data.id)
+            } else {
+                // set state with updated order if tab is not 'pending'
+                const index = this.state.orders.findIndex((element) => element.id === res.data.id);
+                orders[index] = res.data
+            }
             this.setState({
                 orders: orders
-            })     
-            // show toast notify
-            
+            })   
+            if(tabType === "pending") {
+                toast.success('Processed order is moved to others tabs!');
+            }           
         } catch (error) {
             if (!error.response) {
                 console.log(error)
@@ -314,7 +333,7 @@ class ProviderOrder extends React.Component {
             }
         } finally {
             this.setState({
-                isCreating: false
+                isProcessingOrder: false
             })
         }
     }
@@ -403,7 +422,7 @@ class ProviderOrder extends React.Component {
         const { orders, page, totalPage, isLoading } = this.state;
         const { startDate, endDate, showDatePicker } = this.state;
         const { keyword } = this.state;
-        const isLoadingReport = this.state.isLoadingReport;
+        const {isProcessingOrder, isLoadingReport} = this.state;
 
         const dateSelectionRange = {
             startDate: startDate,
@@ -491,6 +510,18 @@ class ProviderOrder extends React.Component {
                     {
                         isLoading && 
                         <div className="loading-container">
+                            <ReactLoading
+                                className="loading-component"
+                                type={"spin"}
+                                color={"#df385f"}
+                                height={50}
+                                width={50}
+                            />
+                        </div>
+                    }
+                    {
+                        isProcessingOrder &&
+                        <div className="loading-container__processing">
                             <ReactLoading
                                 className="loading-component"
                                 type={"spin"}
