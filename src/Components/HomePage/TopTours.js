@@ -4,6 +4,7 @@ import axios from "axios";
 import { connect } from "react-redux";
 import { Left, Right } from '../Header/Arrows';
 import TourCard from '../TourCard';
+import ReactLoading from "react-loading";
 import 'slick-carousel/slick/slick-theme.css';
 import 'slick-carousel/slick/slick.css';
 import '../../Styles/top-tours.scss';
@@ -11,7 +12,8 @@ import '../../Styles/top-tours.scss';
 class TopTours extends Component {
 
   state = {
-    topTours: []
+    topTours: [],
+    isLoading: false
   }
 
   baseUrl = this.props.reduxData.baseUrl;
@@ -73,6 +75,7 @@ class TopTours extends Component {
     const providerId = this.props.providerId;
     const isSmall = this.props.isSmall;
     const className = isSmall ? "top-tours-section small" : "top-tours-section";
+    const isLoading = this.state.isLoading;
 
     return (
         <div className="top-tours-container">
@@ -85,6 +88,18 @@ class TopTours extends Component {
                   <h3 className="sub-title">Take a look at some most-ordered tours!</h3>
                 }
             </div>
+            {
+              isLoading &&
+              <div className="loading-container">
+                  <ReactLoading
+                      className="loading-component"
+                      type={"spin"}
+                      color={"#df385f"}
+                      height={50}
+                      width={50}
+                  />
+              </div>
+            }
             <div className={className}>
                   <TourSlider tours={topTours} baseUrl={this.baseUrl}/>
                 <hr

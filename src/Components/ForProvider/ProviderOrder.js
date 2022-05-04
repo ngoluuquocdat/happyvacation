@@ -22,7 +22,9 @@ class ProviderOrder extends React.Component {
         startDate: new Date(),
         endDate: new Date(),
         keyword: '',
-        showDatePicker: false
+        showDatePicker: false,
+        isLoading: false,
+        isLoadingReport: false
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -401,6 +403,7 @@ class ProviderOrder extends React.Component {
         const { orders, page, totalPage, isLoading } = this.state;
         const { startDate, endDate, showDatePicker } = this.state;
         const { keyword } = this.state;
+        const isLoadingReport = this.state.isLoadingReport;
 
         const dateSelectionRange = {
             startDate: startDate,
@@ -467,7 +470,21 @@ class ProviderOrder extends React.Component {
                                 </div>
                             }                                        
                         </div>
-                        <button className='export-btn' onClick={this.exportOrderReport}>Export</button>
+                        <button className='export-btn' onClick={this.exportOrderReport}>
+                            {
+                                isLoadingReport &&
+                                <div className="loading-container">
+                                    <ReactLoading
+                                        className="loading-component"
+                                        type={"spin"}
+                                        color={"#df385f"}
+                                        height={20}
+                                        width={20}
+                                    />
+                                </div>
+                            }
+                            Export
+                        </button>
                     </div>
                 </div>
                 <div className='provider-order-body'>

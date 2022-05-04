@@ -3,6 +3,7 @@ import HeaderNav from './Header/HeaderNav';
 import TopTours from './HomePage/TopTours';
 import TourCard from './TourCard';
 import axios from "axios";
+import ReactLoading from "react-loading";
 import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom'
 import { Pagination } from "@mui/material";
@@ -24,7 +25,7 @@ class ProviderPage extends React.Component {
         perPage: 8,
         sort: 'latest',
         isShowSortMenu: false,
-        isLoadingTop: false,
+        isLoadingProvider: false,
         isLoadingAvailable: false
     }
 
@@ -36,7 +37,7 @@ class ProviderPage extends React.Component {
         console.log(`GET providers/${providerId}`);
         try {
             this.setState({
-                isLoadingTop: true,
+                isLoadingProvider: true,
             });   
             let res = await axios.get(`${this.baseUrl}/api/Providers/${providerId}`);
             //console.log(res);
@@ -64,14 +65,14 @@ class ProviderPage extends React.Component {
         } finally {
             setTimeout(() => {
                 this.setState({
-                    isLoadingTop: false,
+                    isLoadingProvider: false,
                 });
             }, 1000);
         }      
 
         // call api to get tours
         const { perPage } = this.state;
-        this.fetchData(1, perPage, 'latest') 
+        this.fetchDataTour(1, perPage, 'latest') 
     }
 
     componentDidUpdate(prevProps, prevState) { 
@@ -80,17 +81,17 @@ class ProviderPage extends React.Component {
         if(prevState.page !== this.state.page && prevState.tours === this.state.tours) {
             const { page, perPage, sort } = this.state;
             // call api to get tours and set state
-            this.fetchData(page, perPage, sort)  
+            this.fetchDataTour(page, perPage, sort)  
         }
         // when sort option change 
         if(prevState.sort !== this.state.sort) {
             const { page, perPage, sort } = this.state;
             // call api to get tours and set state
-            this.fetchData(page, perPage, sort)
+            this.fetchDataTour(page, perPage, sort)
         }
     }
 
-    async fetchData(page, perPage, sort) {
+    async fetchDataTour(page, perPage, sort) {
 		try {
             this.setState({
                 isLoadingAvailable: true,
@@ -152,7 +153,8 @@ class ProviderPage extends React.Component {
         const providerId = this.props.match.params.id;
         const { tours, provider, totalCount, page, totalPage } = this.state;
         const isToursEmpty = provider.tourAvailable === 0;
-        const {sort, isShowSortMenu} = this.state;
+        const isLoadingProvider = this.state.isLoadingProvider;
+        const { sort, isShowSortMenu } = this.state;
         const url = `url('${this.baseUrl+provider.avatarUrl}')`;
 
         return (
@@ -162,6 +164,18 @@ class ProviderPage extends React.Component {
                 </div>
                 <div className="provider-page-container">
                     <div className="provider-section">
+                        {
+                            isLoadingProvider &&
+                            <div className="loading-container">
+                                <ReactLoading
+                                    className="loading-component"
+                                    type={"spin"}
+                                    color={"#df385f"}
+                                    height={50}
+                                    width={50}
+                                />
+                            </div>
+                        }
                         <div className="provider-section-left">
                             <div className="provider-avatar" style={{backgroundImage: url}} />
                         </div>
