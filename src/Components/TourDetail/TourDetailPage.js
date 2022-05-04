@@ -181,7 +181,10 @@ class TourDetailPage extends React.Component {
     handleBookingSubmit = async() => {
         const token = localStorage.getItem('user-token');
         if(!token) {
-            toast.info('You need to login to continue.');
+            toast.info('You need to login to continue.',
+            {
+                onClick: () => {this.props.history.push('/login', {prevPath: this.props.location.pathname});}
+            });
             return;
         }
         // call api post order
@@ -436,18 +439,21 @@ class TourDetailPage extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="children-booking">
-                                            <div>
-                                                <label className='title'>Children</label>
-                                            </div>
-                                            <div className='quantity-picker-wrap'>
-                                                <div className='quantity-picker'>
-                                                    <span className='minus-btn' onClick={() => this.handleChildrenMinus()}><AiOutlineMinus /></span>
-                                                    <span className='quantity-value'>{children}</span>
-                                                    <span className='add-btn' onClick={() => this.handleChildrenAdd()}><AiOutlinePlus /></span>
+                                        {
+                                            tour.pricePerChild >= 0 &&
+                                            <div className="children-booking">
+                                                <div>
+                                                    <label className='title'>Children</label>
+                                                </div>
+                                                <div className='quantity-picker-wrap'>
+                                                    <div className='quantity-picker'>
+                                                        <span className='minus-btn' onClick={() => this.handleChildrenMinus()}><AiOutlineMinus /></span>
+                                                        <span className='quantity-value'>{children}</span>
+                                                        <span className='add-btn' onClick={() => this.handleChildrenAdd()}><AiOutlinePlus /></span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        }
                                         {
                                             user_logged_in &&
                                             <>
