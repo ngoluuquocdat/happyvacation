@@ -69,11 +69,6 @@ class SideNav extends React.Component {
                                     Create new tour
                                 </NavLink>
                             </li>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <NavLink className="item-link" to="/for-provider/tours/processed">
-                                    Processed
-                                </NavLink>
-                            </li>
                         </ul>
                     </li>
                     <li className='side-nav-item'>
@@ -86,16 +81,6 @@ class SideNav extends React.Component {
                             <li className='submenu-item' onClick={this.handleItemSelect}>
                                 <NavLink className="item-link" to="/for-provider/profile">
                                     Profile
-                                </NavLink>
-                            </li>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <NavLink className="item-link" to="/for-provider/pending">
-                                    Pending
-                                </NavLink>
-                            </li>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <NavLink className="item-link" to="/for-provider/processed">
-                                    Processed
                                 </NavLink>
                             </li>
                         </ul>

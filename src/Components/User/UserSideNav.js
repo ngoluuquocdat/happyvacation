@@ -66,11 +66,6 @@ class UserSideNav extends React.Component {
                                     Tours
                                 </NavLink>
                             </li>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <NavLink className="item-link" to="/user/liked-providers">
-                                    Providers
-                                </NavLink>
-                            </li>
                         </ul>
                     </li>
                 </ul>
