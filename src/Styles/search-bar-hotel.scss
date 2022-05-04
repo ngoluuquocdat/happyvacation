@@ -39,8 +39,7 @@
 
         .destination-menu {
             display: block;
-            // width: 100%; 
-            width: 85%;  // something wrong about 100%, use this
+            width: 100%;
             margin-top: 0;
             background-color: #fff;
             position: absolute;
@@ -107,7 +106,7 @@
         cursor: pointer;
 
         .guest-menu {
-            width: calc(85% - 12px);
+            width: calc(100%);
             background-color: #fff;
             position: absolute;
             top: 100%;
