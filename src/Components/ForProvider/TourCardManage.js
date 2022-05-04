@@ -86,8 +86,10 @@ class TourCardManage extends Component {
                     Adult:&nbsp;
                     ${tour.pricePerAdult}
                     <br></br>
-                    Child:&nbsp;
-                    ${tour.pricePerChild}
+                    {
+                        tour.pricePerChild >= 0 &&
+                        `Child: ${tour.pricePerChild}`                     
+                    }
                 </div>
                 <div className='tour-info-item rating'>
                     {tour.rating>0 ? tour.rating : 'Not Rated'}  

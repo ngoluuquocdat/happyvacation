@@ -43,14 +43,29 @@
             width: 45%;
             justify-content: space-between;
             display: flex;
+            margin-bottom: 24px;
             .form-group {
                 display: flex;
+                align-items: center;
                 margin-right: -15px;
+                margin-bottom: 0;
                 .input-number {
                     margin-left: 10px;
                 }
                 .form-title {
                     font-size: 20px;
+                }
+            }
+        }
+        .price {
+            width: 60%;
+            .include-children-wrap {
+                display: flex;
+                align-items: center;
+                input,
+                label {
+                    user-select: none;
+                    cursor: pointer;
                 }
             }
         }
@@ -61,6 +76,9 @@
                 margin-bottom: 12px;
                 font-size: 22px;
                 font-weight: 450;
+            }
+            .form-title.disabled {
+                color: #aaa;
             }
             .form-title.tour-name {
                 font-size: 28px;

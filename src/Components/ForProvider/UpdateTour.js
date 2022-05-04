@@ -34,6 +34,7 @@ class UpdateTour extends React.Component {
         minAdults: 1,
         pricePerAdult: 0,
         pricePerChild: 0,
+        includeChildren: true,
         itineraries: [ { title: '', content: ''} ],
         expenses: [ { content: '', isIncluded: true } ],
         images: [ { id:0, url: '', newUrl: '', file: null , deleted: false} ],
@@ -84,7 +85,8 @@ class UpdateTour extends React.Component {
                 groupSize: resTour.groupSize,
                 minAdults: resTour.minAdults,
                 pricePerAdult: resTour.pricePerAdult,
-                pricePerChild: resTour.pricePerChild,
+                includeChildren: resTour.pricePerChild >= 0,
+                pricePerChild: resTour.pricePerChild >= 0 ? resTour.pricePerChild: 0,
                 itineraries: resTour.itineraries,
                 expenses: resTour.expenses,
                 durationUnit: resTour.duration >= 1 ? 'Days' : 'Hours',
@@ -226,6 +228,13 @@ class UpdateTour extends React.Component {
         })
     }
 
+    // toggle include children
+    handleIncludeChildren = (event) => {
+        this.setState({
+            includeChildren: event.target.checked
+        })
+    }
+
     // handle itinerary input
     handleItineraryInput = (event, item, index) => {
         const key = event.target.name;
@@ -336,9 +345,9 @@ class UpdateTour extends React.Component {
             this.props.history.push('/login', {prevPath: this.props.location.pathname});
         }
         
-        const { tourName, overview} = this.state;
+        const { tourName, overview } = this.state;
         const { selectedCategories, selectedPlaces, startingLocation, destinationLocation } = this.state;
-        const { isPrivate, duration, groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
+        const { isPrivate, duration, groupSize, minAdults, pricePerAdult, pricePerChild, includeChildren } = this.state;
         let { itineraries, expenses, images } = this.state;
         itineraries = itineraries.filter(element => (element.title !== '') && (element.content !== ''));
         expenses = expenses.filter(element => element.content !== '');
@@ -366,6 +375,7 @@ class UpdateTour extends React.Component {
         data.append('groupSize', groupSize);
         data.append('minAdults', minAdults);
         data.append('pricePerAdult', pricePerAdult);
+        data.append('includeChildren', includeChildren);
         data.append('pricePerChild', pricePerChild); 
         data.append('location', startingLocation);     
         data.append('destination', destinationLocation);     
@@ -425,7 +435,7 @@ class UpdateTour extends React.Component {
         const categories = this.categories;
         const listPlaces = this.listPlaces;
         const { tourName, overview} = this.state;
-        const { isPrivate } = this.state;
+        const { isPrivate, includeChildren } = this.state;
         const { checkedCategoryStates, checkedPlaceStates } = this.state;
         const { duration, durationUnit } = this.state;
         const { groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
@@ -542,7 +552,7 @@ class UpdateTour extends React.Component {
                                 }
                             </div>
                             <div className='form-group'>
-                                <label className="form-title">Destination</label>
+                                <label className="form-title">Ending Location</label>
                                 {
                                     openDestinationLocationField ?
                                     <div className="address-change">
@@ -621,16 +631,28 @@ class UpdateTour extends React.Component {
                                     />
                                 </div>
                                 <div className='form-group'>
-                                    <label className="form-title">Price per Child</label>
+                                    <label className={includeChildren ? 'form-title' : 'form-title disabled'}>Price per Child</label>
                                     <input 
                                         className="input-number" 
                                         type="number" 
                                         name='pricePerChild'  
                                         min="1"
-                                        value={pricePerChild}
+                                        value={includeChildren ? pricePerChild : 0}
+                                        disabled={!includeChildren}
                                         onChange={(event)=>this.onChangeInputNumber(event)}
                                     />
                                 </div> 
+                                <div className='include-children-wrap'>
+                                    <input 
+                                        id="include-children" 
+                                        className="include-children" 
+                                        name='tour-type' 
+                                        type='checkbox' 
+                                        checked={includeChildren}
+                                        onChange={(event)=>this.handleIncludeChildren(event)}
+                                    />
+                                    <label htmlFor='include-children' className='include-children'>Include Children ?</label>
+                                </div>
                             </div>
                             <div className='form-group'>
                                 <label className="form-title">Itinerary</label>

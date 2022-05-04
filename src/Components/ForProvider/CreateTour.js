@@ -27,6 +27,7 @@ class CreateTour extends React.Component {
         groupSize: 1,
         minAdults: 1,
         pricePerAdult: 0,
+        includeChildren: true,
         pricePerChild: 0,
         itineraries: [ { title: '', content: ''} ],
         expenses: [ { content: '', isIncluded: true } ],
@@ -127,6 +128,7 @@ class CreateTour extends React.Component {
             startingLocation: place
         })
     }
+
     onDestinationPlacePick = (place) => {
         this.setState({
             destinationLocation: place
@@ -152,6 +154,13 @@ class CreateTour extends React.Component {
         }
         this.setState({
             [key]: value
+        })
+    }
+
+    // toggle include children
+    handleIncludeChildren = (event) => {
+        this.setState({
+            includeChildren: event.target.checked
         })
     }
 
@@ -264,7 +273,7 @@ class CreateTour extends React.Component {
 
         const { tourName, overview} = this.state;
         const { selectedCategories, selectedPlaces, startingLocation, destinationLocation } = this.state;
-        const { isPrivate, duration, groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
+        const { isPrivate, duration, groupSize, minAdults, pricePerAdult, includeChildren, pricePerChild } = this.state;
         let { itineraries, expenses, images } = this.state;
         itineraries = itineraries.filter(element => (element.title !== '') && (element.content !== ''));
         expenses = expenses.filter(element => element.content !== '');
@@ -297,6 +306,7 @@ class CreateTour extends React.Component {
             groupSize: groupSize,
             minAdults: minAdults,
             pricePerAdult: pricePerAdult,
+            includeChildren: includeChildren,
             pricePerChild: pricePerChild,
             categoryIds: selectedCategories.map(item => item.id),
             placeIds: selectedPlaces.map(item => item.id),
@@ -316,6 +326,7 @@ class CreateTour extends React.Component {
         data.append('groupSize', groupSize);
         data.append('minAdults', minAdults);
         data.append('pricePerAdult', pricePerAdult);
+        data.append('includeChildren', includeChildren);
         data.append('pricePerChild', pricePerChild); 
         data.append('location', startingLocation);     
         data.append('destination', destinationLocation);     
@@ -372,7 +383,7 @@ class CreateTour extends React.Component {
         const categories = this.categories;
         const listPlaces = this.listPlaces;
         const { tourName, overview} = this.state;
-        const { isPrivate } = this.state;
+        const { isPrivate, includeChildren } = this.state;
         const { checkedCategoryStates, checkedPlaceStates } = this.state;
         const { duration, durationUnit } = this.state;
         const { groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
@@ -403,17 +414,17 @@ class CreateTour extends React.Component {
                     <div className='form-group'>
                         <label className="form-title">Tour Type</label>
                         <input 
-                        id="tour-type" 
-                        className="input-check" 
-                        name='tour-type' 
-                        type='checkbox' 
-                        value={isPrivate}
-                        onChange={(event)=>this.handleTourType(event)}
+                            id="tour-type" 
+                            className="input-check" 
+                            name='tour-type' 
+                            type='checkbox' 
+                            value={isPrivate}
+                            onChange={(event)=>this.handleTourType(event)}
                         />
                         <label htmlFor='tour-type' className='tour-type'>Is Private?</label>
                     </div>
                     <div className='form-group'>
-                        <label className="form-title">Category</label>
+                        <label className="form-title">Categories</label>
                         <div className="tour-categories">
                             {
                                 categories.map((item, index) => {
@@ -464,7 +475,7 @@ class CreateTour extends React.Component {
                         </div>
                     </div>
                     <div className='form-group'>
-                        <label className="form-title">Destination</label>
+                        <label className="form-title">Ending Location</label>
                         <div className="place-picker-container">
                             <PlacePicker onPlacePick={this.onDestinationPlacePick}/>
                         </div>
@@ -532,16 +543,28 @@ class CreateTour extends React.Component {
                             />
                         </div>
                         <div className='form-group'>
-                            <label className="form-title">Price per Child</label>
+                            <label className={includeChildren ? 'form-title' : 'form-title disabled'}>Price per Child</label>
                             <input 
                                 className="input-number" 
                                 type="number" 
                                 name='pricePerChild'  
                                 min="1"
-                                value={pricePerChild}
+                                value={includeChildren ? pricePerChild : 0}
+                                disabled={!includeChildren}
                                 onChange={(event)=>this.onChangeInputNumber(event)}
                             />
                         </div> 
+                        <div className='include-children-wrap'>
+                            <input 
+                                id="include-children" 
+                                className="include-children" 
+                                name='tour-type' 
+                                type='checkbox' 
+                                checked={includeChildren}
+                                onChange={(event)=>this.handleIncludeChildren(event)}
+                            />
+                            <label htmlFor='include-children' className='include-children'>Include Children ?</label>
+                        </div>
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Itinerary</label>
