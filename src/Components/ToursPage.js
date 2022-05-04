@@ -46,7 +46,7 @@ class ToursPage extends React.Component {
             params.append("placeId", filter.selectedPlace ? filter.selectedPlace.id : 0);
             params.append("privateOnly", filter.isPrivate);
             params.append("keyword", filter.keyword);
-            params.append("duration", Math.ceil(Math.abs(filter.endDate - filter.startDate) / (1000 * 60 * 60 * 24)));
+            params.append("duration", Math.ceil(Math.abs(filter.endDate - filter.startDate + !!(filter.endDate - filter.startDate)) / (1000 * 60 * 60 * 24)));
             params.append("minPrice", filter.priceRange[0]);
             params.append("maxPrice", filter.priceRange[1]);
             filter.selectedCategories.forEach((item) => {
