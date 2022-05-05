@@ -10,6 +10,10 @@ import { GrClose } from 'react-icons/gr'
 import { VscAdd } from 'react-icons/vsc'
 import { VscEdit } from 'react-icons/vsc'
 import { IoIosReturnLeft } from 'react-icons/io'
+import TextField from '@mui/material/TextField';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import '../../Styles/ForProvider/update-tour.scss'
 
 class UpdateTour extends React.Component {
@@ -23,11 +27,17 @@ class UpdateTour extends React.Component {
         selectedPlaces: [],
         checkedCategoryStates: [],
         checkedPlaceStates: [],
-        showListPlace: false,
         openStartingLocationField: false,
-        openDestinationLocationField: false,
+        openEndingLocationField: false,
+        startPoint: '',
+        endPoint: '',
+        startingTime: this.stringToDateTime("8:30 AM"),
         startingLocation: '',
-        destinationLocation: '',
+        startingAddress: '',
+        endingLocation: '',
+        endingAddress: '',
+        pickUpAsChoice: false,
+        pickUpRange: {id: 0, placeName: ''},
         duration: 1,
         durationUnit: 'Days',
         groupSize: 1,
@@ -45,6 +55,23 @@ class UpdateTour extends React.Component {
     listPlaces = [];
     categories =  [];
     baseUrl = this.props.reduxData.baseUrl;
+
+    stringToDateTime(timeAsString) {
+        // timeAsString format: 8:30 AM
+        let period = timeAsString.slice(-2);
+        let hour_minute_str = timeAsString.replace(period, '').trim();
+        let hour = parseInt(hour_minute_str.split(':')[0]);
+        if(period === 'PM' && hour < 12) {
+            hour = hour + 12;
+        }
+        if(period === 'AM' && hour === 12) {
+            hour = 0;
+        }
+        let minute = parseInt(hour_minute_str.split(':')[1]);
+        let date = new Date();
+        date.setHours(hour, minute, 0);
+        return date;
+    }
 
     async componentDidMount() {
         // call api to get list categories, list places
@@ -71,6 +98,11 @@ class UpdateTour extends React.Component {
             console.log('call api')
             //console.log(res);
             const resTour = res.data;
+            const pickUpAsChoice = resTour.startPoint.includes('CustomerPoint&');
+            let pickUpRange = {id: 0, placeName: ''};
+            if(pickUpAsChoice === true) {
+                pickUpRange = {id: parseInt(resTour.startPoint.split('&')[1]), placeName: resTour.startPoint.split('&')[2]}
+            }
             // set state
             this.setState({
                 tourId: resTour.id,
@@ -79,8 +111,11 @@ class UpdateTour extends React.Component {
                 isPrivate: resTour.isPrivate,
                 selectedCategories: resTour.categories,
                 selectedPlaces: resTour.places,
-                startingLocation: resTour.location,
-                destinationLocation: resTour.destination,
+                startPoint: resTour.startPoint,
+                endPoint: resTour.endPoint,
+                pickUpAsChoice: pickUpAsChoice,
+                pickUpRange: pickUpRange,
+                startingTime: this.stringToDateTime(resTour.startTime),
                 duration: resTour.duration,
                 groupSize: resTour.groupSize,
                 minAdults: resTour.minAdults,
@@ -170,17 +205,47 @@ class UpdateTour extends React.Component {
             checkedPlaceStates: checkedPlaceStates
         })
         // add or remove place item in filter
-        const selectedPlaces = this.state.selectedPlaces;
+        let selectedPlaces = this.state.selectedPlaces;
         if(isChecked) {
+            selectedPlaces = [...selectedPlaces, item]; 
+        } else {
+            selectedPlaces = selectedPlaces.filter((element) => element.id !== item.id);
+        }
+        // check about pickup range
+        let pickUpRange = this.state.pickUpRange;
+        if(selectedPlaces.findIndex((element) => element.id === pickUpRange.id) < 0) {
+            pickUpRange = selectedPlaces.length > 0 ? selectedPlaces[0] : {id: 0, placeName: ''};
+        }
+        // set state
+        this.setState({
+            selectedPlaces: selectedPlaces,
+            pickUpRange: pickUpRange
+        })
+    }
+
+    // handle change location option
+    toggleLocationOption = () => {
+        const pickUpAsChoice = !this.state.pickUpAsChoice;
+        if(pickUpAsChoice === true) {
+            let pickUpRange = this.state.selectedPlaces.length > 0 ? this.state.selectedPlaces[0] : {id: 0, placeName: ''}
             this.setState({
-                selectedPlaces: [...selectedPlaces, item]           
+                pickUpAsChoice: pickUpAsChoice,
+                pickUpRange: pickUpRange
             })
         } else {
             this.setState({
-                selectedPlaces: selectedPlaces.filter((element) => element.id !== item.id)
+                pickUpAsChoice: pickUpAsChoice
             })
         }
     }
+
+    // handle pickup range select
+    handlePickUpRangeSelect = (event, item, index) => {
+        this.setState({
+            pickUpRange: item
+        })
+    }
+
     // toggle place picker
     handleAddressEditClick = (event) => {
         const key = event.target.id;
@@ -196,13 +261,20 @@ class UpdateTour extends React.Component {
     onStartingPlacePick = (place) => {
         this.setState({
             startingLocation: place,
-            openStartingLocationField: false
+            //openStartingLocationField: false
         })
     }
-    onDestinationPlacePick = (place) => {
+    onEndingPlacePick = (place) => {
         this.setState({
-            destinationLocation: place,
-            openDestinationLocationField: false
+            endingLocation: place,
+            //openEndingLocationField: false
+        })
+    }
+
+    // handle new time pick
+    handleNewTimeValue = (newValue) => {
+        this.setState({
+            startingTime: newValue
         })
     }
 
@@ -346,15 +418,29 @@ class UpdateTour extends React.Component {
         }
         
         const { tourName, overview } = this.state;
-        const { selectedCategories, selectedPlaces, startingLocation, destinationLocation } = this.state;
+        const { selectedCategories, selectedPlaces } = this.state;
         const { isPrivate, duration, groupSize, minAdults, pricePerAdult, pricePerChild, includeChildren } = this.state;
+        const { startingLocation, endingLocation, startingAddress, endingAddress, startingTime } = this.state;
+        const { pickUpAsChoice, pickUpRange } = this.state;
         let { itineraries, expenses, images } = this.state;
         itineraries = itineraries.filter(element => (element.title !== '') && (element.content !== ''));
         expenses = expenses.filter(element => element.content !== '');
         images = images.filter(element => !((element.file == null && element.id < 0) || (element.deleted === true && element.id < 0)));
+
+        let isLocationsValid = false;
+        if(pickUpAsChoice === true && pickUpRange.id !== 0) {
+            isLocationsValid = true;
+        }
+        if(pickUpAsChoice === false) {
+            isLocationsValid = (startingLocation !== '') && (startingAddress !== '') &&
+            (endingLocation !== '') && (endingAddress !== '');
+        }
+        console.log('location check', isLocationsValid);
+
         const isValid = (tourName !== '') && (overview !== '') &&
                         (selectedCategories.length > 0) && (selectedPlaces.length > 0) &&
-                        (startingLocation !== '') && (destinationLocation !== '') &&
+                        isLocationsValid &&
+                        (startingTime !== '') &&
                         (itineraries.length > 0) && (expenses.length > 0) && (images.length > 0);
         
         if(!isValid) {
@@ -364,7 +450,21 @@ class UpdateTour extends React.Component {
         this.setState({
             isCreating: true
         })
-
+        // change starting time format
+        let period = startingTime.getHours() >= 12 ? 'PM' : 'AM';
+        let hour = startingTime.getHours() % 12;
+        let minute = startingTime.getMinutes() < 10 ? '0'+startingTime.getMinutes() : startingTime.getMinutes();
+        let startTime = `${hour}:${minute} ${period}`;
+        // starting/ending point format
+        let startPoint='';
+        let endPoint='';
+        if(pickUpAsChoice === true) {
+            startPoint = `CustomerPoint&${pickUpRange.id}&${pickUpRange.placeName}`;
+            endPoint = `CustomerPoint&${pickUpRange.id}&${pickUpRange.placeName}`;
+        } else {
+            startPoint = `${startingAddress}, ${startingLocation}`;
+            endPoint = `${endingAddress}, ${endingLocation}`;
+        }
         // post to api
         const tourId = this.props.match.params.id;
         let data = new FormData();
@@ -377,8 +477,9 @@ class UpdateTour extends React.Component {
         data.append('pricePerAdult', pricePerAdult);
         data.append('includeChildren', includeChildren);
         data.append('pricePerChild', pricePerChild); 
-        data.append('location', startingLocation);     
-        data.append('destination', destinationLocation);     
+        data.append('startTime', startTime); 
+        data.append('startPoint', startPoint);     
+        data.append('endPoint', endPoint);     
         selectedCategories.map((item, index) => {
             data.append(`categoryIds[${index}]`, item.id); 
         })
@@ -411,6 +512,10 @@ class UpdateTour extends React.Component {
 
             // show toast notify
             toast.success('Update your tour successfully!');
+            // redirect to list tours management page
+            setTimeout(() => {              
+                this.props.history.push('/for-provider/tours');
+            }, 2000)
         } catch (error) {
             if (!error.response) {
               toast.error("Network error");
@@ -419,10 +524,14 @@ class UpdateTour extends React.Component {
             if (error.response.status === 400) {
               console.log(error)
             }
+            if (error.response.status === 401) {
+                console.log(error);
+                this.props.history.push('/login');
+            }
             if (error.response.status === 403) {
                 console.log(error)
                 // redirect to login/register for provider
-                this.props.history.push('/login');
+                this.props.history.push('/for-provider/register');
             }
         } finally {
             this.setState({
@@ -440,8 +549,11 @@ class UpdateTour extends React.Component {
         const { duration, durationUnit } = this.state;
         const { groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
         const { itineraries, expenses, images } = this.state;
-        const { startingLocation, destinationLocation } = this.state;
-        const { openStartingLocationField, openDestinationLocationField } = this.state;
+        const { startingAddress, endingAddress, pickUpAsChoice, pickUpRange } = this.state;
+        const { selectedPlaces } = this.state;
+        const { startingTime } = this.state;
+        const { startPoint, endPoint } = this.state;
+        const { openStartingLocationField, openEndingLocationField } = this.state;
         const { isCreating, isLoading } = this.state;
         
         return (
@@ -514,7 +626,6 @@ class UpdateTour extends React.Component {
                                 <label className="form-title">Tourist Sites</label>
                                 <div 
                                     className="places"
-                                    onClick={() => this.handleDestinationClick()}
                                 >
                                     {
                                         listPlaces.map((item, index) => {
@@ -534,39 +645,116 @@ class UpdateTour extends React.Component {
                                     }
                                 </div>
                             </div>
-                            <div className='form-group'>
-                                <label className="form-title">Starting Location</label>
-                                {
-                                    openStartingLocationField ?
-                                    <div className="address-change">
-                                        <div className="place-picker-container">
-                                            <PlacePicker onPlacePick={this.onStartingPlacePick}/>
-                                        </div>
-                                        <span className="back-btn" id='Starting' onClick={this.handleAddressEditClick}><IoIosReturnLeft/> Back</span>
-                                    </div>
-                                    :
-                                    <div className='address-display'>
-                                        <input className="input-field address" type='text' value={startingLocation} readOnly/>
-                                        <span className="edit-btn" id='Starting' onClick={this.handleAddressEditClick}><VscEdit/> Edit</span>
-                                    </div>
-                                }
+
+                            <div className='location-options'>
+                                <label className="location-label">Location</label>    
+                                <label htmlFor='include-children' className='location-option-name'>
+                                    {
+                                        pickUpAsChoice ?
+                                        'Pick up and drop-off customers at their location'
+                                        :
+                                        'Fixed location provided by tour provider'
+                                    }
+                                </label>   
+                                <span className="change-location-option" onClick={this.toggleLocationOption}>Change option</span> 
                             </div>
-                            <div className='form-group'>
-                                <label className="form-title">Ending Location</label>
-                                {
-                                    openDestinationLocationField ?
-                                    <div className="address-change">
-                                        <div className="place-picker-container">
-                                            <PlacePicker onPlacePick={this.onDestinationPlacePick}/>
+                            {
+                                pickUpAsChoice ?
+                                <div className='location-customer-choice'>
+                                    <div className='form-group'>
+                                        <label className="form-title--small">Select place that you provide your pick up/drop-off</label>
+                                        <div className="pickup-range-select">
+                                            {
+                                                selectedPlaces.length > 0 ?
+                                                selectedPlaces.map((item, index) => {
+                                                    return (
+                                                        <div key={'pickup'+item.id} className='item-place'>
+                                                            <input 
+                                                                type="checkbox" 
+                                                                id={'pickup'+item.id} 
+                                                                value={item.placeName} 
+                                                                checked={pickUpRange.id === item.id}
+                                                                onChange={(event) => this.handlePickUpRangeSelect(event, item, index)}
+                                                            />
+                                                            <label htmlFor={'pickup'+item.id}>{item.placeName}</label>
+                                                        </div>
+                                                    )
+                                                })
+                                                :
+                                                <span className="no-tourist-sites-warn">You need to choose tourist sites first.</span>
+                                            }
                                         </div>
-                                        <span className="back-btn" id='Destination' onClick={this.handleAddressEditClick}><IoIosReturnLeft/> Back</span>
                                     </div>
-                                    :
-                                    <div className='address-display'>
-                                        <input className="input-field address" type='text' value={destinationLocation} readOnly/>
-                                        <span className="edit-btn" id='Destination' onClick={this.handleAddressEditClick}><VscEdit/> Edit</span>
+                                </div>
+                                :
+                                <>
+                                    <div className='form-group'>
+                                        <label className="form-title--small">Starting</label>
+                                        {
+                                            openStartingLocationField || startPoint.includes('CustomerPoint&') ?
+                                            <div className="address-change">
+                                                <div className="address-inputs">
+                                                    <div className="place-picker-container">
+                                                        <PlacePicker onPlacePick={this.onStartingPlacePick}/>
+                                                    </div>
+                                                    <input 
+                                                        className="input-field address" 
+                                                        type='text' 
+                                                        placeholder="Detailed number and street..."
+                                                        value={startingAddress}
+                                                        name='startingAddress'
+                                                        onChange={this.handleInputText}
+                                                    />
+                                                </div>
+                                                <span className="back-btn" id='Starting' onClick={this.handleAddressEditClick}><IoIosReturnLeft/> Back</span>
+                                            </div>
+                                            :
+                                            <div className='address-display'>
+                                                <input className="input-field address" type='text' value={startPoint} readOnly/>
+                                                <span className="edit-btn" id='Starting' onClick={this.handleAddressEditClick}><VscEdit/> Edit</span>
+                                            </div>
+                                        }
                                     </div>
-                                }
+                                    <div className='form-group'>
+                                        <label className="form-title--small">Ending</label>
+                                        {
+                                            openEndingLocationField || endPoint.includes('CustomerPoint&')?
+                                            <div className="address-change">
+                                                <div className="address-inputs">
+                                                    <div className="place-picker-container">
+                                                        <PlacePicker onPlacePick={this.onEndingPlacePick}/>
+                                                    </div>
+                                                    <input 
+                                                        className="input-field address" 
+                                                        type='text' 
+                                                        placeholder="Detailed number and street..."
+                                                        value={endingAddress}
+                                                        name='endingAddress'
+                                                        onChange={this.handleInputText}
+                                                    />
+                                                </div>
+                                                <span className="back-btn" id='Ending' onClick={this.handleAddressEditClick}><IoIosReturnLeft/> Back</span>
+                                            </div>
+                                            :
+                                            <div className='address-display'>
+                                                <input className="input-field address" type='text' value={endPoint} readOnly/>
+                                                <span className="edit-btn" id='Ending' onClick={this.handleAddressEditClick}><VscEdit/> Edit</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </>
+                            }                                                       
+                            <div className='form-group'>
+                                <label className="form-title">Starting Time</label>
+                                <div className="starting-time">
+                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                        <TimePicker
+                                            value={startingTime}
+                                            onChange={(newValue) => this.handleNewTimeValue(newValue)}
+                                            renderInput={(params) => <TextField {...params} />}
+                                        />
+                                    </LocalizationProvider>
+                                </div>                       
                             </div>
                             <div className='form-group'>
                                 <label className="form-title">Duration</label>

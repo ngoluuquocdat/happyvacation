@@ -54,13 +54,14 @@
                     font-size: 30px;
                     margin-bottom: 10px;
                 }
-                .tour-location-destination {
+                .tour-start-end {
                     display: flex;
+                    flex-direction: column;
                     justify-content: space-between;
-                    align-items: center;
+                    align-items: flex-start;
 
-                    .tour-location, 
-                    .tour-destination {
+                    .tour-start, 
+                    .tour-end {
                         text-align: left;
                         font-size: 15px;
                         color: #5E6D77;
@@ -71,6 +72,9 @@
                             margin-right: 10px;
                         }
                     }
+                    .tour-end {
+                        margin-top: 6px;
+                    }
                 }
                 .tour-categories {
                     display: flex;
@@ -80,7 +84,7 @@
                     align-items: center;
                     font-size: 15px;
                     text-align: left;
-                    margin-top: 15px;
+                    margin-top: 18px;
                     color: #5E6D77;
                     svg {
                         margin-right: 10px;

@@ -74,8 +74,14 @@
             .form-title {
                 display: block;
                 margin-bottom: 12px;
-                font-size: 22px;
+                font-size: 26px;
                 font-weight: 450;
+            }
+            .form-title--small {
+                display: block;
+                margin-bottom: 12px;
+                font-size: 20px;
+                font-weight: 350;
             }
             .form-title.disabled {
                 color: #aaa;
@@ -101,8 +107,7 @@
                 font-size: 20px;
             }
             .input-field.address {
-                width: 70%;
-                outline: none;
+                margin-top: 10px;
             }
             .input-area {
                 resize: none;
@@ -148,7 +153,7 @@
                 margin-bottom: 10px;
                 display: flex;
                 align-items: center;
-                width: 60%;
+                width: 70%;
                 border: 1px solid #dfdfdf;
                 border-radius: 5px;
             }
@@ -295,6 +300,19 @@
                 }
             }
         } 
+        .location-options {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: baseline;
+            margin-bottom: 16px;
+            .location-label {
+                display: block;
+                margin-bottom: 12px;
+                font-size: 26px;
+                font-weight: 450;
+            }
+        }
         .save-btn-wrapper {
             display: flex;
             align-items: center;

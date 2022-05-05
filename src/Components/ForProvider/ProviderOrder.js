@@ -90,6 +90,11 @@ class ProviderOrder extends React.Component {
                 // redirect to login page or show notification
                 this.props.history.push('/login', {prevPath: this.props.location.pathname});
             }
+            if (error.response.status === 403) {
+                toast.error("Not allowed");
+                // redirect to provider register page or show notification
+                this.props.history.push('/for-provider/register');
+            }
         } finally {
             this.setState({
                 isLoading: false
@@ -146,8 +151,13 @@ class ProviderOrder extends React.Component {
                 }
                 if (error.response.status === 401) {
                     console.log(error);
-                 // redirect to login page or show notification
-                 this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                    // redirect to login page or show notification
+                    this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                }
+                if (error.response.status === 403) {
+                    toast.error("Not allowed");
+                    // redirect to provider register page or show notification
+                    this.props.history.push('/for-provider/register');
                 }
             } finally {
                 this.setState({
@@ -196,8 +206,13 @@ class ProviderOrder extends React.Component {
                 }
                 if (error.response.status === 401) {
                     console.log(error);
-                 // redirect to login page or show notification
-                 this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                    // redirect to login page or show notification
+                    this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                }
+                if (error.response.status === 403) {
+                    toast.error("Not allowed");
+                    // redirect to provider register page or show notification
+                    this.props.history.push('/for-provider/register');
                 }
             } finally {
                 this.setState({
@@ -253,8 +268,13 @@ class ProviderOrder extends React.Component {
             }
             if (error.response.status === 401) {
                 console.log(error);
-             // redirect to login page or show notification
-             this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
+            if (error.response.status === 403) {
+                toast.error("Not allowed");
+                // redirect to provider register page or show notification
+                this.props.history.push('/for-provider/register');
             }
         } finally {
             this.setState({

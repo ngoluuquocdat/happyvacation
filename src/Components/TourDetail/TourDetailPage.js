@@ -34,9 +34,11 @@ class TourDetailPage extends React.Component {
         fullname: this.props.reduxData.user ? this.props.reduxData.user.fullName : '',
         phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
         email: this.props.reduxData.user ? this.props.reduxData.user.email : '',
+        pickingPlace: '',
         isLoading: true,    // must be true
         isBooking: false,
         networkFailed: false
+        
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -92,6 +94,7 @@ class TourDetailPage extends React.Component {
             }, 1000)       
         }  
     }
+    
     componentDidUpdate(prevProps, prevState) {
         if(prevProps.reduxData.user !== this.props.reduxData.user){
             // set state if new user data save in redux
@@ -250,7 +253,7 @@ class TourDetailPage extends React.Component {
         const { date, adults, children, price } = this.state;
         const { tour } = this.state;
         const user_logged_in = !!localStorage.getItem('user-token');      
-        const { fullname, phone, email } = this.state;
+        const { fullname, phone, email, pickingPlace } = this.state;
         const baseUrl = this.state.networkFailed ? '' : this.baseUrl;
         const { isLoading, isBooking } = this.state;
         console.log('tour', tour)
@@ -285,19 +288,31 @@ class TourDetailPage extends React.Component {
                                         }
                                         <span className="review">{tour.reviews} reviews</span>
                                     </div>
-                                    <div className='tour-location-destination'>
-                                        <div className="tour-location">
-                                            <VscLocation /> Start: {tour.location}
+                                    <div className='tour-start-end'>
+                                        <div className="tour-start">
+                                            <VscLocation /> Start:&nbsp;
+                                            {
+                                                tour.startPoint.includes('CustomerPoint&') ?
+                                                'We will pick you up at your chosen place.'
+                                                :
+                                                tour.startPoint
+                                            }
                                         </div>
-                                        <div className="tour-destination">
-                                            <VscLocation /> End: {tour.destination}
+                                        <div className="tour-end">
+                                            <VscLocation /> End:&nbsp;
+                                            {
+                                                tour.endPoint.includes('CustomerPoint&') ?
+                                                'We will take you back to your chosen place.'
+                                                :
+                                                tour.endPoint
+                                            }
                                         </div> 
                                     </div>   
                                     <div className='tour-categories'>
-                                            <BsTag /> 
-                                            {
-                                                tour.categories.map((item) => ` ${item.categoryName},`)
-                                            }                               
+                                        <BsTag /> 
+                                        {
+                                            tour.categories.map((item) => ` ${item.categoryName},`)
+                                        }                               
                                     </div>                        
                                 </div>
                                 <div className='tour-feature'>
@@ -378,7 +393,7 @@ class TourDetailPage extends React.Component {
                                 </div>
                                 <div className='tour-itinerary'>
                                     <h3 className="tour-detail-title">Itinerary</h3>    
-                                    <div className="intinerary-content">
+                                    <div className="itinerary-content">
                                         {
                                             (tour.itineraries && tour.itineraries.length > 0) &&
                                             tour.itineraries.map((item) => {

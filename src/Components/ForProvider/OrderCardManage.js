@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { BsArrowRight } from 'react-icons/bs';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import ReactLoading from "react-loading";
-import { toast } from 'react-toastify';
+import { BsArrowRight } from 'react-icons/bs';
+import { VscLocation } from 'react-icons/vsc';
 import '../../Styles/order-card.scss'
 
 class OrderCardManage extends Component {
@@ -39,6 +37,18 @@ class OrderCardManage extends Component {
                         <h5 className='tour-order-title'>
                             <Link to={`/tours/${order.tourId}`} exact="true" className="link">{order.tourName}</Link>
                         </h5>
+                        <div className='tour-order-start-end'>
+                            <span><VscLocation />
+                                Start:&nbsp;
+                                {
+                                    order.startPoint.includes('&CustomerPoint') ?
+                                    `${order.startPoint.replace('&CustomerPoint', '')} (Customer's location)`
+                                    :
+                                    order.startPoint
+                                }
+                            </span>
+                            <span><VscLocation />End:&nbsp;{order.endPoint}</span>
+                        </div>
                         <div className='tour-order-info'>
                             <div className='tour-order-description-wrap'>
                                 <p className='tour-order-description'>

@@ -286,7 +286,7 @@ class SearchBar extends React.Component {
                             selectedPlace.placeName
                             :
                             'Where are you going?'
-                            }
+                        }
                         </p>
                     </div>
                     {

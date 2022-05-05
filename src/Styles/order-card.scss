@@ -29,26 +29,28 @@
         
 
         .left {
-            width: 33.33333333%;
+            width: 30%;
             padding-right: 15px;
             .tour-thumbnail {
                 background-size: cover;
                 background-repeat: no-repeat;
                 background-position-x: center;
                 background-position-y: center;
-                width: 90%;
+                width: 85%;
                 height: 0;
-                padding-bottom: 90%;
+                padding-bottom: 85%;
             }
         }
         .left.small {
-            width: 25%;
+            width: 30%;
         }
         // .right.small {
         //     width: 75%;
         // }
         .right {
             width: 66.66666666%;
+            //width: 75%;
+
             //padding-left: 15px;
             
             .tour-order-title {
@@ -62,6 +64,19 @@
             }
             .tour-order-title:hover {
                 color: #df385f;
+            }
+            .tour-order-start-end {
+                display: flex;
+                flex-direction: column;
+                span {
+                    margin-bottom: 10px;
+                    margin-left: -4px;
+                    display: flex;
+                    align-items: center;
+                    svg {
+                        margin-right: 5px;
+                    }
+                }
             }
             .tour-order-description {
                 margin: 0;
@@ -81,6 +96,7 @@
                             font-weight: 500;
                             // must be inline-block for ::first-letter to work
                             display: inline-block;  
+                            font-size: 18px;
                         }
                         .order-state::first-letter {
                             text-transform: uppercase;

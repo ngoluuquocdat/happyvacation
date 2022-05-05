@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { BsArrowRight } from 'react-icons/bs';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { BsArrowRight } from 'react-icons/bs';
+import { VscLocation } from 'react-icons/vsc';
 import '../Styles/order-card.scss'
 
 class OrderCard extends Component {
@@ -30,6 +31,18 @@ class OrderCard extends Component {
                         <h5 className='tour-order-title'>
                             <Link to={`/tours/${order.tourId}`} exact="true" className="link">{order.tourName}</Link>
                         </h5>
+                        <div className='tour-order-start-end'>
+                            <span><VscLocation />
+                                Start:&nbsp;
+                                {
+                                    order.startPoint.includes('&CustomerPoint') ?
+                                    `${order.startPoint.replace('&CustomerPoint', '')} (Customer's location)`
+                                    :
+                                    order.startPoint
+                                }
+                            </span>
+                            <span><VscLocation />End:&nbsp;{order.endPoint}</span>
+                        </div>
                         <div className='tour-order-info'>
                             <div className='tour-order-description-wrap'>
                                 <p className='tour-order-description'>
@@ -70,7 +83,7 @@ class OrderCard extends Component {
                                 <p className='tour-order-price'>
                                     <span>Adults: </span>
                                     {order.adults} X ${order.pricePerAdult} <BsArrowRight className='arrow-icon'/> ${order.adults * order.pricePerAdult}
-                                </p>
+                                </p>ada
                                 <p className='tour-order-price'>
                                     <span>Children: </span>
                                     {order.children} X ${order.pricePerChild} <BsArrowRight className='arrow-icon'/> ${order.children * order.pricePerChild}

@@ -7,6 +7,10 @@ import { connect } from 'react-redux';
 import { BsTrash } from 'react-icons/bs'
 import { GrClose } from 'react-icons/gr'
 import { VscAdd } from 'react-icons/vsc'
+import TextField from '@mui/material/TextField';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import '../../Styles/ForProvider/create-tour.scss'
 
 class CreateTour extends React.Component {
@@ -19,9 +23,13 @@ class CreateTour extends React.Component {
         selectedPlaces: [],
         checkedCategoryStates: [],
         checkedPlaceStates: [],
-        showListPlace: false,
         startingLocation: '',
-        destinationLocation: '',
+        startingAddress: '',
+        endingLocation: '',
+        endingAddress: '',
+        pickUpAsChoice: false,
+        pickUpRange: {id: 0, placeName: ''},
+        startingTime: '',
         duration: 1,
         durationUnit: 'Days',
         groupSize: 1,
@@ -110,16 +118,45 @@ class CreateTour extends React.Component {
             checkedPlaceStates: checkedPlaceStates
         })
         // add or remove place item in filter
-        const selectedPlaces = this.state.selectedPlaces;
+        let selectedPlaces = this.state.selectedPlaces;
         if(isChecked) {
+            selectedPlaces = [...selectedPlaces, item]; 
+        } else {
+            selectedPlaces = selectedPlaces.filter((element) => element.id !== item.id);
+        }
+        // check about pickup range
+        let pickUpRange = this.state.pickUpRange;
+        if(selectedPlaces.findIndex((element) => element.id === pickUpRange.id) < 0) {
+            pickUpRange = selectedPlaces.length > 0 ? selectedPlaces[0] : {id: 0, placeName: ''};
+        }
+        // set state
+        this.setState({
+            selectedPlaces: selectedPlaces,
+            pickUpRange: pickUpRange
+        })
+    }
+
+    // handle change location option
+    toggleLocationOption = () => {
+        const pickUpAsChoice = !this.state.pickUpAsChoice;
+        if(pickUpAsChoice === true) {
+            let pickUpRange = this.state.selectedPlaces.length > 0 ? this.state.selectedPlaces[0] : {id: 0, placeName: ''}
             this.setState({
-                selectedPlaces: [...selectedPlaces, item]           
+                pickUpAsChoice: pickUpAsChoice,
+                pickUpRange: pickUpRange
             })
         } else {
             this.setState({
-                selectedPlaces: selectedPlaces.filter((element) => element.id !== item.id)
+                pickUpAsChoice: pickUpAsChoice
             })
         }
+    }
+
+    // handle pickup range select
+    handlePickUpRangeSelect = (event, item, index) => {
+        this.setState({
+            pickUpRange: item
+        })
     }
 
     // handle location picking
@@ -131,7 +168,14 @@ class CreateTour extends React.Component {
 
     onDestinationPlacePick = (place) => {
         this.setState({
-            destinationLocation: place
+            endingLocation: place
+        })
+    }
+
+    // handle new time pick
+    handleNewTimeValue = (newValue) => {
+        this.setState({
+            startingTime: newValue
         })
     }
 
@@ -272,52 +316,55 @@ class CreateTour extends React.Component {
         }
 
         const { tourName, overview} = this.state;
-        const { selectedCategories, selectedPlaces, startingLocation, destinationLocation } = this.state;
+        const { selectedCategories, selectedPlaces } = this.state;
+        const { startingLocation, endingLocation, startingAddress, endingAddress, startingTime } = this.state;
+        const { pickUpAsChoice, pickUpRange } = this.state;
         const { isPrivate, duration, groupSize, minAdults, pricePerAdult, includeChildren, pricePerChild } = this.state;
         let { itineraries, expenses, images } = this.state;
         itineraries = itineraries.filter(element => (element.title !== '') && (element.content !== ''));
         expenses = expenses.filter(element => element.content !== '');
         images = images.filter(element => element.file !== null);
 
+        let isLocationsValid = false;
+        if(pickUpAsChoice === true && pickUpRange.id !== 0) {
+            isLocationsValid = true;
+        }
+        if(pickUpAsChoice === false) {
+            isLocationsValid = (startingLocation !== '') && (startingAddress !== '') &&
+            (endingLocation !== '') && (endingAddress !== '');
+        }
+        console.log('location check', isLocationsValid);
+
         const isValid = (tourName !== '') && (overview !== '') &&
                         (selectedCategories.length > 0) && (selectedPlaces.length > 0) &&
-                        (startingLocation !== '') && (destinationLocation !== '') &&
+                        isLocationsValid &&
+                        (startingTime !== '') &&
                         (itineraries.length > 0) && (expenses.length > 0) && (images.length > 0);
         
-        if(!isValid) {
-            toast.warning('Please fill all information!', {
-                position: "top-right",
-                autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                progress: undefined,
-            });
-            return;
-        }
+        // if(!isValid) {
+        //     toast.warning('Please fill all information!');
+        //     return;
+        // }
         this.setState({
             isCreating: true
         })
-        const newTour = {
-            tourName: tourName,
-            overview: overview,
-            isPrivate: isPrivate,
-            duration: duration,
-            groupSize: groupSize,
-            minAdults: minAdults,
-            pricePerAdult: pricePerAdult,
-            includeChildren: includeChildren,
-            pricePerChild: pricePerChild,
-            categoryIds: selectedCategories.map(item => item.id),
-            placeIds: selectedPlaces.map(item => item.id),
-            location: startingLocation,
-            destination: destinationLocation,
-            itineraries: itineraries,
-            expenses: expenses,
-            images: images.map(item => item.file)
+        // change starting time format
+        let period = startingTime.getHours() >= 12 ? 'PM' : 'AM';
+        let hour = startingTime.getHours() % 12;
+        let minute = startingTime.getMinutes() < 10 ? '0'+startingTime.getMinutes() : startingTime.getMinutes();
+        let startTime = `${hour}:${minute} ${period}`
+        // starting/ending point format
+        let startPoint='';
+        let endPoint='';
+        if(pickUpAsChoice === true) {
+            startPoint = `CustomerPoint&${pickUpRange.id}&${pickUpRange.placeName}`;
+            endPoint = `CustomerPoint&${pickUpRange.id}&${pickUpRange.placeName}`;
+        } else {
+            startPoint = `${startingAddress}, ${startingLocation}`;
+            endPoint = `${endingAddress}, ${endingLocation}`;
         }
+        
         // post to api
-        console.log('New tour: ', newTour);
         let data = new FormData();
         data.append('tourName', tourName);
         data.append('overview', overview);
@@ -328,8 +375,9 @@ class CreateTour extends React.Component {
         data.append('pricePerAdult', pricePerAdult);
         data.append('includeChildren', includeChildren);
         data.append('pricePerChild', pricePerChild); 
-        data.append('location', startingLocation);     
-        data.append('destination', destinationLocation);     
+        data.append('startTime', startTime); 
+        data.append('startPoint', startPoint);     
+        data.append('endPoint', endPoint);     
         selectedCategories.map((item, index) => {
             data.append(`categoryIds[${index}]`, item.id); 
         })
@@ -359,18 +407,23 @@ class CreateTour extends React.Component {
 
             // show toast notify
             toast.success('Create your tour successfully!');
+            // redirect to list tours management page
+            setTimeout(() => {              
+                this.props.history.push('/for-provider/tours');
+            }, 2000)
         } catch (error) {
             if (!error.response) {
               toast.error("Network error");
               return;
             }
             if (error.response.status === 400) {
-              console.log(error)
+                console.log(error)
+                this.props.history.push('/login');
             }
             if (error.response.status === 403) {
                 console.log(error)
                 // redirect to login/register for provider
-                this.props.history.push('/login');
+                this.props.history.push('/for-provider/register');
             }
         } finally {
             this.setState({
@@ -385,11 +438,12 @@ class CreateTour extends React.Component {
         const { tourName, overview} = this.state;
         const { isPrivate, includeChildren } = this.state;
         const { checkedCategoryStates, checkedPlaceStates } = this.state;
+        const { startingAddress, endingAddress, pickUpAsChoice, pickUpRange } = this.state;
+        const { startingTime } = this.state;
         const { duration, durationUnit } = this.state;
         const { groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
-        const { selectedPlace } = this.state;
-        const { itineraries, expenses, images } = this.state;
-        const isPlaceSelected =  selectedPlace && selectedPlace !== 'null' && selectedPlace !== 'undefined';
+        const { selectedPlaces } = this.state;
+        const { itineraries, expenses, images } = this.state;        
         const { isCreating } = this.state;
         return (
             <div className='create-tour-container'>
@@ -446,10 +500,7 @@ class CreateTour extends React.Component {
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Tourist Sites</label>
-                        <div 
-                            className="places"
-                            onClick={() => this.handleDestinationClick()}
-                        >
+                        <div className="places">
                             {
                                 listPlaces.map((item, index) => {
                                     return (
@@ -468,17 +519,89 @@ class CreateTour extends React.Component {
                             }
                         </div>
                     </div>
-                    <div className='form-group'>
-                        <label className="form-title">Starting Location</label>
-                        <div className="place-picker-container">
-                            <PlacePicker onPlacePick={this.onStartingPlacePick}/>
-                        </div>
+                    <div className='location-options'>
+                        <label className="location-label">Location</label>    
+                        <label htmlFor='include-children' className='location-option-name'>
+                            {
+                                pickUpAsChoice ?
+                                'Pick up and drop-off customers at their location'
+                                :
+                                'Fixed location provided by tour provider'
+                            }
+                        </label>   
+                        <span className="change-location-option" onClick={this.toggleLocationOption}>Change option</span> 
                     </div>
-                    <div className='form-group'>
-                        <label className="form-title">Ending Location</label>
-                        <div className="place-picker-container">
-                            <PlacePicker onPlacePick={this.onDestinationPlacePick}/>
+                    {
+                        pickUpAsChoice ?
+                        <div className='location-customer-choice'>
+                            <div className='form-group'>
+                                <label className="form-title--small">Select place that you provide your pick up/drop-off</label>
+                                <div className="pickup-range-select">
+                                    {
+                                        selectedPlaces.length > 0 ?
+                                        selectedPlaces.map((item, index) => {
+                                            return (
+                                                <div key={'pickup'+item.id} className='item-place'>
+                                                    <input 
+                                                        type="checkbox" 
+                                                        id={'pickup'+item.id} 
+                                                        value={item.placeName} 
+                                                        checked={pickUpRange.id === item.id}
+                                                        onChange={(event) => this.handlePickUpRangeSelect(event, item, index)}
+                                                    />
+                                                    <label htmlFor={'pickup'+item.id}>{item.placeName}</label>
+                                                </div>
+                                            )
+                                        })
+                                        :
+                                        <span className="no-tourist-sites-warn">You need to choose tourist sites first.</span>
+                                    }
+                                </div>
+                            </div>
                         </div>
+                        :
+                        <>
+                            <div className='form-group'>
+                                <label className="form-title--small">Starting</label>
+                                <div className="place-picker-container">
+                                    <PlacePicker onPlacePick={this.onStartingPlacePick}/>
+                                </div>
+                                <input 
+                                    className="input-field address" 
+                                    type='text' 
+                                    placeholder="Detailed number and street..."
+                                    value={startingAddress}
+                                    name='startingAddress'
+                                    onChange={this.handleInputText}
+                                />
+                            </div>
+                            <div className='form-group'>
+                                <label className="form-title--small">Ending</label>
+                                <div className="place-picker-container">
+                                    <PlacePicker onPlacePick={this.onDestinationPlacePick}/>
+                                </div>
+                                <input 
+                                    className="input-field address" 
+                                    type='text' 
+                                    placeholder="Detailed number and street..."
+                                    value={endingAddress}
+                                    name='endingAddress'
+                                    onChange={this.handleInputText}
+                                />
+                            </div>
+                        </>
+                    }
+                    <div className='form-group'>
+                        <label className="form-title">Starting Time</label>
+                        <div className="starting-time">
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <TimePicker
+                                    value={startingTime}
+                                    onChange={(newValue) => this.handleNewTimeValue(newValue)}
+                                    renderInput={(params) => <TextField {...params} />}
+                                />
+                            </LocalizationProvider>
+                        </div>                       
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Duration</label>
