@@ -17,6 +17,7 @@ import {
 } from "react-router-dom";
 import { ToastContainer} from 'react-toastify';
 import Register from './Components/Register/RegisterPage';
+import Checkout from './Components/Checkout';
 
 class App extends Component {
   state = { width: 0, height: 0 };
@@ -75,6 +76,10 @@ class App extends Component {
               </Route >
               <Route path="/providers/:id" >
                 <ProviderPage />
+                <Footer />
+              </Route >
+              <Route path="/checkout" >
+                <Checkout />
                 <Footer />
               </Route >
               <Route path="/login" >

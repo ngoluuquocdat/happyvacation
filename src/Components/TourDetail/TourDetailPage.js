@@ -31,10 +31,10 @@ class TourDetailPage extends React.Component {
         price: 0,
         tour: {},
         showDatePicker: false,
-        fullname: this.props.reduxData.user ? this.props.reduxData.user.fullName : '',
-        phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
-        email: this.props.reduxData.user ? this.props.reduxData.user.email : '',
-        pickingPlace: '',
+        // fullname: this.props.reduxData.user ? this.props.reduxData.user.fullName : '',
+        // phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
+        // email: this.props.reduxData.user ? this.props.reduxData.user.email : '',
+        // pickingPlace: '',
         isLoading: true,    // must be true
         isBooking: false,
         networkFailed: false
@@ -51,14 +51,18 @@ class TourDetailPage extends React.Component {
         })
 
         // call api to get tour, and set state
+        const token = localStorage.getItem('user-token');
         const tourId = this.props.match.params.id
         try {
             this.setState({
                 isLoading: true
             })
             let res = await axios.get(
-                `https://localhost:7079/api/Tours/${tourId}`
-            );       
+                `https://localhost:7079/api/Tours/${tourId}`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            ); 
             console.log('call api')
             //console.log(res);
             const resTour = res.data;
@@ -192,54 +196,22 @@ class TourDetailPage extends React.Component {
         }
         // call api post order
         console.log('state date type', typeof this.state.date)
-        let bookingRequest = {
+        console.log(this.state.tour.images[0].url)
+        let bookingSubRequest = {
             tourId: this.state.tour.id,
-            departureDate: `${this.state.date.getFullYear()}-${("0" + (this.state.date.getMonth()+1)).slice(-2)}-${("0" + this.state.date.getDate()).slice(-2)}`,
+            tourName: this.state.tour.tourName,
+            thumbnailUrl: this.state.tour.images[0].url,
+            isPrivate: this.state.tour.isPrivate,
+            startPoint: this.state.tour.startPoint,
+            endPoint: this.state.tour.endPoint,
+            duration: this.state.tour.duration,
+            pricePerAdult: this.state.tour.pricePerAdult,
+            pricePerChild: this.state.tour.pricePerChild,
+            departureDate: `${("0" + this.state.date.getDate()).slice(-2)}/${("0" + (this.state.date.getMonth()+1)).slice(-2)}/${this.state.date.getFullYear()}`,
             adults: this.state.adults,
-            children: this.state.children,
-            touristName: this.state.fullname,
-            touristPhone: this.state.phone,
-            touristEmail: this.state.email
+            children: this.state.children
         }
-
-        try {
-            this.setState({
-                isBooking: true
-            })
-            let res = await axios.post(
-                `${this.baseUrl}/api/Orders`,
-                bookingRequest,
-                {
-                    headers: { Authorization:`Bearer ${token}` }
-                }
-            )
-
-            // show toast notify
-            setTimeout(() => {
-                toast.success('Booking successful!');
-            }, 1500) 
-            
-        } catch(error) {
-            if (!error.response) {
-                toast.error("Network error");
-                console.log(error)
-                return;
-              }
-              if (error.response.status === 400) {
-                console.log(error)
-              }
-              if (error.response.status === 401) {
-                console.log(error);
-                // redirect to login page or show notification
-                this.props.history.push('/login');
-              }
-        } finally {
-            setTimeout(() => {
-                this.setState({
-                    isBooking: false
-                })
-            }, 1500) 
-        } 
+        this.props.history.push('/checkout', {bookingSubRequest: bookingSubRequest});      
         
     }
     // visit provider
@@ -417,121 +389,121 @@ class TourDetailPage extends React.Component {
                                 </div>
                             </div>                          
                         </div>
-                    <div className="right-side">
-                            <div className="booking-section">
-                                    <div className="booking-header">
-                                        <div className="price">
-                                            <span className='label'>{price>tour.pricePerAdult*tour.minAdults?'price':'from'}</span>
-                                            <span className='value'>${price},00</span>
-                                        </div>
-                                    </div>
-                                    <div className="booking-body">
-                                        <div className="date-booking" onClick={() => this.handleDateClick()}>
-                                            <div className="date-display">
-                                                <label className='title'>Date</label>
-                                                <span>{`${("0" + date.getDate()).slice(-2)}/${("0" + (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`} <FaCaretDown /></span>
+                        <div className="right-side">
+                                <div className="booking-section">
+                                        <div className="booking-header">
+                                            <div className="price">
+                                                <span className='label'>{price>tour.pricePerAdult*tour.minAdults?'price':'from'}</span>
+                                                <span className='value'>${price},00</span>
                                             </div>
-                                            {
-                                                showDatePicker && 
-                                                <div className="date-picker" onClick={(event) => event.stopPropagation()}>
-                                                    <Calendar
-                                                        date={date}
-                                                        minDate={new Date()}
-                                                        onChange={this.handleDateSelect}
-                                                    />
+                                        </div>
+                                        <div className="booking-body">
+                                            <div className="date-booking" onClick={() => this.handleDateClick()}>
+                                                <div className="date-display">
+                                                    <label className='title'>Date</label>
+                                                    <span>{`${("0" + date.getDate()).slice(-2)}/${("0" + (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`} <FaCaretDown /></span>
                                                 </div>
-                                            }                                        
-                                        </div>
-                                        <div className="adults-booking">
-                                            <div>
-                                                <label className='title'>Adults</label>                                            
+                                                {
+                                                    showDatePicker && 
+                                                    <div className="date-picker" onClick={(event) => event.stopPropagation()}>
+                                                        <Calendar
+                                                            date={date}
+                                                            minDate={new Date()}
+                                                            onChange={this.handleDateSelect}
+                                                        />
+                                                    </div>
+                                                }                                        
                                             </div>
-                                            <div className='quantity-picker-wrap'>
-                                                <div className='quantity-picker'>
-                                                    <span className='minus-btn' onClick={() => this.handleAdultsMinus()}><AiOutlineMinus /></span>
-                                                    <span className='quantity-value'>{adults}</span>
-                                                    <span className='add-btn' onClick={() => this.handleAdultsAdd()}><AiOutlinePlus /></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {
-                                            tour.pricePerChild >= 0 &&
-                                            <div className="children-booking">
+                                            <div className="adults-booking">
                                                 <div>
-                                                    <label className='title'>Children</label>
+                                                    <label className='title'>Adults</label>                                            
                                                 </div>
                                                 <div className='quantity-picker-wrap'>
                                                     <div className='quantity-picker'>
-                                                        <span className='minus-btn' onClick={() => this.handleChildrenMinus()}><AiOutlineMinus /></span>
-                                                        <span className='quantity-value'>{children}</span>
-                                                        <span className='add-btn' onClick={() => this.handleChildrenAdd()}><AiOutlinePlus /></span>
+                                                        <span className='minus-btn' onClick={() => this.handleAdultsMinus()}><AiOutlineMinus /></span>
+                                                        <span className='quantity-value'>{adults}</span>
+                                                        <span className='add-btn' onClick={() => this.handleAdultsAdd()}><AiOutlinePlus /></span>
                                                     </div>
                                                 </div>
                                             </div>
-                                        }
-                                        {
-                                            user_logged_in &&
-                                            <>
-                                                <div className="customer-info-group">
-                                                    <label className='title'>Full name</label>
-                                                    <input 
-                                                        type="text" 
-                                                        name="fullname"
-                                                        className='input-field' 
-                                                        value={fullname} 
-                                                        onChange={this.handleInputChange}
-                                                    />
+                                            {
+                                                tour.pricePerChild >= 0 &&
+                                                <div className="children-booking">
+                                                    <div>
+                                                        <label className='title'>Children</label>
+                                                    </div>
+                                                    <div className='quantity-picker-wrap'>
+                                                        <div className='quantity-picker'>
+                                                            <span className='minus-btn' onClick={() => this.handleChildrenMinus()}><AiOutlineMinus /></span>
+                                                            <span className='quantity-value'>{children}</span>
+                                                            <span className='add-btn' onClick={() => this.handleChildrenAdd()}><AiOutlinePlus /></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <div className="customer-info-group">
-                                                    <label className='title'>Phone</label>
-                                                    <input 
-                                                        type="phone" 
-                                                        name="phone"
-                                                        className='input-field'
-                                                        value={phone}  
-                                                        onChange={this.handleInputChange}
-                                                    />
-                                                </div>
-                                                <div className="customer-info-group">
-                                                    <label className='title'>Email</label>
-                                                    <input 
-                                                        type="email" 
-                                                        name="email"
-                                                        className='input-field'
-                                                        value={email} 
-                                                        onChange={this.handleInputChange}
-                                                    />
-                                                </div>
-                                            </>
-                                        }
-                                        <div className="submit-booking">
-                                            <button className="submit" onClick={this.handleBookingSubmit}>
-                                                BOOK NOW
-                                                {
-                                                    isBooking &&
-                                                    <ReactLoading
-                                                        className="loading-component"
-                                                        type={"spin"}
-                                                        color={"#fff"}
-                                                        height={20}
-                                                        width={20}
-                                                    />
-                                                }
-                                            </button>
+                                            }
+                                            {
+                                                // user_logged_in &&
+                                                // <>
+                                                //     <div className="customer-info-group">
+                                                //         <label className='title'>Full name</label>
+                                                //         <input 
+                                                //             type="text" 
+                                                //             name="fullname"
+                                                //             className='input-field' 
+                                                //             value={fullname} 
+                                                //             onChange={this.handleInputChange}
+                                                //         />
+                                                //     </div>
+                                                //     <div className="customer-info-group">
+                                                //         <label className='title'>Phone</label>
+                                                //         <input 
+                                                //             type="phone" 
+                                                //             name="phone"
+                                                //             className='input-field'
+                                                //             value={phone}  
+                                                //             onChange={this.handleInputChange}
+                                                //         />
+                                                //     </div>
+                                                //     <div className="customer-info-group">
+                                                //         <label className='title'>Email</label>
+                                                //         <input 
+                                                //             type="email" 
+                                                //             name="email"
+                                                //             className='input-field'
+                                                //             value={email} 
+                                                //             onChange={this.handleInputChange}
+                                                //         />
+                                                //     </div>
+                                                // </>
+                                            }
+                                            <div className="submit-booking">
+                                                <button className="submit" onClick={this.handleBookingSubmit}>
+                                                    BOOK NOW
+                                                    {
+                                                        isBooking &&
+                                                        <ReactLoading
+                                                            className="loading-component"
+                                                            type={"spin"}
+                                                            color={"#fff"}
+                                                            height={20}
+                                                            width={20}
+                                                        />
+                                                    }
+                                                </button>
+                                            </div>
                                         </div>
+                                </div>
+                                <div className="provider-section">
+                                    <div className="provide-title">
+                                        Provided by
                                     </div>
-                            </div>
-                            <div className="provider-section">
-                                <div className="provide-title">
-                                    Provided by
+                                    <div className="provider-main-info">
+                                        <img src={baseUrl + tour.providerAvatar}></img>
+                                        <span className="provider-name">{tour.providerName}</span>
+                                    </div>
+                                    <button className='visit' onClick={this.handleVisitProvider}>VISIT</button>
                                 </div>
-                                <div className="provider-main-info">
-                                    <img src={baseUrl + tour.providerAvatar}></img>
-                                    <span className="provider-name">{tour.providerName}</span>
-                                </div>
-                                <button className='visit' onClick={this.handleVisitProvider}>VISIT</button>
-                            </div>
-                    </div>            
+                        </div>            
                     </div>           
                 }
           </div>

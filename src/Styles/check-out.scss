@@ -1,0 +1,203 @@
+
+
+
+
+
+.check-out-page-container {
+    width: 1200px;
+    min-height: 100vh;
+    margin: 0 auto 60px;
+    box-sizing: border-box;
+    padding-top: 80px;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: -20px;
+
+    .check-out-page__title {
+        text-align: left;
+        margin: 0;
+        font-weight: 400;
+        font-size: 32px;
+        margin-bottom: 16px;
+        padding-left: 15px;
+        padding-right: 15px;
+    } 
+    .check-out-page__content {
+        width: 90%;
+        border-top: 2px solid #DAE1E7;
+        border-bottom: 2px solid #DAE1E7;
+        padding-top: 30px;
+        padding-left: 15px;
+        padding-right: 15px;    
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .tour-booking-detail {
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #DAE1E7;
+            .left {
+                width: 30%;
+                padding-right: 15px;
+                .tour-thumbnail {
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position-x: center;
+                    background-position-y: center;
+                    width: 100%;
+                    height: 0;
+                    padding-bottom: 80%;
+                }
+            }
+            .right {
+                width: 66.66666666%;
+                .tour-name {
+                    padding: 0;
+                    margin: 0;
+                    font-weight: 400;
+                    font-size: 18px;
+                    margin-bottom: 10px;
+                    text-align: left;
+                    text-transform: uppercase;
+                    cursor: pointer;
+                }
+                .tour-order-start-end {
+                    display: flex;
+                    flex-direction: column;
+                    span {
+                        margin-bottom: 10px;
+                        margin-left: -4px;
+                        display: flex;
+                        align-items: center;
+                        svg {
+                            margin-right: 5px;
+                        }
+                    }
+                }
+                .tour-order-info {
+                    display: flex;
+                    justify-content: space-between;
+                    .tour-order-description-wrap {
+                        text-align: left;
+                        .tour-order-description {
+                            margin: 0;
+                            margin-bottom: 10px;
+                        }
+                    }
+                    .booking-detail-wrap {
+                        width: 50%;
+                        text-align: left;
+                        small {
+                            color: #df385f;
+                        }
+                        .tour-order-price {
+                            margin: 0;
+                            margin-bottom: 10px;
+                            .arrow-icon {
+                                margin: 0 5px;
+                            }
+                        }
+                        .tour-order-total-price {
+                            margin: 0;
+                            margin-bottom: 10px;
+                            span {
+                                font-weight: 500;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .customer-information {
+            width: 100%;           
+            padding: 30px 15px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            .customer-form-group {
+                width: 50%;
+                padding: 0 15px;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 12px;
+
+                .input-label {
+                    width: 80%;
+                    display: block;
+                    text-align: left;
+                    margin-bottom: 10px;
+                }
+                .input-field {
+                    display: inline-block;
+                    box-sizing: border-box;
+                    width: 100%;
+                    border: 1px solid #dfdfdf;
+                    outline-width: thin;
+                    outline-color: #df385f;
+                    padding: 8px 12px;
+                    font-size: 16px;
+                    border-radius: 5px;
+                }
+                .note {
+                    font-style: italic;
+                    text-align: left;
+                    display: flex;
+                    margin-top: 8px;
+
+                    .asterisk {
+                        color: red;
+                        margin-right: 4px;
+                        font-size: 20px;
+                    }
+                    .note__content {
+                        font-size: 14px;
+                        .pick-up-range {
+                            color: #df385f;
+                        }
+                    }
+                }
+            }
+            .information-policy {
+                margin-top: 36px;
+                .information-policy__content {
+                    font-size: 14px;
+                    .policy-link {
+                        color: #df385f;
+                        cursor: pointer;
+                    }
+                    .policy-link:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+    }
+    .check-out-controls {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 40px;
+        .btn {
+            width: 100px;
+            padding: 12px 16px;          
+            text-align: center;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 15px;
+            position: relative;
+            margin-right: 60px;
+        }
+        .btn--confirm {
+            background-color: #df385f;  // a bit lighter than booking header
+            color: #fff;
+            margin: 0;
+        }
+    }
+}

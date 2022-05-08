@@ -38,7 +38,8 @@ class HeaderNav extends Component {
         );          
         const user = {
             username: res.data.username,
-            fullName: `${res.data.firstName} ${res.data.lastName}`,
+            firstName: res.data.firstName,
+            lastName: res.data.lastName,
             phone: res.data.phone,
             email: res.data.email,
             avatarUrl: res.data.avatarUrl,
