@@ -63,7 +63,6 @@ class TourDetailPage extends React.Component {
                     headers: { Authorization:`Bearer ${token}` }
                 }
             ); 
-            console.log('call api')
             //console.log(res);
             const resTour = res.data;
             this.setState({

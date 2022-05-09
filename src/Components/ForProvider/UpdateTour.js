@@ -648,7 +648,7 @@ class UpdateTour extends React.Component {
 
                             <div className='location-options'>
                                 <label className="location-label">Location</label>    
-                                <label htmlFor='include-children' className='location-option-name'>
+                                <label className='location-option-name'>
                                     {
                                         pickUpAsChoice ?
                                         'Pick up and drop-off customers at their location'

@@ -166,16 +166,26 @@ class Checkout extends React.Component {
                                 <div className='right'>
                                     <h5 className='tour-name'>{bookingSubRequest.tourName}</h5>
                                     <div className='tour-order-start-end'>
-                                        <span><VscLocation />
+                                        <span>
+                                            <VscLocation />
                                             Start:&nbsp;
                                             {
-                                                bookingSubRequest.startPoint.includes('&CustomerPoint') ?
-                                                `${bookingSubRequest.startPoint.replace('&CustomerPoint', '')} (Customer's location)`
+                                                bookingSubRequest.startPoint.includes('CustomerPoint&') ?
+                                                'We will pick you up at your chosen place.'
                                                 :
                                                 bookingSubRequest.startPoint
                                             }
                                         </span>
-                                        <span><VscLocation />End:&nbsp;{bookingSubRequest.endPoint}</span>
+                                        <span>
+                                            <VscLocation />
+                                            End:&nbsp;
+                                            {
+                                                bookingSubRequest.endPoint.includes('CustomerPoint&') ?
+                                                'We will take you back to your chosen place.'
+                                                :
+                                                bookingSubRequest.endPoint
+                                            }
+                                        </span>
                                     </div>
                                     <div className='tour-order-info'>
                                         <div className='tour-order-description-wrap'>
