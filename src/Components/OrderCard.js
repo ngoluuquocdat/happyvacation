@@ -35,13 +35,21 @@ class OrderCard extends Component {
                             <span><VscLocation />
                                 Start:&nbsp;
                                 {
-                                    order.startPoint.includes('&CustomerPoint') ?
-                                    `${order.startPoint.replace('&CustomerPoint', '')} (Customer's location)`
+                                    order.startPoint.includes('CustomerPoint&') ?
+                                    `${order.startPoint.split('&')[1]} (Customer's location in ${order.startPoint.split('&')[2]})`
                                     :
                                     order.startPoint
                                 }
                             </span>
-                            <span><VscLocation />End:&nbsp;{order.endPoint}</span>
+                            <span><VscLocation />
+                                End:&nbsp;
+                                {
+                                    order.endPoint.includes('CustomerPoint&') ?
+                                    `${order.endPoint.split('&')[1]} (Customer's location in ${order.endPoint.split('&')[2]})`
+                                    :
+                                    order.endPoint
+                                }
+                            </span>
                         </div>
                         <div className='tour-order-info'>
                             <div className='tour-order-description-wrap'>
