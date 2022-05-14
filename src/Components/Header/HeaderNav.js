@@ -100,7 +100,7 @@ class HeaderNav extends Component {
     const isShowUserMenu = this.state.isShowUserMenu;
     const isCurrentUserExist = ((currentUser!=null)&&(Object.keys(currentUser).length !== 0 && currentUser.constructor === Object));
     const isLoading = this.state.isLoading;
-    //const isLoading = true;
+    
     return (
       <div className="header-wrap">
             <div className="nav-bar">             

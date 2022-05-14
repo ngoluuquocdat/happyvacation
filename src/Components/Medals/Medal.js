@@ -8,7 +8,6 @@ class Medal extends Component {
         let left = this.props.left ? this.props.left : 0;
 
         const rank = this.props.rank;
-        console.log(rank)
         let color = '';
         switch(rank) {
             case 1:

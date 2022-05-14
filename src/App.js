@@ -7,6 +7,7 @@ import ProviderPage from './Components/TourProviderPage';
 import UserMain from './Components/User/UserMain';
 import ProviderMain from './Components/ForProvider/ProviderMain';
 import Login from './Components/Login/LoginPage';
+import PlacePage from './Components/Place/PlacePage'
 import logo from './Images/HappyVacation.png';
 import Footer from './Components/Footer/Footer';
 import {
@@ -76,6 +77,10 @@ class App extends Component {
               </Route >
               <Route path="/providers/:id" >
                 <ProviderPage />
+                <Footer />
+              </Route >
+              <Route path="/places/:id" >
+                <PlacePage />
                 <Footer />
               </Route >
               <Route path="/checkout" >

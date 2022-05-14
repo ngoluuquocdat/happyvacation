@@ -81,7 +81,7 @@ class ProviderPage extends React.Component {
         if(prevState.page !== this.state.page && prevState.tours === this.state.tours) {
             const { page, perPage, sort } = this.state;
             // call api to get tours and set state
-            this.fetchDataTour(page, perPage, sort)  
+            this.fetchDataTour(page, perPage, sort)
         }
         // when sort option change 
         if(prevState.sort !== this.state.sort) {

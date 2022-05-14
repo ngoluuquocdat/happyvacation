@@ -20,19 +20,23 @@ class TopTours extends Component {
   
   async componentDidMount() {
     const providerId = this.props.providerId;
+    const placeId = this.props.placeId;
     const count = this.props.count;
     // call api to get list top tour
     let apiUrl = '';
     if(providerId) {
       apiUrl = `${this.baseUrl}/api/Providers/${providerId}/tours`
     } else {
-      apiUrl = `${this.baseUrl}/api/Tours`;
+        apiUrl = `${this.baseUrl}/api/Tours`;
     }
     try {
       this.setState({
           isLoading: true,
       });
       var params = new URLSearchParams();
+      if(placeId) {
+        params.append("placeId", placeId)
+      }
       params.append("sort", "orders");
       params.append("page", 1);
       params.append("perPage", count);
@@ -74,19 +78,33 @@ class TopTours extends Component {
     const topTours = this.state.topTours;
     const providerId = this.props.providerId;
     const isSmall = this.props.isSmall;
+    const width = this.props.width;
+    const subTitle = this.props.subTitle;
     const className = isSmall ? "top-tours-section small" : "top-tours-section";
     const isLoading = this.state.isLoading;
 
+    let style = {}
+    if(width) {
+      style = { width: width }
+    }
+
     return (
-        <div className="top-tours-container">
-            <div className="title-section">
+        <div className="top-tours-container" style={style}>
+            <div className="title-section" style={style}>
                 <h1 className="title">Popular tours</h1>
                 {
-                  providerId ?
-                  <h3 className="sub-title">Take a look at some most-ordered tours from this provider!</h3>
+                  subTitle ?
+                  <h3 className="sub-title">{subTitle}</h3>
                   :
-                  <h3 className="sub-title">Take a look at some most-ordered tours!</h3>
-                }
+                  <>
+                    {
+                      providerId ?
+                      <h3 className="sub-title">Take a look at some most-ordered tours from this provider!</h3>
+                      :
+                      <h3 className="sub-title">Take a look at some most-ordered tours!</h3>
+                    }
+                  </>
+                }              
             </div>
             {
               isLoading &&
@@ -100,7 +118,7 @@ class TopTours extends Component {
                   />
               </div>
             }
-            <div className={className}>
+            <div className={className} style={style}>
                   <TourSlider tours={topTours} baseUrl={this.baseUrl}/>
                 <hr
                     style={{

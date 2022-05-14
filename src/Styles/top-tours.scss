@@ -2,6 +2,8 @@
 
 .top-tours-container {
   width: 100%;
+  margin: 0 -15px;
+  position: relative;
   .title-section {
     width: 80%;
     margin: 0px auto;
@@ -18,11 +20,11 @@
     }
     .sub-title {
       margin-top: 5px;
-      font-size: 16px;
+      font-size: 18px;
     }
   }
   .top-tours-section {
-      width: 85%;
+      width: 80%;
       display: flex;
       flex-direction: column;
       margin: 0px auto;

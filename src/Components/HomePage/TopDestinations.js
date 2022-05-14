@@ -7,20 +7,21 @@ import '../../Styles/top-destinations.scss';
 class TopDestinations extends Component {
 
   handlePlaceSelect = (item) => {
-    const filter = {
-      selectedPlace: {
-        id: item.id,
-        placeName: item.placeName
-      },
-      startDate: new Date(),
-      endDate: new Date(),
-      keyword: '',
-      priceRange: [0, 3000],
-      selectedCategories: [],
-      isPrivate: false,
-      matchAll: false
-    }
-    this.props.history.push('/tours', {filter: filter});
+    // const filter = {
+    //   selectedPlace: {
+    //     id: item.id,
+    //     placeName: item.placeName
+    //   },
+    //   startDate: new Date(),
+    //   endDate: new Date(),
+    //   keyword: '',
+    //   priceRange: [0, 3000],
+    //   selectedCategories: [],
+    //   isPrivate: false,
+    //   matchAll: false
+    // }
+    //this.props.history.push('/tours', {filter: filter});
+    this.props.history.push(`places/${item.id}`);
   }
 
   render() {
