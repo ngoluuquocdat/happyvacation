@@ -68,6 +68,37 @@
   .list-nav-item:hover {
     color: #ec1943;
   }
+
+.destination-menu {
+  display: block;
+  width: 200px;
+  margin-top: 15px;
+  background-color: #fff;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  padding: 8px;
+  text-align: left;
+  list-style: none;
+  border: 1px solid #dfdfdf;
+  box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+  max-height: 300px;
+  overflow: hidden;
+  overflow-y: scroll;
+  color: #000;
+  font-weight: 400;
+  animation: listGrowth ease 0.3s;
+  transform-origin: 50% top;
+
+  .destination-item {
+      padding: 6px 10px;
+  }
+  .destination-item:hover {
+      background-color: #f5f4f7;
+      color: #ec1943;
+  }
+}
   
   .sign-in {
     display: flex;

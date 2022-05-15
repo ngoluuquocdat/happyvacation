@@ -79,10 +79,45 @@ class PlacePage extends React.Component {
         this.setState({intervalId: intervalId});
     }
 
-    componentDidUpdate (prevProps, prevState) {
+    async componentDidUpdate (prevProps, prevState) {
         // call api to get temperature
         if(prevState.place !== this.state.place) {
             this.getWeather();
+        }
+        // when change place id in path
+        if(prevProps.location.pathname !== this.props.location.pathname) {
+            // call api to get place
+            const placeId = this.props.match.params.id
+            try {
+                let res = await axios.get(`${this.baseUrl}/api/Places/${placeId}`);
+                this.setState({
+                    place: res.data,
+                    viewport: {
+                        width: "100%",
+                        height: "100%",
+                        latitude: res.data.latitude,
+                        longitude: res.data.longitude,
+                        zoom: 12
+                    }
+                }) 
+            } catch (error) {
+                if (!error.response) {
+                    toast.error("Network error");
+                    // fake api response
+                    this.baseUrl = '';
+                    this.setState({
+                        place: place_temp,
+                        viewport: {
+                            width: "100%",
+                            height: "100%",
+                            latitude: place_temp.latitude,
+                            longitude: place_temp.longitude,
+                            zoom: 12
+                        }
+                    })            
+                    return;
+                } 
+            }
         }
     }
 
