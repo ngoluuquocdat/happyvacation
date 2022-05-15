@@ -278,7 +278,7 @@ class PlacePage extends React.Component {
                                     width={'100%'}
                                     height={'80vh'}
                                 >
-                                    <source src="https://localhost:7079/storage/HoiAn360.mp4" type="video/mp4" />
+                                    <source src={`${this.baseUrl+place.overviewVideoUrl}`} type="video/mp4" />
                                 </dl8-video>
                             </div>
                         }
@@ -419,6 +419,7 @@ const place_temp = {
             "content": "T-shirts and shorts are okay almost anywhere, but it’s preferable to wear longer trousers and cover your shoulders if you’re visiting temples and other holy places. Likewise, bikinis and swim-shorts are fine on the beach, but refrain from dressing scantily in towns or on the street."
         }
     ],
+    overviewVideoUrl: "https://localhost:7079/storage/HoiAn360.mp4",
     tourCount: 6,
     subTouristSiteCount: 4
 }

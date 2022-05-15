@@ -8,8 +8,11 @@ import UserMain from './Components/User/UserMain';
 import ProviderMain from './Components/ForProvider/ProviderMain';
 import Login from './Components/Login/LoginPage';
 import PlacePage from './Components/Place/PlacePage'
+import TouristSitePage from './Components/Place/TouristSitePage'
 import logo from './Images/HappyVacation.png';
 import Footer from './Components/Footer/Footer';
+import Register from './Components/Register/RegisterPage';
+import Checkout from './Components/Checkout';
 import {
   BrowserRouter,
   Switch,
@@ -17,8 +20,7 @@ import {
   Link
 } from "react-router-dom";
 import { ToastContainer} from 'react-toastify';
-import Register from './Components/Register/RegisterPage';
-import Checkout from './Components/Checkout';
+
 
 class App extends Component {
   state = { width: 0, height: 0 };
@@ -81,6 +83,10 @@ class App extends Component {
               </Route >
               <Route path="/places/:id" >
                 <PlacePage />
+                <Footer />
+              </Route >
+              <Route path="/sites/:id" >
+                <TouristSitePage />
                 <Footer />
               </Route >
               <Route path="/checkout" >

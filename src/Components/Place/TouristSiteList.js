@@ -39,6 +39,27 @@ class TouristSiteList extends Component {
         }
     }
 
+    async componentDidUpdate(prevProps, prevState) {
+        if(prevState.page !== this.state.page) {
+            const {page, perPage} = this.state;
+            const placeId = this.props.placeId;
+            try {
+                let res = await axios.get(`${this.baseUrl}/api/Places/${placeId}/touristSites?page=${page}&perPage=${perPage}`);
+                this.setState({
+                    sites: res.data.items,
+                    totalPage: res.data.totalPage,
+                }) 
+            } catch (error) {
+                if (!error.response) {
+                    toast.error("Network error");
+                    // fake api response
+                    this.baseUrl = '';       
+                    return;
+                } 
+            }
+        }
+    }
+
     // change page
     handleOnChangePage = (event, page) => {
         this.setState({
