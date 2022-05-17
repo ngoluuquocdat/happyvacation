@@ -12,6 +12,11 @@ class OrderCard extends Component {
 
     }
 
+    // see order detail click
+    seeOrderDetail = (event, orderId) => {
+        window.open(`/customer/view/orders/${orderId}`, "_blank");
+    }
+
     baseUrl = this.props.reduxData.baseUrl;
 
     render() {
@@ -91,7 +96,7 @@ class OrderCard extends Component {
                                 <p className='tour-order-price'>
                                     <span>Adults: </span>
                                     {order.adults} X ${order.pricePerAdult} <BsArrowRight className='arrow-icon'/> ${order.adults * order.pricePerAdult}
-                                </p>ada
+                                </p>
                                 <p className='tour-order-price'>
                                     <span>Children: </span>
                                     {order.children} X ${order.pricePerChild} <BsArrowRight className='arrow-icon'/> ${order.children * order.pricePerChild}
@@ -100,6 +105,7 @@ class OrderCard extends Component {
                                     <span>Total price: </span>
                                     ${order.totalPrice}
                                 </p>
+                                <p className='tour-order-see-detail' onClick={(event) => this.seeOrderDetail(event, order.id)}>Detail</p>
                             </div>
                         </div>
                     </div>

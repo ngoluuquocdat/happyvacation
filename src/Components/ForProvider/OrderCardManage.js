@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { BsArrowRight } from 'react-icons/bs';
 import { VscLocation } from 'react-icons/vsc';
 import '../../Styles/order-card.scss'
@@ -17,6 +18,12 @@ class OrderCardManage extends Component {
     // order process click
     orderProcessClick = (event, orderId) => {
         this.props.changeOrderState(orderId, event.target.name)
+    }
+
+    // see order detail click
+    seeOrderDetail = (event, orderId) => {
+        window.open(`/provider/view/orders/${orderId}`, "_blank");
+        //this.props.history.push(`/provider/view/orders/${orderId}`);
     }
 
     render() {
@@ -112,7 +119,7 @@ class OrderCardManage extends Component {
                                 </p>
                             </div>
                             <div className='tourist-information-wrap'>
-                                <p className='tour-order-price'><small>Tourist Information</small></p>
+                                <p className='tour-order-price'><small>Customer Information</small></p>
                                 <p className='tour-order-description'>
                                     {order.touristName}
                                 </p>
@@ -122,6 +129,7 @@ class OrderCardManage extends Component {
                                 <p className='tour-order-description'>
                                     {order.touristEmail}
                                 </p>
+                                <p className='tour-order-see-detail' onClick={(event) => this.seeOrderDetail(event, order.id)}>Detail</p>
                             </div>
                         </div>
                     </div>
@@ -150,6 +158,6 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(OrderCardManage);
+export default connect(mapStateToProps)(withRouter(OrderCardManage));
 
   

@@ -13,6 +13,9 @@ import logo from './Images/HappyVacation.png';
 import Footer from './Components/Footer/Footer';
 import Register from './Components/Register/RegisterPage';
 import Checkout from './Components/Checkout';
+import ProviderOrderDetailModal from './Components/ForProvider/ProviderOrderDetailModal';
+import UserOrderDetailModal from './Components/User/UserTourOrder/UserOrderDetailModal';
+import NotFoundPage from './Components/NotFoundPage';
 import {
   BrowserRouter,
   Switch,
@@ -104,6 +107,15 @@ class App extends Component {
               </Route >
               <Route path="/for-provider">
                 <ProviderMain />
+              </Route >
+              <Route path="/provider/view/orders/:id" exact>
+                  <ProviderOrderDetailModal />
+              </Route >
+              <Route path="/customer/view/orders/:id" exact>
+                  <UserOrderDetailModal />
+              </Route >
+              <Route path="/not-found" exact>
+                  <NotFoundPage />
               </Route >
             </Switch>
             

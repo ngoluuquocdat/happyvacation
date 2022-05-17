@@ -1,6 +1,7 @@
 import React from 'react'
 import { requestForToken, onMessageListener } from '../../firebase';
 import OrderCardManage from '../ForProvider/OrderCardManage'
+import ProviderOrderDetailModal from '../ForProvider/ProviderOrderDetailModal'
 import { toast } from 'react-toastify';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -15,6 +16,7 @@ class ProviderOrder extends React.Component {
     state = {
         orderState: '',
         orders: [],
+        selectedOrderDetail: {},
         totalPage: 0,
         totalCount: 0,
         page: 1,
@@ -25,7 +27,8 @@ class ProviderOrder extends React.Component {
         showDatePicker: false,
         isLoading: false,
         isProcessingOrder: false,
-        isLoadingReport: false
+        isLoadingReport: false,
+        isShowDetailModal: false
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -349,7 +352,7 @@ class ProviderOrder extends React.Component {
             if (error.response.status === 403) {
                 toast.error("Not allowed");
                 // redirect to provider register page or show notification
-                this.props.history.push('/for-provider/register');
+                // this.props.history.push('/for-provider/register');
             }
         } finally {
             this.setState({
@@ -357,6 +360,14 @@ class ProviderOrder extends React.Component {
             })
         }
     }
+
+    // close order detail modal
+    closeModal = () => {
+        this.setState({
+            isShowDetailModal: false
+        })
+    }
+
     // keyword on change
     keywordInput = (event) => {
         this.setState({
@@ -555,7 +566,12 @@ class ProviderOrder extends React.Component {
                         {
                             orders.map((item) => {
                                 return (
-                                    <OrderCardManage key={'order'+item.id} order={item} changeOrderState={this.changeOrderState}/>
+                                    <OrderCardManage 
+                                        key={'order'+item.id} 
+                                        order={item} 
+                                        changeOrderState={this.changeOrderState}
+                                        seeOrderDetail={this.seeOrderDetail}
+                                    />
                                 )
                             })
                         }

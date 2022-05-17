@@ -4,7 +4,7 @@
 
 
 .check-out-page-container {
-    width: 1200px;
+    width: 80%;
     min-height: 100vh;
     margin: 0 auto 60px;
     box-sizing: border-box;
@@ -20,7 +20,7 @@
         text-align: left;
         margin: 0;
         font-weight: 400;
-        font-size: 32px;
+        font-size: 36px;
         margin-bottom: 16px;
         padding-left: 15px;
         padding-right: 15px;
@@ -29,9 +29,7 @@
         width: 90%;
         border-top: 2px solid #DAE1E7;
         border-bottom: 2px solid #DAE1E7;
-        padding-top: 30px;
-        padding-left: 15px;
-        padding-right: 15px;    
+        padding: 30px 15px;  
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -113,68 +111,165 @@
                 }
             }
         }
+        .input-label {
+            width: 80%;
+            display: block;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        .input-field {
+            display: inline-block;
+            box-sizing: border-box;
+            width: 100%;
+            border: 1px solid #dfdfdf;
+            outline-width: thin;
+            outline-color: #df385f;
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        .section__title {
+            margin: 0;
+            padding: 0;
+            font-size: 24px;
+            font-weight: 400;
+        }
+        .date-input {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            position: relative;
+            cursor: pointer;           
+            user-select: none;          
+
+            .date-display {
+                width: 140px;
+                margin-right: 20px;
+                display: flex;
+                justify-content: space-between;     
+                padding: 8px 12px;   
+                border: 1px solid #dfdfdf;
+                border-radius: 5px;              
+            }
+            .date-picker {
+                position: absolute;
+                right: 0;
+                top: 100%;
+                background-color: #fff;
+                border: 1px solid #D7DCE3;
+                z-index: 1;
+                animation: listGrowth ease 0.3s;
+                transform-origin: 50% top;
+                box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
+            }
+        }
+        .information-policy {
+            margin-top: 36px;
+            .information-policy__content {
+                font-size: 14px;
+                .policy-link {
+                    color: #df385f;
+                    cursor: pointer;
+                }
+                .policy-link:hover {
+                    text-decoration: underline;
+                }
+            }
+        }
         .customer-information {
             width: 100%;           
             padding: 30px 15px;
             display: flex;
             justify-content: space-between;
             flex-wrap: wrap;
-            .customer-form-group {
-                width: 50%;
-                padding: 0 15px;
-                box-sizing: border-box;
+            .customer-information-main {
+                width: 100%;           
+                padding-top: 25px;
                 display: flex;
-                flex-direction: column;
-                margin-bottom: 12px;
-
-                .input-label {
-                    width: 80%;
-                    display: block;
-                    text-align: left;
-                    margin-bottom: 10px;
-                }
-                .input-field {
-                    display: inline-block;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                .customer-form-group {
+                    width: 50%;
+                    padding: 0 15px;
                     box-sizing: border-box;
-                    width: 100%;
-                    border: 1px solid #dfdfdf;
-                    outline-width: thin;
-                    outline-color: #df385f;
-                    padding: 8px 12px;
-                    font-size: 16px;
-                    border-radius: 5px;
-                }
-                .note {
-                    font-style: italic;
-                    text-align: left;
                     display: flex;
-                    margin-top: 8px;
-
-                    .asterisk {
-                        color: red;
-                        margin-right: 4px;
-                        font-size: 20px;
-                    }
-                    .note__content {
-                        font-size: 14px;
-                        .pick-up-range {
-                            color: #df385f;
+                    flex-direction: column;
+                    margin-bottom: 12px;
+    
+                    .note {
+                        font-style: italic;
+                        text-align: left;
+                        display: flex;
+                        margin-top: 8px;
+    
+                        .asterisk {
+                            color: red;
+                            margin-right: 4px;
+                            font-size: 20px;
+                        }
+                        .note__content {
+                            font-size: 14px;
+                            .pick-up-range {
+                                color: #df385f;
+                            }
                         }
                     }
                 }
-            }
-            .information-policy {
-                margin-top: 36px;
-                .information-policy__content {
-                    font-size: 14px;
-                    .policy-link {
-                        color: #df385f;
-                        cursor: pointer;
-                    }
-                    .policy-link:hover {
-                        text-decoration: underline;
+            }           
+        }
+        .member-information {
+            width: 100%;           
+            padding: 30px 15px 0 15px;
+            border-top: 2px solid #DAE1E7;
+            .member-information__adults,
+            .member-information__children {
+                padding-bottom: 25px;
+                border-bottom: 2px solid #DAE1E7;
+                .member-information__form-title {
+                    text-align: left;
+                    padding-left: 15px;
+                    margin-top: 25px;
+                    margin-bottom: 10px;
+                }
+                .member-information__form {
+                    width: 100%;           
+                    // padding: 0 15px 0 15px;
+                    display: flex;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    .member-form-group {
+                        width: 50%;
+                        padding: 0 15px;
+                        box-sizing: border-box;
+                        display: flex;
+                        flex-direction: column;
+                        margin-bottom: 12px;                       
                     }
                 }
+                .fill-all-warning {
+                    display: block;
+                    margin-top: 12px;
+                    color: red;
+                }
+                .age-warning {
+                    color: red;
+                    width: 250px;
+                }
+                .btn-more {
+                    width: 128px;
+                    padding: 12px 16px; 
+                    margin-top: 12px;         
+                    text-align: center;
+                    border: none;
+                    border-radius: 3px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    background-color: #df385f;  // a bit lighter than booking header
+                    color: #fff;
+                }
+            }
+            .member-information__children{
+                border: none
             }
         }
     }

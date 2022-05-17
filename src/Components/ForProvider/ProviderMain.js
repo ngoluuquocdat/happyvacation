@@ -1,8 +1,10 @@
 import React from 'react';
 import {
     Switch,
-    Route
+    Route,
+    withRouter
 } from "react-router-dom";
+import { connect } from 'react-redux';
 import HeaderNav from '../Header/HeaderNav'
 import SideNav from './SideNav';
 import ProviderTour from './ProviderTour';
@@ -15,6 +17,27 @@ import UpdateTour from './UpdateTour';
 import '../../Styles/ForProvider/provider-main.scss';
 
 class ProviderMain extends React.Component {
+
+    componentDidMount() {
+        const currentUser = this.props.reduxData.baseUrl;
+        if(currentUser.providerId === 0) {
+            this.props.history.push('/for-provider/register');
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps.reduxData.user !== this.props.reduxData.user){
+            // set state if new user data save in redux
+            if(this.props.reduxData.user === null) {
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                return;
+            }
+            if(this.props.reduxData.user.providerId === 0) {
+                this.props.history.push('/for-provider/register');
+            }
+        }
+    }
+
     render() {
         return(
             <>
@@ -68,4 +91,10 @@ class ProviderMain extends React.Component {
     }
 }
 
-export default ProviderMain;
+const mapStateToProps = (state) => {
+    return {
+        reduxData: state
+    }
+}
+
+export default connect(mapStateToProps)(withRouter(ProviderMain));
