@@ -84,7 +84,7 @@ class TourDetailPage extends React.Component {
                 return;
             } 
             if (error.response.status === 404) {
-                console.log(error)
+                this.props.history.push('/not-found');
             }
             if (error.response.status === 400) {
               console.log(error)
