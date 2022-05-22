@@ -6,6 +6,7 @@ import ReactLoading from "react-loading";
 import { Calendar } from 'react-date-range';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 import { FaCaretDown } from 'react-icons/fa';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai'
 import { VscLocation } from 'react-icons/vsc';
@@ -43,6 +44,11 @@ class Checkout extends React.Component {
         if(!token) {
             this.props.history.push('/login');
         }
+        
+        if(!this.props.location.state.bookingSubRequest) {
+            this.props.history.push('/');
+        }
+
         // initiate adults and children list
         const { adults, children } = this.props.location.state.bookingSubRequest;
 
@@ -228,37 +234,44 @@ class Checkout extends React.Component {
     }
 
     // handle confirm booking
-    handleConfirm = async () => {
+    handleConfirm = async (transactionId) => {       
         // check token
         const token = localStorage.getItem('user-token');
         if(!token) {
             this.props.history.push(`/login`);
         }
+        const bookingSubRequest = this.props.location.state.bookingSubRequest;
         // check valid
         const { firstName, lastName, phone, email, identifyNumber, pickingPlace } = this.state;
-        const { adultsList, childrenList } = this.state;
+        const adultsList = [...this.state.adultsList];   
+        const childrenList = [...this.state.childrenList];    
 
-        let customerValid = true;
-        if(Object.values(this.state).includes('')) {
-            customerValid = false;
-        }
+        // let customerValid = true;
+        // if(firstName === '' || lastName === '' || phone === '' || email === '', identifyNumber === '') {
+        //     customerValid = false;
+        // }
+        // if(bookingSubRequest.startPoint.includes('CustomerPoint&')) {
+        //     if(pickingPlace === '') {
+        //         customerValid = false;
+        //     }
+        // }
 
-        let listsValid = true;
-        // valid adults list
-        for(let i=0; i<adultsList.length; i++) {
-            if(this.checkAdultItem(i) === false) {
-                listsValid = false;
-            }
-        }
-        // valid children list
-        for(let i=0; i<childrenList.length; i++) {
-            if(this.checkChildItem(i) === false) {
-                listsValid = false;
-            }
-            if(this.checkChildAge(childrenList[i].dob) === false) {
-                listsValid = false;
-            }
-        }
+        // let listsValid = true;
+        // // valid adults list
+        // for(let i=0; i<adultsList.length; i++) {
+        //     if(this.checkAdultItem(i) === false) {
+        //         listsValid = false;
+        //     }
+        // }
+        // // valid children list
+        // for(let i=0; i<childrenList.length; i++) {
+        //     if(this.checkChildItem(i) === false) {
+        //         listsValid = false;
+        //     }
+        //     if(this.checkChildAge(childrenList[i].dob) === false) {
+        //         listsValid = false;
+        //     }
+        // }
         // change date time format to string dd/MM/yyyy
         for(let i=0; i<adultsList.length; i++) {
             adultsList[i].dob = this.dateTimeToString(adultsList[i].dob);
@@ -267,13 +280,17 @@ class Checkout extends React.Component {
             childrenList[i].dob = this.dateTimeToString(childrenList[i].dob);
         }
 
-        if(customerValid === false || listsValid === false) {
-            toast.warning('Your information is invalid!');
-            return;
-        }
+        // start point & end point
+        const startPoint = bookingSubRequest.startPoint.includes('CustomerPoint&') ?
+                           `CustomerPoint&${pickingPlace}&${bookingSubRequest.startPoint.split('&')[2]}`
+                            :
+                            bookingSubRequest.startPoint;
+        const endPoint = bookingSubRequest.endPoint.includes('CustomerPoint&') ?
+                         `CustomerPoint&${pickingPlace}&${bookingSubRequest.startPoint.split('&')[2]}`
+                            :
+                            bookingSubRequest.endPoint;                   
 
         // submit to api
-        const bookingSubRequest = this.props.location.state.bookingSubRequest;
         let bookingRequest = {
             tourId: bookingSubRequest.tourId,
             departureDate: bookingSubRequest.departureDate,
@@ -284,14 +301,17 @@ class Checkout extends React.Component {
             touristName: `${firstName} ${lastName}`,
             touristPhone: phone,
             touristEmail: email,
-            touristIdentify: identifyNumber,
-            startPoint: `CustomerPoint&${pickingPlace}&${bookingSubRequest.startPoint.split('&')[2]}`,
-            endPoint: `CustomerPoint&${pickingPlace}&${bookingSubRequest.startPoint.split('&')[2]}`
+            touristIdentity: identifyNumber,
+            startPoint: startPoint,
+            endPoint: endPoint,
+            transactionId: transactionId
         }
+        console.log('booking Request', bookingRequest);
         try {
-            this.setState({
-                isBooking: true
-            })
+            // this.setState({
+            //     isBooking: true
+            // })
+            console.log("start calling api");
             let res = await axios.post(
                 `${this.baseUrl}/api/Orders`,
                 bookingRequest,
@@ -305,7 +325,17 @@ class Checkout extends React.Component {
                 toast.success('Booking successful!');
             }, 1500) 
             // to successful page
-            this.props.history.push(`/checkout/successful`);            
+            this.props.history.push(`/checkout/successful`, 
+            {
+                tourName: bookingSubRequest.tourName,
+                providerName: bookingSubRequest.providerName,
+                totalPrice: bookingSubRequest.adults * bookingSubRequest.pricePerAdult + bookingSubRequest.children * bookingSubRequest.pricePerChild
+            });  
+            
+            // paypal payment
+            // const paymentUrl = res.data;
+            // window.open(paymentUrl);
+
         } catch(error) {
             if (!error.response) {
                 toast.error("Network error");
@@ -328,6 +358,57 @@ class Checkout extends React.Component {
             }, 1500) 
         } 
     }
+
+    // valid fields
+    valid = () => {
+         const bookingSubRequest = this.props.location.state.bookingSubRequest;
+        // check valid
+        const { firstName, lastName, phone, email, identifyNumber, pickingPlace } = this.state;
+        const { adultsList, childrenList } = this.state;       
+
+        let customerValid = true;
+        if(firstName === '' || lastName === '' || phone === '' || email === '', identifyNumber === '') {
+            customerValid = false;
+        }
+        if(bookingSubRequest.startPoint.includes('CustomerPoint&')) {
+            if(pickingPlace === '') {
+                customerValid = false;
+            }
+        }
+
+        let listsValid = true;
+        // valid adults list
+        for(let i=0; i<adultsList.length; i++) {
+            if(this.checkAdultItem(i) === false) {
+                listsValid = false;
+            }
+        }
+        // valid children list
+        for(let i=0; i<childrenList.length; i++) {
+            if(this.checkChildItem(i) === false) {
+                listsValid = false;
+            }
+            if(this.checkChildAge(childrenList[i].dob) === false) {
+                listsValid = false;
+            }
+        }
+        // // change date time format to string dd/MM/yyyy
+        // for(let i=0; i<adultsList.length; i++) {
+        //     adultsList[i].dob = this.dateTimeToString(adultsList[i].dob);
+        // }
+        // for(let i=0; i<childrenList.length; i++) {
+        //     childrenList[i].dob = this.dateTimeToString(childrenList[i].dob);
+        // }
+
+        if(customerValid === false || listsValid === false) {
+            toast.warning('Your information is invalid!');
+            return false;
+        }
+        return true;
+    }
+
+
+    
     
     render() {
         const { bookingSubRequest } = this.props.location.state;
@@ -337,6 +418,7 @@ class Checkout extends React.Component {
         const { invalidAdultItem, invalidChildItem } = this.state;
         const avatarUrl = `url('${this.baseUrl + bookingSubRequest.thumbnailUrl}')`;
         const { isLoading } = this.state;
+        
         return (
             <div className="App">
                 <div className="small-header">
@@ -646,7 +728,7 @@ class Checkout extends React.Component {
                                                             <div className="member-form-group">
                                                                 <label className='input-label'>Date of Birth</label>
                                                                 <div className="date-input" onClick={() => this.handleChildDateClick(index)}>
-                                                                    <div className="date-display">
+                                                                    <div className="date-display">                                                     
                                                                         <span>{`${("0" + item.dob.getDate()).slice(-2)}/${("0" + (item.dob.getMonth()+1)).slice(-2)}/${item.dob.getFullYear()}`} <FaCaretDown /></span>
                                                                     </div>
                                                                     {
@@ -691,7 +773,41 @@ class Checkout extends React.Component {
                         </div>
                         <div className='check-out-controls'>
                             <button className='btn btn--cancel' onClick={this.handleCancel}>Cancel</button>
-                            <button className='btn btn--confirm' onClick={this.handleConfirm}>CONFIRM</button>
+                            {/* <button className='btn btn--confirm' onClick={this.handleConfirm}>CONFIRM</button> */}
+                            <PayPalButtons
+                                onClick={(data, actions) => {
+                                    if(!this.valid()){
+                                        return actions.reject();
+                                    } else {
+                                        return actions.resolve();
+                                    }
+                                }}
+                                createOrder={(data, actions) => {
+                                    return actions.order.create({
+                                        purchase_units: [
+                                            {
+
+                                                descriptions: `${bookingSubRequest.tourName} from ${bookingSubRequest.providerName}`,
+                                                amount: {
+                                                    value: bookingSubRequest.adults * bookingSubRequest.pricePerAdult + bookingSubRequest.children * bookingSubRequest.pricePerChild
+
+                                                }
+                                            }
+                                        ]
+                                    })
+                                }}
+                                onApprove={async(data, actions) => {
+                                    const order = await actions.order.capture();
+                                    console.log("order", order)
+                                    const transactionId = order.purchase_units[0].payments.captures[0].id
+                                    console.log('transactionId', transactionId);
+                                    await this.handleConfirm(transactionId);
+                                }}
+                                onError={(err) => {
+                                    console.log("ERROR PAYPAL", err)
+                                    window.location.reload();
+                                }}
+                            />
                         </div>
                     </div>           
                 }

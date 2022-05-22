@@ -200,6 +200,7 @@ class TourDetailPage extends React.Component {
             tourId: this.state.tour.id,
             tourName: this.state.tour.tourName,
             thumbnailUrl: this.state.tour.images[0].url,
+            providerName: this.state.tour.providerName,
             isPrivate: this.state.tour.isPrivate,
             startPoint: this.state.tour.startPoint,
             endPoint: this.state.tour.endPoint,

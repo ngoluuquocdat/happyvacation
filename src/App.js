@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { onMessageListener } from './firebase';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import Home from './Components/HomePage/Home';
 import ToursPage from './Components/ToursPage';
 import TourDetailPage from './Components/TourDetail/TourDetailPage';
@@ -13,6 +14,7 @@ import logo from './Images/HappyVacation.png';
 import Footer from './Components/Footer/Footer';
 import Register from './Components/Register/RegisterPage';
 import Checkout from './Components/Checkout';
+import PaypalSuccess from './Components/PaypalSuccess';
 import ProviderOrderDetailModal from './Components/ForProvider/ProviderOrderDetailModal';
 import UserOrderDetailModal from './Components/User/UserTourOrder/UserOrderDetailModal';
 import NotFoundPage from './Components/NotFoundPage';
@@ -57,70 +59,76 @@ class App extends Component {
       );
     } else {
       return (
-        <BrowserRouter>
-          <>
-            <ToastContainer
-              position="top-right"
-              autoClose={2500}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-            />
-            <Switch>
-              <Route path="/" exact>
-                <Home />
-                <Footer />
-              </Route >
-              <Route path="/tours" exact >
-                <ToursPage />
-                <Footer />
-              </Route >
-              <Route path="/tours/:id" >
-                <TourDetailPage />
-                <Footer />
-              </Route >
-              <Route path="/providers/:id" >
-                <ProviderPage />
-                <Footer />
-              </Route >
-              <Route path="/places/:id" >
-                <PlacePage />
-                <Footer />
-              </Route >
-              <Route path="/sites/:id" >
-                <TouristSitePage />
-                <Footer />
-              </Route >
-              <Route path="/checkout" >
-                <Checkout />
-                <Footer />
-              </Route >
-              <Route path="/login" >
-                <Login />
-              </Route >
-              <Route path="/register" >
-                <Register />
-              </Route >
-              <Route path="/user" >
-                <UserMain />
-              </Route >
-              <Route path="/for-provider">
-                <ProviderMain />
-              </Route >
-              <Route path="/provider/view/orders/:id" exact>
-                  <ProviderOrderDetailModal />
-              </Route >
-              <Route path="/customer/view/orders/:id" exact>
-                  <UserOrderDetailModal />
-              </Route >
-              <Route path="/not-found" exact>
-                  <NotFoundPage />
-              </Route >
-            </Switch>
-            
-          </>
-        </BrowserRouter>
+        <PayPalScriptProvider options={{"client-id": "ARqrsuQnlbgJc1KFc3MCUHtEc9s6NZC15MtmYVuGL9HLZRoLX804chAwPoOwygzSI-z5ld9Rh52N3tSL"}}>
+          <BrowserRouter>
+            <>
+              <ToastContainer
+                position="top-right"
+                autoClose={2500}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+              />
+              <Switch>
+                <Route path="/" exact>
+                  <Home />
+                  <Footer />
+                </Route >
+                <Route path="/tours" exact >
+                  <ToursPage />
+                  <Footer />
+                </Route >
+                <Route path="/tours/:id" >
+                  <TourDetailPage />
+                  <Footer />
+                </Route >
+                <Route path="/providers/:id" >
+                  <ProviderPage />
+                  <Footer />
+                </Route >
+                <Route path="/places/:id" >
+                  <PlacePage />
+                  <Footer />
+                </Route >
+                <Route path="/sites/:id" >
+                  <TouristSitePage />
+                  <Footer />
+                </Route >
+                <Route path="/checkout" exact>
+                  <Checkout />
+                  <Footer />
+                </Route >
+                <Route path="/checkout/successful">
+                    <PaypalSuccess />
+                    <Footer />
+                </Route >
+                <Route path="/login" >
+                  <Login />
+                </Route >
+                <Route path="/register" >
+                  <Register />
+                </Route >
+                <Route path="/user" >
+                  <UserMain />
+                </Route >
+                <Route path="/for-provider">
+                  <ProviderMain />
+                </Route >
+                <Route path="/provider/view/orders/:id" exact>
+                    <ProviderOrderDetailModal />
+                </Route >
+                <Route path="/customer/view/orders/:id" exact>
+                    <UserOrderDetailModal />
+                </Route >
+                <Route path="/not-found" exact>
+                    <NotFoundPage />
+                </Route >
+              </Switch>          
+            </>
+          </BrowserRouter>
+        </PayPalScriptProvider>
+        
       )
     }
   }
