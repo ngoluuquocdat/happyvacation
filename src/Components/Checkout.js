@@ -228,12 +228,12 @@ class Checkout extends React.Component {
         return `${("0" + date.getDate()).slice(-2)}/${("0" + (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`
     }
 
-    // handle cancel
+    // handle cancel checkout
     handleCancel = () => {
         this.props.history.push(`/tours/${this.props.location.state.bookingSubRequest.tourId}`);
     }
 
-    // handle confirm booking
+    // handle confirm booking, create order in database, called after successful capture payment
     handleConfirm = async (transactionId) => {       
         // check token
         const token = localStorage.getItem('user-token');
@@ -246,32 +246,6 @@ class Checkout extends React.Component {
         const adultsList = [...this.state.adultsList];   
         const childrenList = [...this.state.childrenList];    
 
-        // let customerValid = true;
-        // if(firstName === '' || lastName === '' || phone === '' || email === '', identifyNumber === '') {
-        //     customerValid = false;
-        // }
-        // if(bookingSubRequest.startPoint.includes('CustomerPoint&')) {
-        //     if(pickingPlace === '') {
-        //         customerValid = false;
-        //     }
-        // }
-
-        // let listsValid = true;
-        // // valid adults list
-        // for(let i=0; i<adultsList.length; i++) {
-        //     if(this.checkAdultItem(i) === false) {
-        //         listsValid = false;
-        //     }
-        // }
-        // // valid children list
-        // for(let i=0; i<childrenList.length; i++) {
-        //     if(this.checkChildItem(i) === false) {
-        //         listsValid = false;
-        //     }
-        //     if(this.checkChildAge(childrenList[i].dob) === false) {
-        //         listsValid = false;
-        //     }
-        // }
         // change date time format to string dd/MM/yyyy
         for(let i=0; i<adultsList.length; i++) {
             adultsList[i].dob = this.dateTimeToString(adultsList[i].dob);
@@ -357,6 +331,14 @@ class Checkout extends React.Component {
                 })
             }, 1500) 
         } 
+    }
+
+    // handle failed booking, called after failed capture payment
+    handleFailedPayment = () => {       
+        this.props.history.push(`/checkout/result`, 
+            {
+                hasFailed: true
+            }); 
     }
 
     // valid fields
@@ -802,6 +784,9 @@ class Checkout extends React.Component {
                                     const transactionId = order.purchase_units[0].payments.captures[0].id
                                     console.log('transactionId', transactionId);
                                     await this.handleConfirm(transactionId);
+                                }}
+                                onCancel={(data, actions) => {
+
                                 }}
                                 onError={(err) => {
                                     console.log("ERROR PAYPAL", err)

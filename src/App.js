@@ -99,7 +99,7 @@ class App extends Component {
                   <Checkout />
                   <Footer />
                 </Route >
-                <Route path="/checkout/successful">
+                <Route path="/checkout/result">
                     <PaypalSuccess />
                     <Footer />
                 </Route >
