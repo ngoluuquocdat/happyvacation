@@ -1,10 +1,12 @@
 
 
 
-.order-card {
+.order-card,
+.order-card--departed,
+.order-card--canceled {
     width: 100%;
-    border-bottom: 1px solid #dfdfdf;
-    padding-bottom: 20px;
+    border: 1px solid #bdbdbd;
+    padding: 20px;
     margin-bottom: 20px;
 
     .provider-info {
@@ -38,6 +40,38 @@
                 width: 85%;
                 height: 0;
                 padding-bottom: 85%;
+                position: relative;
+
+                .thumbnail-overlay {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    background-color: #000;
+                    opacity: 0.4;
+                }
+                .thumbnail-label {                
+                    text-align: center;
+                    font-size: 36px;
+                    font-weight: 500;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) rotate(-14deg);                    
+                    display: inline-block;
+                    padding: 0.25rem 1rem;
+                    text-transform: uppercase;
+                    mix-blend-mode: inherit;
+                }
+                .departed {
+                    color: #0cb930;
+                    border: 0.2rem solid #0cb930;
+                }
+                .canceled {
+                    color: #dd3700;
+                    border: 0.2rem solid #dd3700;
+                }
             }
         }
         .left.small {
@@ -57,7 +91,7 @@
                 margin: 0;
                 font-weight: 400;
                 font-size: 18px;
-                margin-bottom: 10px;
+                margin-bottom: 12px;
                 text-transform: uppercase;
                 cursor: pointer;
             }
@@ -68,7 +102,7 @@
                 display: flex;
                 flex-direction: column;
                 span {
-                    margin-bottom: 10px;
+                    margin-bottom: 12px;
                     margin-left: -4px;
                     display: flex;
                     align-items: center;
@@ -79,7 +113,7 @@
             }
             .tour-order-description {
                 margin: 0;
-                margin-bottom: 10px;
+                margin-bottom: 12px;
             }
 
             .tour-order-info {
@@ -89,7 +123,7 @@
                     width: 50%;
                     .tour-order-description {
                         margin: 0;
-                        margin-bottom: 10px;
+                        margin-bottom: 12px;
 
                         .order-state {
                             font-weight: 500;
@@ -116,17 +150,18 @@
                     width: 50%;
                     small {
                         color: #df385f;
+                        font-size: 16px;
                     }
                     .tour-order-price {
                         margin: 0;
-                        margin-bottom: 10px;
+                        margin-bottom: 12px;
                         .arrow-icon {
                             margin: 0 5px;
                         }
                     }
                     .tour-order-total-price {
                         margin: 0;
-                        margin-bottom: 10px;
+                        margin-bottom: 12px;
                         span {
                             font-weight: 500;
                         }
@@ -135,6 +170,8 @@
                         cursor: pointer;
                         user-select: none;
                         color: #0090c4;
+                        margin-top: 12px;
+                        margin-bottom: 12px;
                     }
                 }        
             }
@@ -165,4 +202,12 @@
             }
         }
     }
+}
+.order-card--departed {
+    background-color: #e8f6ec;
+    border-color: #56bd73;
+}
+.order-card--canceled {
+    background-color: #fff2ee;
+    border-color: #ff5622;
 }

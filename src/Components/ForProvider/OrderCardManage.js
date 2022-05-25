@@ -26,19 +26,47 @@ class OrderCardManage extends Component {
         //this.props.history.push(`/provider/view/orders/${orderId}`);
     }
 
+    // open change departure date modal
+    openChangeDateModal = (event, orderId, departureDate) => {
+        console.log('cdate', departureDate)
+        this.props.openChangeDateModal(orderId, departureDate);
+    }
+
     render() {
         const order = this.props.order;
         const avatarUrl = `url('${this.baseUrl + order.thumbnailUrl}')`;
         //const avatarUrl = `url('${order.thumbnailUrl}')`;
+        let card_class_name = 'order-card';
+        //if(order.hasDeparted && order.state === 'confirmed') {
+        if(order.hasDeparted) {
+            card_class_name = 'order-card--departed'
+        }
+        if(order.state === 'canceled') {
+            card_class_name = 'order-card--canceled'
+        }
         return (           
-            <div className='order-card'>
+            <div className={card_class_name}>
                 <div className='order-id'> 
                     <span>Order ID: </span>
                     <span>{order.id}</span>             
                 </div>
                 <div className='order-content'>
                     <div className='left small'>
-                        <div className="tour-thumbnail" style={{backgroundImage: avatarUrl}}></div>
+                        <div className="tour-thumbnail" style={{backgroundImage: avatarUrl}}>
+                            {
+                                (order.hasDeparted || order.state === 'canceled') && 
+                                <>
+                                    <div className="thumbnail-overlay"></div>
+                                    <span 
+                                        className={order.state === 'canceled' ? 'thumbnail-label canceled' : 'thumbnail-label departed'}
+                                    >
+                                        {
+                                            order.state === 'canceled' ? 'Canceled' : 'Departed'
+                                        }
+                                    </span>
+                                </>
+                            }
+                        </div>                       
                     </div>
                     <div className='right'>
                         <h5 className='tour-order-title'>
@@ -109,10 +137,13 @@ class OrderCardManage extends Component {
                                     <span>Adults: </span>
                                     {order.adults} X ${order.pricePerAdult} <BsArrowRight className='arrow-icon'/> ${order.adults * order.pricePerAdult}
                                 </p>
-                                <p className='tour-order-price'>
-                                    <span>Children: </span>
-                                    {order.children} X ${order.pricePerChild} <BsArrowRight className='arrow-icon'/> ${order.children * order.pricePerChild}
-                                </p>
+                                {
+                                    order.pricePerChild >= 0 &&
+                                    <p className='tour-order-price'>
+                                        <span>Children: </span>
+                                        {order.children} X ${order.pricePerChild} <BsArrowRight className='arrow-icon'/> ${order.children * order.pricePerChild}
+                                    </p>
+                                }
                                 <p className='tour-order-total-price'>
                                     <span>Total price: </span>
                                     ${order.totalPrice}
@@ -130,12 +161,16 @@ class OrderCardManage extends Component {
                                     {order.touristEmail}
                                 </p>
                                 <p className='tour-order-see-detail' onClick={(event) => this.seeOrderDetail(event, order.id)}>Detail</p>
+                                {
+                                    !order.hasDeparted && order.state !== 'canceled' &&
+                                    <p className='tour-order-see-detail' onClick={(event) => this.openChangeDateModal(event, order.id, order.departureDate)}>Change Departure date</p>
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
                 {
-                    order.state !== 'canceled' &&
+                    !order.hasDeparted && order.state !== 'canceled' &&
                     <div className='order-process'>
                         {/* <p className='open-more'>MORE</p> */}
                         <div className='order-process-button-wrap'>
@@ -143,7 +178,7 @@ class OrderCardManage extends Component {
                                 order.state === 'pending' &&
                                 <button className='order-confirm' name='confirmed' onClick={(event) => this.orderProcessClick(event, order.id)}>CONFIRM</button>  
                             }
-                            <button className='order-cancel' name='canceled' onClick={(event) => this.orderProcessClick(event, order.id)}>CANCEL</button>
+                            <button className='order-cancel' name='canceled' onClick={(event) => this.orderProcessClick(event, order.id, order.departureDate)}>CANCEL</button>
                         </div>        
                     </div>
                 }
