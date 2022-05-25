@@ -2,6 +2,7 @@ import React from 'react'
 import { requestForToken, onMessageListener } from '../../firebase';
 import OrderCardManage from '../ForProvider/OrderCardManage'
 import ProviderOrderDetailModal from '../ForProvider/ProviderOrderDetailModal'
+import ChangeDepartureDateModal from './ChangeDepartureDateModal';
 import { toast } from 'react-toastify';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -9,6 +10,7 @@ import axios from 'axios';
 import ReactLoading from "react-loading";
 import { DateRange } from 'react-date-range';
 import { Pagination } from "@mui/material";
+import { BsArrowRight } from 'react-icons/bs';
 import '../../Styles/ForProvider/provider-order.scss'
 
 class ProviderOrder extends React.Component {
@@ -28,18 +30,14 @@ class ProviderOrder extends React.Component {
         isLoading: false,
         isProcessingOrder: false,
         isLoadingReport: false,
-        isShowDetailModal: false
+        isShowDetailModal: false,
+        openChangeDateModal: false,
+        changingDepartureOrderId: 0,
+        currentDepartureDate: ''
     }
 
     baseUrl = this.props.reduxData.baseUrl;
     broadcast_mes_timestamp = '';
-
-    // change page
-    handleOnChangePage = (event, page) => {
-        this.setState({
-            page: page,
-        });
-    };
 
     async componentDidMount() {
         // check jwt token
@@ -76,13 +74,7 @@ class ProviderOrder extends React.Component {
         } catch (error) {
             if (!error.response) {
                 toast.error("Network error");
-                console.log(error)
-                //fake api response
-                const resOrders = orders;
-                // set state`   
-                this.setState({
-                    orders: resOrders
-                }); 
+                console.log(error)               
                 return;
             }
             if (error.response.status === 400) {
@@ -140,13 +132,6 @@ class ProviderOrder extends React.Component {
             } catch (error) {
                 if (!error.response) {
                     toast.error("Network error");
-                    console.log(error)
-                    //fake api response
-                    const resOrders = orders;
-                    // set state`   
-                    this.setState({
-                        orders: resOrders
-                    }); 
                     return;
                 }
                 if (error.response.status === 400) {
@@ -196,12 +181,6 @@ class ProviderOrder extends React.Component {
                 if (!error.response) {
                     toast.error("Network error");
                     console.log(error)
-                    //fake api response
-                    const resOrders = orders;
-                    // set state`   
-                    this.setState({
-                        orders: resOrders
-                    }); 
                     return;
                 }
                 if (error.response.status === 400) {
@@ -224,6 +203,13 @@ class ProviderOrder extends React.Component {
             }                         
         }
     } 
+
+    // change page
+    handleOnChangePage = (event, page) => {
+        this.setState({
+            page: page,
+        });
+    };
 
     // get orders
     getOrders = async (keyword) => {
@@ -258,12 +244,6 @@ class ProviderOrder extends React.Component {
             if (!error.response) {
                 toast.error("Network error");
                 console.log(error)
-                //fake api response
-                const resOrders = orders;
-                // set state`   
-                this.setState({
-                    orders: resOrders
-                }); 
                 return;
             }
             if (error.response.status === 400) {
@@ -449,11 +429,45 @@ class ProviderOrder extends React.Component {
         }         
     }
 
+    
+    // open change departure date modal
+    openChangeDateModal = (orderId, departureDate) => {
+        this.setState({
+            openChangeDateModal: true,
+            changingDepartureOrderId: orderId,
+            currentDepartureDate: departureDate
+        })
+    }
+    // close change departure date modal
+    closeChangeDateModal = () => {
+        this.setState({
+            openChangeDateModal: false
+        })
+    }
+
+    // update new departure date for an order
+    updateNewDeparture = (orderId, departureDate) => {
+        let orders = this.state.orders;
+        // set state with updated order if tab is not 'pending'
+        const index = this.state.orders.findIndex((element) => element.id === orderId);
+        orders[index] = {
+            ...orders[index], 
+            departureDate: departureDate
+        };
+
+        this.setState({
+            orders: orders,
+            openChangeDateModal: false
+        })      
+    }
+
+
     render() {
         const { orders, page, totalPage, isLoading } = this.state;
         const { startDate, endDate, showDatePicker } = this.state;
         const { keyword } = this.state;
-        const {isProcessingOrder, isLoadingReport} = this.state;
+        const { isProcessingOrder, isLoadingReport } = this.state;
+        const { openChangeDateModal, currentDepartureDate, changingDepartureOrderId } = this.state;
 
         const dateSelectionRange = {
             startDate: startDate,
@@ -470,6 +484,7 @@ class ProviderOrder extends React.Component {
             });       
         })
         .catch((err) => console.log('failed: ', err));
+
         // receive message in background from fm-sw.js
         const broadcast = new BroadcastChannel('booking-message');       
         broadcast.onmessage = (event) => {
@@ -571,6 +586,7 @@ class ProviderOrder extends React.Component {
                                         order={item} 
                                         changeOrderState={this.changeOrderState}
                                         seeOrderDetail={this.seeOrderDetail}
+                                        openChangeDateModal={this.openChangeDateModal}
                                     />
                                 )
                             })
@@ -590,31 +606,22 @@ class ProviderOrder extends React.Component {
                         />
                     </div>
                 )}
+                {
+                    openChangeDateModal &&
+                    <div className='modal-container'>
+                        <ChangeDepartureDateModal 
+                            changingDepartureOrderId={changingDepartureOrderId}
+                            currentDepartureDate={currentDepartureDate}
+                            updateNewDeparture={this.updateNewDeparture}
+                            closeChangeDateModal={this.closeChangeDateModal}
+                        />
+                    </div>
+                }
             </div>
         )
     }
 }
 
-const orders = [
-    {
-        id: 1,
-        tourId: 1,
-        tourName: 'HALF-DAY FOODIE TOUR BY BICYCLE & VISIT TRA QUE VEGETABLE VILLAGE',
-        departureDate: '14/04/2022',
-        modifiedDate: '10/04/2022',
-        duration: 0.5,
-        isPrivate: false,
-        adults: 2,
-        children: 1,
-        pricePerAdult: 45,
-        pricePerChild: 22,
-        totalPrice: 112.50,
-        thumbnailUrl: 'https://hoianexpress.com.vn/wp-content/uploads/2019/12/Foodie_11-150x150.jpg',
-        state: 'Confirmed',
-        providerId: 1,
-        providerName: 'Hoi An Express'
-    }
-]
 
 const mapStateToProps = (state) => {
     return {

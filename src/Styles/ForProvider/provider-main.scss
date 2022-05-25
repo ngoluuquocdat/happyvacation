@@ -5,6 +5,7 @@
 .provider-main-container {
     display: flex;
     overflow: hidden;
+    position: relative;
 
     .side-nav-wrap {
         align-self: stretch;       

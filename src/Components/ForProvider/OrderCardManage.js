@@ -28,7 +28,6 @@ class OrderCardManage extends Component {
 
     // open change departure date modal
     openChangeDateModal = (event, orderId, departureDate) => {
-        console.log('cdate', departureDate)
         this.props.openChangeDateModal(orderId, departureDate);
     }
 

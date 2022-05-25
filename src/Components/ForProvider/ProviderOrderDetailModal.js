@@ -230,29 +230,34 @@ class ProviderOrderDetailModal extends React.Component {
                                 }
                                 </div>
                             </div>
-                            <h3 className="section-sub-title">Children</h3>
-                            <div className="children-table">
-                                <div className="children-table-heading">
-                                    <span>No.</span>
-                                    <span className="name">Full Name</span>
-                                    <span>Identity Number</span>
-                                    <span>Date of Birth</span>
-                                </div>
-                                <div className="children-list">
-                                {
-                                    order.childrenList.map((item, index) => {
-                                        return(
-                                            <div className="child-item">
-                                                <span>{index+1}</span>
-                                                <span className="name">{item.fullName}</span>
-                                                <span>{item.identityNumber}</span>
-                                                <span>{item.dob}</span>
-                                            </div>
-                                        )
-                                    })
-                                }
-                                </div>
-                            </div>
+                            {
+                                order.childrenList.length > 0 &&
+                                <>
+                                    <h3 className="section-sub-title">Children</h3>
+                                    <div className="children-table">
+                                        <div className="children-table-heading">
+                                            <span>No.</span>
+                                            <span className="name">Full Name</span>
+                                            <span>Identity Number</span>
+                                            <span>Date of Birth</span>
+                                        </div>
+                                        <div className="children-list">
+                                        {
+                                            order.childrenList.map((item, index) => {
+                                                return(
+                                                    <div className="child-item">
+                                                        <span>{index+1}</span>
+                                                        <span className="name">{item.fullName}</span>
+                                                        <span>{item.identityNumber}</span>
+                                                        <span>{item.dob}</span>
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                        </div>
+                                    </div>
+                                </>
+                            }
                         </div>
                     </div>    
                 }

@@ -8,11 +8,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { PayPalButtons } from '@paypal/react-paypal-js';
 import { FaCaretDown } from 'react-icons/fa';
-import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai'
 import { VscLocation } from 'react-icons/vsc';
-import { BsClock, BsPeople, BsTag } from 'react-icons/bs';
-import { FiStar } from 'react-icons/fi';
-import { BiCategoryAlt } from 'react-icons/bi';
 import { BsArrowRight } from 'react-icons/bs';
 import '../Styles/check-out.scss';
 
@@ -299,8 +295,9 @@ class Checkout extends React.Component {
                 toast.success('Booking successful!');
             }, 1500) 
             // to successful page
-            this.props.history.push(`/checkout/successful`, 
+            this.props.history.push(`/checkout/result`, 
             {
+                hasFailed: false,
                 tourName: bookingSubRequest.tourName,
                 providerName: bookingSubRequest.providerName,
                 totalPrice: bookingSubRequest.adults * bookingSubRequest.pricePerAdult + bookingSubRequest.children * bookingSubRequest.pricePerChild

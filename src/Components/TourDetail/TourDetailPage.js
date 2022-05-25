@@ -37,8 +37,7 @@ class TourDetailPage extends React.Component {
         // pickingPlace: '',
         isLoading: true,    // must be true
         isBooking: false,
-        networkFailed: false
-        
+        networkFailed: false      
     }
 
     baseUrl = this.props.reduxData.baseUrl;
