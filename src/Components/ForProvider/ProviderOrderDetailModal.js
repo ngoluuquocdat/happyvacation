@@ -36,7 +36,8 @@ class ProviderOrderDetailModal extends React.Component {
         if(!token) {
             this.props.history.push('/login', {prevPath: this.props.location.pathname});
         }
-        const orderId = this.props.match.params.id
+        //const orderId = this.props.match.params.id
+        const orderId = this.props.orderId;
         try {
             this.setState({
                 isLoading: true
@@ -78,18 +79,19 @@ class ProviderOrderDetailModal extends React.Component {
         }
     }
 
+    // close detail modal
+    closeDetailModal = () => {
+        this.props.closeDetailModal();
+    }
+
     render() {
         const order = this.state.order;
         const isOrderLoaded = Object.values(order).length > 0;
         console.log('is load ', isOrderLoaded)
         const avatarUrl = `url('${this.baseUrl + order.thumbnailUrl}')`;
-        const isLoading = this.state.isLoading;
 
         return (
-            <div className="order-detail-page-wrapper">               
-                <div className="small-header">
-                    <HeaderNav />
-                </div>
+            <div className="order-detail-page-wrapper" onClick={(event) => event.stopPropagation()}>               
                 {
                     !isOrderLoaded ? 
                     <div className="loading-container">
@@ -181,10 +183,13 @@ class ProviderOrderDetailModal extends React.Component {
                                             <span>Adults: </span>
                                             {order.adults} X ${order.pricePerAdult} <BsArrowRight className='arrow-icon'/> ${order.adults * order.pricePerAdult}
                                         </p>
-                                        <p className='tour-order-price'>
-                                            <span>Children: </span>
-                                            {order.children} X ${order.pricePerChild} <BsArrowRight className='arrow-icon'/> ${order.children * order.pricePerChild}
-                                        </p>
+                                        {
+                                            order.pricePerChild >= 0 &&
+                                            <p className='tour-order-price'>
+                                                <span>Children: </span>
+                                                {order.children} X ${order.pricePerChild} <BsArrowRight className='arrow-icon'/> ${order.children * order.pricePerChild}
+                                            </p>
+                                        }
                                         <p className='tour-order-total-price'>
                                             <span>Total price: </span>
                                             ${order.totalPrice}

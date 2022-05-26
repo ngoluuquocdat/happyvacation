@@ -20,10 +20,15 @@ class OrderCardManage extends Component {
         this.props.changeOrderState(orderId, event.target.name)
     }
 
-    // see order detail click
-    seeOrderDetail = (event, orderId) => {
-        window.open(`/provider/view/orders/${orderId}`, "_blank");
-        //this.props.history.push(`/provider/view/orders/${orderId}`);
+    // // see order detail click
+    // seeOrderDetail = (event, orderId) => {
+    //     window.open(`/provider/view/orders/${orderId}`, "_blank");
+    //     //this.props.history.push(`/provider/view/orders/${orderId}`);
+    // }
+
+    // open detail modal
+    openDetailModal = (event, orderId) => {
+        this.props.openDetailModal(orderId);
     }
 
     // open change departure date modal
@@ -159,7 +164,7 @@ class OrderCardManage extends Component {
                                 <p className='tour-order-description'>
                                     {order.touristEmail}
                                 </p>
-                                <p className='tour-order-see-detail' onClick={(event) => this.seeOrderDetail(event, order.id)}>Detail</p>
+                                <p className='tour-order-see-detail' onClick={(event) => this.openDetailModal(event, order.id)}>Detail</p>
                                 {
                                     !order.hasDeparted && order.state !== 'canceled' &&
                                     <p className='tour-order-see-detail' onClick={(event) => this.openChangeDateModal(event, order.id, order.departureDate)}>Change Departure date</p>

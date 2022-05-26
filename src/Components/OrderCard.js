@@ -14,7 +14,7 @@ class OrderCard extends Component {
 
     // see order detail click
     seeOrderDetail = (event, orderId) => {
-        window.open(`/customer/view/orders/${orderId}`, "_blank");
+        this.props.openDetailModal(orderId);
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -23,8 +23,17 @@ class OrderCard extends Component {
         const order = this.props.order;
         const avatarUrl = `url('${this.baseUrl + order.thumbnailUrl}')`;
         //const avatarUrl = `url('${order.thumbnailUrl}')`;
+        let card_class_name = 'order-card';
+        //if(order.hasDeparted && order.state === 'confirmed') {
+        if(order.hasDeparted) {
+            card_class_name = 'order-card--departed'
+        }
+        if(order.state === 'canceled') {
+            card_class_name = 'order-card--canceled'
+        }
+
         return (           
-            <div className='order-card' onClick={() => this.handleOpenContent()}>
+            <div className={card_class_name} onClick={() => this.handleOpenContent()}>
                 <div className='provider-info'> 
                     <Link to={`/providers/${order.providerId}`} exact="true" className="link"><span>{order.providerName}</span></Link>             
                 </div>
@@ -97,10 +106,13 @@ class OrderCard extends Component {
                                     <span>Adults: </span>
                                     {order.adults} X ${order.pricePerAdult} <BsArrowRight className='arrow-icon'/> ${order.adults * order.pricePerAdult}
                                 </p>
-                                <p className='tour-order-price'>
-                                    <span>Children: </span>
-                                    {order.children} X ${order.pricePerChild} <BsArrowRight className='arrow-icon'/> ${order.children * order.pricePerChild}
-                                </p>
+                                {
+                                    order.pricePerChild >= 0 &&
+                                    <p className='tour-order-price'>
+                                        <span>Children: </span>
+                                        {order.children} X ${order.pricePerChild} <BsArrowRight className='arrow-icon'/> ${order.children * order.pricePerChild}
+                                    </p>
+                                }
                                 <p className='tour-order-total-price'>
                                     <span>Total price: </span>
                                     ${order.totalPrice}

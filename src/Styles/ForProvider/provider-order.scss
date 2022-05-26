@@ -143,6 +143,7 @@
 
     .modal-container {
         position: fixed;
+        z-index: 10;    // greater than .header-wrap in header-nav.scss
         top: 0;
         left: 0;
         right: 0;

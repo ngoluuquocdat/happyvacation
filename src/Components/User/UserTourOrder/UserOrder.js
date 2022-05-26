@@ -1,5 +1,6 @@
 import React from 'react'
 import OrderCard from '../../OrderCard'
+import UserOrderDetailModal from './UserOrderDetailModal';
 import { toast } from 'react-toastify';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -17,6 +18,8 @@ class UserOrder extends React.Component {
         totalCount: 0,
         page: 1,
         perPage: 3,
+        isShowDetailModal: false, 
+        selectedOrderId: 0
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -201,8 +204,23 @@ class UserOrder extends React.Component {
 
     } 
 
+    // open order detail modal
+    openDetailModal = (orderId) => {
+        this.setState({
+            isShowDetailModal: true,
+            selectedOrderId: orderId
+        })
+    }
+
+    // close all modals
+    closeAllModals = () => {
+        this.setState({
+            isShowDetailModal: false
+        })
+    }
+
     render() {
-        const { orders, page, totalCount, totalPage, isLoading } = this.state;
+        const { orders, page, totalCount, totalPage, isLoading, isShowDetailModal, selectedOrderId } = this.state;
         return (
             <div className='user-order-container'>
                 <div className='user-order-header'>
@@ -226,7 +244,11 @@ class UserOrder extends React.Component {
                         {
                             orders.map((item) => {
                                 return (
-                                    <OrderCard key={item.id} order={item}/>
+                                    <OrderCard 
+                                        key={item.id} 
+                                        order={item}
+                                        openDetailModal={this.openDetailModal}
+                                    />
                                 )
                             })
                         }
@@ -245,6 +267,16 @@ class UserOrder extends React.Component {
                         />
                     </div>
                 )}
+                {
+                    isShowDetailModal &&
+                    <div className='modal-container' onClick={this.closeAllModals}>
+                        <UserOrderDetailModal 
+                            orderId={selectedOrderId}
+                            closeDetailModal={this.closeDetailModal}
+                            
+                        />
+                    </div>
+                }
             </div>
         )
     }

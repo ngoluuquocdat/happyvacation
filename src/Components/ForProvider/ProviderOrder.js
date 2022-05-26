@@ -1,7 +1,7 @@
 import React from 'react'
 import { requestForToken, onMessageListener } from '../../firebase';
-import OrderCardManage from '../ForProvider/OrderCardManage'
-import ProviderOrderDetailModal from '../ForProvider/ProviderOrderDetailModal'
+import OrderCardManage from '../ForProvider/OrderCardManage';
+import ProviderOrderDetailModal from '../ForProvider/ProviderOrderDetailModal';
 import ChangeDepartureDateModal from './ChangeDepartureDateModal';
 import { toast } from 'react-toastify';
 import { withRouter } from 'react-router-dom';
@@ -31,6 +31,7 @@ class ProviderOrder extends React.Component {
         isProcessingOrder: false,
         isLoadingReport: false,
         isShowDetailModal: false,
+        selectedOrderId: 0,
         openChangeDateModal: false,
         changingDepartureOrderId: 0,
         currentDepartureDate: ''
@@ -341,8 +342,16 @@ class ProviderOrder extends React.Component {
         }
     }
 
+    // open order detail modal
+    openDetailModal = (orderId) => {
+        this.setState({
+            isShowDetailModal: true,
+            selectedOrderId: orderId
+        })
+    }
+
     // close order detail modal
-    closeModal = () => {
+    closeDetailModal = () => {
         this.setState({
             isShowDetailModal: false
         })
@@ -461,6 +470,14 @@ class ProviderOrder extends React.Component {
         })      
     }
 
+    // close all modals
+    closeAllModals = () => {
+        this.setState({
+            openChangeDateModal: false,
+            isShowDetailModal: false
+        })
+    }
+
 
     render() {
         const { orders, page, totalPage, isLoading } = this.state;
@@ -468,6 +485,7 @@ class ProviderOrder extends React.Component {
         const { keyword } = this.state;
         const { isProcessingOrder, isLoadingReport } = this.state;
         const { openChangeDateModal, currentDepartureDate, changingDepartureOrderId } = this.state;
+        const { isShowDetailModal, selectedOrderId } = this.state;
 
         const dateSelectionRange = {
             startDate: startDate,
@@ -584,8 +602,8 @@ class ProviderOrder extends React.Component {
                                     <OrderCardManage 
                                         key={'order'+item.id} 
                                         order={item} 
+                                        openDetailModal={this.openDetailModal}
                                         changeOrderState={this.changeOrderState}
-                                        seeOrderDetail={this.seeOrderDetail}
                                         openChangeDateModal={this.openChangeDateModal}
                                     />
                                 )
@@ -614,6 +632,16 @@ class ProviderOrder extends React.Component {
                             currentDepartureDate={currentDepartureDate}
                             updateNewDeparture={this.updateNewDeparture}
                             closeChangeDateModal={this.closeChangeDateModal}
+                        />
+                    </div>
+                }
+                {
+                    isShowDetailModal &&
+                    <div className='modal-container' onClick={this.closeAllModals}>
+                        <ProviderOrderDetailModal 
+                            orderId={selectedOrderId}
+                            closeDetailModal={this.closeDetailModal}
+                            
                         />
                     </div>
                 }

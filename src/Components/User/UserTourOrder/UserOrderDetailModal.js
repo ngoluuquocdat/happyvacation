@@ -36,7 +36,7 @@ class UserOrderDetailModal extends React.Component {
         if(!token) {
             this.props.history.push('/login', {prevPath: this.props.location.pathname});
         }
-        const orderId = this.props.match.params.id
+        const orderId = this.props.orderId;
         try {
             this.setState({
                 isLoading: true
@@ -87,13 +87,9 @@ class UserOrderDetailModal extends React.Component {
         const order = this.state.order;
         const isOrderLoaded = Object.values(order).length > 0;
         const avatarUrl = `url('${this.baseUrl + order.thumbnailUrl}')`;
-        const isLoading = this.state.isLoading;
 
         return (
-            <div className="order-detail-page-wrapper">               
-                <div className="small-header">
-                    <HeaderNav />
-                </div>
+            <div className="order-detail-page-wrapper"  onClick={(event) => event.stopPropagation()}>               
                 {
                     !isOrderLoaded ? 
                     <div className="loading-container">
@@ -185,27 +181,30 @@ class UserOrderDetailModal extends React.Component {
                                             <span>Adults: </span>
                                             {order.adults} X ${order.pricePerAdult} <BsArrowRight className='arrow-icon'/> ${order.adults * order.pricePerAdult}
                                         </p>
-                                        <p className='tour-order-price'>
-                                            <span>Children: </span>
-                                            {order.children} X ${order.pricePerChild} <BsArrowRight className='arrow-icon'/> ${order.children * order.pricePerChild}
-                                        </p>
+                                        {
+                                            order.pricePerChild >= 0 &&
+                                            <p className='tour-order-price'>
+                                                <span>Children: </span>
+                                                {order.children} X ${order.pricePerChild} <BsArrowRight className='arrow-icon'/> ${order.children * order.pricePerChild}
+                                            </p>
+                                        }
                                         <p className='tour-order-total-price'>
                                             <span>Total price: </span>
                                             ${order.totalPrice}
                                         </p>
                                     </div>
-                                    {/* <div className='tourist-information-wrap'>
-                                        <p className='tour-order-price'><small>Customer Information</small></p>
+                                    <div className='tourist-information-wrap'>
+                                        <p className='tour-order-price'><small>Provider Information</small></p>
                                         <p className='tour-order-description'>
-                                            {order.touristName}
+                                            {order.providerName}
                                         </p>
                                         <p className='tour-order-description'>
-                                            {order.touristPhone}
+                                            {order.providerPhone}
                                         </p>
                                         <p className='tour-order-description'>
-                                            {order.touristEmail}
+                                            {order.providerEmail}
                                         </p>
-                                    </div> */}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -234,29 +233,34 @@ class UserOrderDetailModal extends React.Component {
                                 }
                                 </div>
                             </div>
-                            <h3 className="section-sub-title">Children</h3>
-                            <div className="children-table">
-                                <div className="children-table-heading">
-                                    <span>No.</span>
-                                    <span className="name">Full Name</span>
-                                    <span>Identity Number</span>
-                                    <span>Date of Birth</span>
-                                </div>
-                                <div className="children-list">
-                                {
-                                    order.childrenList.map((item, index) => {
-                                        return(
-                                            <div className="child-item">
-                                                <span>{index+1}</span>
-                                                <span className="name">{item.fullName}</span>
-                                                <span>{item.identityNumber}</span>
-                                                <span>{item.dob}</span>
-                                            </div>
-                                        )
-                                    })
-                                }
-                                </div>
-                            </div>
+                            {
+                                order.childrenList.length > 0 &&
+                                <>
+                                    <h3 className="section-sub-title">Children</h3>
+                                    <div className="children-table">
+                                        <div className="children-table-heading">
+                                            <span>No.</span>
+                                            <span className="name">Full Name</span>
+                                            <span>Identity Number</span>
+                                            <span>Date of Birth</span>
+                                        </div>
+                                        <div className="children-list">
+                                        {
+                                            order.childrenList.map((item, index) => {
+                                                return(
+                                                    <div className="child-item">
+                                                        <span>{index+1}</span>
+                                                        <span className="name">{item.fullName}</span>
+                                                        <span>{item.identityNumber}</span>
+                                                        <span>{item.dob}</span>
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                        </div>
+                                    </div>
+                                </>
+                            }
                         </div>
                     </div>    
                 }
