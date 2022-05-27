@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import CreateTour from './CreateTour';
 import UpdateTour from './UpdateTour';
 import '../../Styles/ForProvider/provider-main.scss';
+import OrderedTouristPage from './OrderedTourists/OrderedTouristPage';
 
 class ProviderMain extends React.Component {
 
@@ -77,6 +78,9 @@ class ProviderMain extends React.Component {
                                     </Route >
                                     <Route path="/for-provider/orders/processed">
                                         <ProviderOrder />
+                                    </Route >
+                                    <Route path="/for-provider/orders/tourists">
+                                        <OrderedTouristPage />
                                     </Route >
                                     <Route path="/for-provider/profile" exact>
                                         <ProfilePage />

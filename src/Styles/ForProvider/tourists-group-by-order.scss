@@ -1,0 +1,91 @@
+
+
+
+
+.tourist-group-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    
+    .tourist-group__id {
+        text-align: center;
+        padding: 0;
+        margin-bottom: 16px;
+    }
+    .tourist-group__start-end {
+        margin-bottom: 16px;
+        .tourist-group__place { 
+            display: block;
+            font-size: 18px;
+        }
+    }
+    .order-members {
+        width: 80%;
+        margin: 0 auto;
+        .section-sub-title {
+            margin: 0;
+            padding: 0;
+            padding-left: 10%;
+        }
+        .adults-table { 
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #DAE1E7;            
+            .adults-table-heading {
+                display: flex;
+                margin-top: 20px;
+                span {
+                    width: 25%;
+                    text-align: center;
+                }
+                span.name {
+                    text-align: left;
+                }
+            }
+            .adults-list {                   
+                .adult-item {
+                    display: flex;
+                    margin-top: 20px;
+                    span {
+                        width: 25%;
+                        font-size: 18px;
+                        text-align: center;
+                    }
+                    span.name {
+                        text-align: left;
+                    }
+                }
+            }
+        }
+        .children-table {             
+            .children-table-heading {
+                display: flex;
+                margin-top: 20px;
+                span {
+                    width: 25%;
+                    text-align: center;
+                }
+                span.name {
+                    text-align: left;
+                }
+            }
+            .children-list {
+                padding-bottom: 20px;
+                border-bottom: 2px solid #DAE1E7;
+                .child-item {
+                    display: flex;
+                    margin-top: 20px;
+                    span {
+                        width: 25%;
+                        font-size: 18px;
+                        text-align: center;
+                    }
+                    span.name {
+                        text-align: left;
+                    }
+                }
+            }
+        }
+    }
+}

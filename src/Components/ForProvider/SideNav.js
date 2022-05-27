@@ -50,6 +50,11 @@ class SideNav extends React.Component {
                                     Processed
                                 </NavLink>
                             </li>
+                            <li className='submenu-item' onClick={this.handleItemSelect}>
+                                <NavLink className="item-link" to="/for-provider/orders/tourists">
+                                    Tourist Groups
+                                </NavLink>
+                            </li>
                         </ul>
                     </li>
                     <li className='side-nav-item'>

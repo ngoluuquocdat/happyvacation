@@ -77,6 +77,9 @@
                     font-size: 14px;
                     margin-left: 20px;
                 }
+                .date-display:hover {
+                    box-shadow: rgba(32, 33, 36, 0.28) 0px 1px 6px 0px;
+                }
                 .data-range-picker {
                     position: absolute;
                     z-index: 99999;
