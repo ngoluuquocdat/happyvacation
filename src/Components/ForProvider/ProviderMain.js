@@ -10,7 +10,8 @@ import SideNav from './SideNav';
 import ProviderTour from './ProviderTour';
 import ProfilePage from './ProfilePage';
 import ProviderOrder from './ProviderOrder';
-import { ToastContainer } from 'react-toastify';
+import { requestForToken, onMessageListener } from '../../firebase';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreateTour from './CreateTour';
 import UpdateTour from './UpdateTour';
@@ -40,16 +41,24 @@ class ProviderMain extends React.Component {
     }
 
     render() {
+
+        // receive firebase cloud message
+        onMessageListener()
+        .then((payload) => {
+            toast.success("You have a new order.");      
+        })
+        .catch((err) => console.log('failed: ', err));
+
         return(
             <>
-                <ToastContainer
+                {/* <ToastContainer
                     position="top-right"
                     autoClose={2500}
                     hideProgressBar={false}
                     newestOnTop={false}
                     closeOnClick
                     rtl={false}
-                />
+                /> */}
                 <div className='provider-main-wrap'>
                     <div className="small-header">
                         <HeaderNav />
