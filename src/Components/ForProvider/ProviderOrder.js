@@ -89,7 +89,7 @@ class ProviderOrder extends React.Component {
             if (error.response.status === 403) {
                 toast.error("Not allowed");
                 // redirect to provider register page or show notification
-                this.props.history.push('/for-provider/register');
+                this.props.history.push('/login');
             }
         } finally {
             this.setState({

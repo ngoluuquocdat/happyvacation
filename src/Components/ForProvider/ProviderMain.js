@@ -35,7 +35,7 @@ class ProviderMain extends React.Component {
                 return;
             }
             if(this.props.reduxData.user.providerId === 0) {
-                this.props.history.push('/for-provider/register');
+                this.props.history.push('/login');
             }
         }
     }

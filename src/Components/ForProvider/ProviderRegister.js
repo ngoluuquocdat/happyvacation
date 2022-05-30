@@ -135,12 +135,12 @@ class ProviderRegister extends Component {
                 {
                     headers: { Authorization:`Bearer ${token}` }
                 }
-            );          
-            console.log(res)     
+            );             
             this.setState({
                 isLoading: false,
                 isDone: true,
-                isRegistered: true
+                isRegistered: true,
+                registration: res.data
             })      
 
         } catch (error) {

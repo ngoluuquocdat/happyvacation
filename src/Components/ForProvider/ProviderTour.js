@@ -294,7 +294,7 @@ class ProviderTour extends React.Component {
             if (error.response.status === 403) {
                 toast.error("Not allowed");
                 // redirect to provider register page or show notification
-                this.props.history.push('/for-provider/register');
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
             }
         } finally {
             this.setState({
@@ -517,125 +517,7 @@ class ProviderTour extends React.Component {
     }
 }
 
-const tours_temp = [
-    {
-        id: 1,
-        tourName: "FULL-DAY HAI VAN PASS & LANG CO BEACH & IN HUE CITY",
-        reviews: 10,
-        rating: 4.8,
-        viewCount: 10,
-        isPrivate: false,
-        groupSize: 15,
-        pricePerAdult: 1000,
-        pricePerChild: 20,
-        duration: 1,
-        orderCount: 2,
-        rating: 4.8,
-        places: [
-            {
-              id: 3,
-              placeName: "Hoi An"
-            }
-          ],
-        categories: [
-            {
-              id: 4,
-              categoryName: "biking tour",
-              count: 0
-            },
-            {
-              id: 7,
-              categoryName: "classic tour",
-              count: 0
-            }
-        ],
-        description: "For everything hunky-dory",
-        thumbnailPath:
-            "https://hoianexpress.com.vn/wp-content/uploads/2019/12/LANG-CO-BEACH-10.jpg",
-        isAvailable: true
-    },
-    {
-        id: 2,
-        tourName:
-            "HALF-DAY FOODIE TOUR BY BICYCLE & VISIT TRA QUE VEGETABLE VILLAGE",
-        reviews: 10,
-        rating: 4.4,
-        viewCount: 10,
-        groupSize: 15,
-        isPrivate: false,
-        pricePerAdult: 100,
-        pricePerChild: 20,
-        duration: 0.5,
-        orderCount: 2,
-        rating: 4.8,
-        places: [
-            {
-              id: 3,
-              placeName: "Hoi An"
-            },
-            {
-              id: 2,
-              placeName: "Hue"
-            }
-          ],
-        categories: [
-            {
-              id: 4,
-              categoryName: "biking tour",
-              count: 0
-            },
-            {
-              id: 7,
-              categoryName: "classic tour",
-              count: 0
-            }
-        ],
-        description: "An offer you can't refuse",
-        isAvailable: true,
-        thumbnailPath:
-            "https://hoianexpress.com.vn/wp-content/uploads/2019/12/Foodie_11-680x500.jpg",
-    },
-    {
-        id: 3,
-        tourName: "HOI AN MYSTERIOUS NIGHT TOUR WITH DINNER FROM DA NANG",
-        reviews: 10,
-        rating: 3.8,
-        viewCount: 10,
-        groupSize: 15,
-        isPrivate: true,
-        pricePerAdult: 100,
-        pricePerChild: 20,
-        duration: 0.16666666,
-        orderCount: 2,
-        rating: 4.8,
-        places: [
-            {
-              id: 1,
-              placeName: "Da Nang"
-            },
-            {
-              id: 2,
-              placeName: "Hue"
-            }
-          ],
-        categories: [
-            {
-              id: 4,
-              categoryName: "biking tour",
-              count: 0
-            },
-            {
-              id: 7,
-              categoryName: "classic tour",
-              count: 0
-            }
-        ],
-        description: "Roam the eternal city",
-        isAvailable: false,
-        thumbnailPath:
-            "https://hoianexpress.com.vn/wp-content/uploads/2019/12/1-25-870x555.jpg",
-    },
-]
+const tours_temp = []
 
 const listPlaces = [
     { id: 1, placeName: 'Da Nang' },
