@@ -1,0 +1,24 @@
+
+
+
+
+.admin-main-container {
+    display: flex;
+    overflow: hidden;
+    position: relative;
+
+    .side-nav-wrap {
+        align-self: stretch;       
+    }
+
+    .content-page-wrap {
+        // width: calc(100% - 250px);
+        // margin-left: 250px;
+        width: 100%;
+        background-color: #f6f6f6;
+
+        .content-page {
+            padding: 20px;
+        }
+    }
+}

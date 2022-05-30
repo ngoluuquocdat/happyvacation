@@ -8,6 +8,7 @@ import ProviderPage from './Components/TourProviderPage';
 import UserMain from './Components/User/UserMain';
 import ProviderMain from './Components/ForProvider/ProviderMain';
 import ProviderRegister from './Components/ForProvider/ProviderRegister';
+import AdminMain from './Components/ForAdmin/AdminMain';
 import Login from './Components/Login/LoginPage';
 import PlacePage from './Components/Place/PlacePage'
 import TouristSitePage from './Components/Place/TouristSitePage'
@@ -121,11 +122,14 @@ class App extends Component {
                 <Route path="/for-provider">
                   <ProviderMain />
                 </Route >
-                <Route path="/provider/view/orders/:id" exact>
+                {/* <Route path="/provider/view/orders/:id" exact>
                     <ProviderOrderDetailModal />
                 </Route >
                 <Route path="/customer/view/orders/:id" exact>
                     <UserOrderDetailModal />
+                </Route > */}
+                <Route path="/for-admin">
+                  <AdminMain />
                 </Route >
                 <Route path="/not-found" exact>
                     <NotFoundPage />
