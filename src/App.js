@@ -7,6 +7,7 @@ import TourDetailPage from './Components/TourDetail/TourDetailPage';
 import ProviderPage from './Components/TourProviderPage';
 import UserMain from './Components/User/UserMain';
 import ProviderMain from './Components/ForProvider/ProviderMain';
+import ProviderRegister from './Components/ForProvider/ProviderRegister';
 import Login from './Components/Login/LoginPage';
 import PlacePage from './Components/Place/PlacePage'
 import TouristSitePage from './Components/Place/TouristSitePage'
@@ -25,6 +26,7 @@ import {
   Link
 } from "react-router-dom";
 import { ToastContainer} from 'react-toastify';
+
 
 
 class App extends Component {
@@ -111,6 +113,10 @@ class App extends Component {
                 </Route >
                 <Route path="/user" >
                   <UserMain />
+                </Route >
+                <Route path="/for-provider/register">
+                  <ProviderRegister />
+                  <Footer />
                 </Route >
                 <Route path="/for-provider">
                   <ProviderMain />
