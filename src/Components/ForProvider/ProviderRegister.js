@@ -202,7 +202,7 @@ class ProviderRegister extends Component {
                             <p>Contact person:&nbsp;{registration.contactPersonName}</p>
                             <p>Email:&nbsp;{registration.providerEmail}</p>
                             <p>Phone:&nbsp;{registration.providerPhone}</p>
-                            {/* <p>If you need any support, feel free to contact us.</p> */}
+                            <p>If you need any support, feel free to contact us.</p>
                         </div>
                         :
                         <>
