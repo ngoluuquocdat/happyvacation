@@ -1,0 +1,171 @@
+
+
+
+.registrations-page-container {
+    background-color: #fff;
+    padding: 20px;
+    min-height: calc(100vh - 100px);
+
+    .registrations-page-header {
+        padding-bottom: 20px;
+        border-bottom: 1px solid #D7DCE3;
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .sub-title {
+            font-size: 16px;
+            color: #6A6A6A;
+        }
+    }
+    .search-area {
+        margin-top: 10px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #D7DCE3;
+        .search-area-upper {
+            display: flex;
+            flex-direction: column;           
+        }
+        .search-area-below {
+            display: flex;
+            width: 100%;
+            .search-group {
+                width: 50%;
+                position: relative;               
+            }
+        }
+        .button-area {
+            margin-top: 10px;
+            .btn-search,
+            .btn-reset {
+                padding: 10px 18px;
+                border: none;
+                border-radius: 3px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+            .btn-search {
+                margin-right: 20px;
+                color: #fff;
+                background-color: #df385f;
+            }
+            .btn-reset {
+                background-color: #fff;  
+                color: #000;
+                border: 1px solid rgba(0,0,0,.34);
+            }
+        }
+        .search-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+
+            .search-label {
+                display: block;
+                margin-bottom: 8px;
+                font-size: 18px;
+                font-weight: 450;
+                margin-right: 16px;
+                width: 180px;
+            }
+            .search-input {
+                display: block;
+                width: 35%;
+                box-sizing: border-box;
+                border: 1px solid #dfdfdf;
+                outline-width: thin;
+                outline-color: #df385f;
+                padding: 10px;
+                font-size: 16px;
+                border-radius: 5px;
+            }
+            .search-input.name {
+                width: 600px;
+            }
+            .search-input::placeholder {
+                color: #bdbdbd;
+            }
+        }
+    }
+    .registrations-page-body {
+        padding-top: 10px;
+        display: flex;
+        position: relative;
+        
+        .loading-container {
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            position: absolute;
+            display: flex;
+        }
+        .list-registrations-wrap {
+            width: 100%;
+            .registration-number {
+                font-size: 20px;
+                font-weight: 500;
+            }
+            .list-registrations {
+                margin-top: 10px;
+                min-height: 300px;
+                //margin: 0 -15px;   
+                box-shadow: 0 0 0 1px #e5e5e5;
+                border-radius: 4px;            
+                .list-registrations-header {
+                    display: flex;
+                    padding: 12px 0;
+                    font-size: 14px;
+                    color: #888;
+                    background-color: rgb(246 246 246);
+                    width: 100%;
+                    .list-registrations-header-item {
+                        //width: 8.33333333%;
+                        //padding: 0 15px;
+                        text-align: center;
+                        position: relative;
+                        user-select: none;
+                        box-sizing: border-box;
+                    }
+                    .list-registrations-header-item.id {
+                        width: 4.16666666%;
+                    }
+                    .list-registrations-header-item.user-id {
+                        width: 9%;
+                    }
+                    .list-registrations-header-item.provider-name {
+                        width: 16.66666666%;
+                    }
+                    .list-registrations-header-item.contact-person {
+                        width: 16.66666666%;
+                    }
+                    .list-registrations-header-item.provider-email {
+                        width: 16.66666666%;
+                    }
+                    .list-registrations-header-item.provider-phone {
+                        width: 10%;
+                    }
+                    .list-registrations-header-item.date {
+                        width: 9%;
+                    }
+                    .list-registrations-header-item.action {
+                        width: 17.83333333%;
+                    }
+                }
+                .list-tour-content {
+                    width: 100%;                
+                }
+            }
+        }
+    }
+    .pagination-container {
+        margin-top: 60px;
+        display: flex;
+        justify-content: center;
+    }
+}
+

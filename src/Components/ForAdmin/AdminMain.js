@@ -9,6 +9,7 @@ import HeaderNav from '../Header/HeaderNav'
 import AdminSideNav from './AdminSideNav';
 import { requestForToken, onMessageListener } from '../../firebase';
 import { ToastContainer, toast } from 'react-toastify';
+import RegistrationsPage from './RegistrationsPage';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../Styles/ForAdmin/admin-main.scss';
 
@@ -28,9 +29,6 @@ class AdminMain extends React.Component {
                 this.props.history.push('/login', {prevPath: this.props.location.pathname});
                 return;
             }
-            if(this.props.reduxData.user.providerId === 0) {
-                this.props.history.push('/login');
-            }
         }
     }
 
@@ -49,7 +47,7 @@ class AdminMain extends React.Component {
                     <div className="small-header">
                         <HeaderNav />
                     </div>
-                    <div className='provider-main-container'>
+                    <div className='admin-main-container'>
                         <div className='side-nav-wrap'>
                             <AdminSideNav />
                         </div>
@@ -63,7 +61,7 @@ class AdminMain extends React.Component {
                                         Disabled providers list page
                                     </Route >
                                     <Route path="/for-admin/providers/registrations">
-                                        Provider registrations
+                                        <RegistrationsPage />
                                     </Route >
                                     <Route path="/for-admin/members" exact>
                                         Members list page

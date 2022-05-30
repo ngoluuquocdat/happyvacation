@@ -1,0 +1,59 @@
+
+
+
+
+
+.registration-card {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    border-bottom: 1px solid #dfdfdf;
+    position: relative;
+    padding: 20px 0;
+
+    .registration-info-item {
+        text-align: center;
+    }
+
+    .registration-info-item.id {
+        width: 4.16666666%;
+    }
+    .registration-info-item.user-id {
+        width: 9%;
+    }
+    .registration-info-item.provider-name {
+        width: 16.66666666%;
+    }
+    .registration-info-item.contact-person {
+        width: 16.66666666%;
+    }
+    .registration-info-item.provider-email {
+        width: 16.66666666%;
+    }
+    .registration-info-item.provider-phone {
+        width: 10%;
+    }
+    .registration-info-item.date {
+        width: 9%;
+    }
+    .registration-info-item.action {
+        width: 17.83333333%;
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #fff;
+        }
+        .btn.approve {
+            margin-right: 10px;           
+            background-color: #64b450;
+        }
+        .btn.reject {
+            background-color: #cc3300;
+        }
+    }
+}

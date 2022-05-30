@@ -15,13 +15,13 @@ class AdminSideNav extends React.Component {
                     <li className='side-nav-item'>
                         <div className='header'>
                             <RiFileList3Line />
-                            <span className='item-text'>Provider Management</span>
-                            <FaCaretDown />
+                            <span className='item-text'>Providers</span>
+                            {/* <FaCaretDown /> */}
                         </div>
                         <ul className='side-nav-submenu'>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
                                 <NavLink className="item-link" to="/for-admin/providers" exact>
-                                    Tour Providers
+                                    All Providers
                                 </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
@@ -39,13 +39,13 @@ class AdminSideNav extends React.Component {
                     <li className='side-nav-item'>
                         <div className='header'>
                             <RiFileList3Line />
-                            <span className='item-text'>Members Management</span>
-                            <FaCaretDown />
+                            <span className='item-text'>Members</span>
+                            {/* <FaCaretDown /> */}
                         </div>
                         <ul className='side-nav-submenu'>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
                                 <NavLink className="item-link" to="/for-admin/members" exact={true}>
-                                    Members
+                                    All Members
                                 </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
@@ -58,8 +58,8 @@ class AdminSideNav extends React.Component {
                     <li className='side-nav-item'>
                         <div className='header'>
                             <RiFileList3Line />
-                            <span className='item-text'>Tourist Sites Management</span>
-                            <FaCaretDown />
+                            <span className='item-text'>Tourist Sites</span>
+                            {/* <FaCaretDown /> */}
                         </div>
                         <ul className='side-nav-submenu'>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
