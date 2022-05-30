@@ -169,7 +169,12 @@ class HeaderNav extends Component {
                     }
                   </span>
                   <Link to="/" exact="true" className="list-nav-item">Community Blog</Link>
-                  <Link to="/" exact="true" className="list-nav-item">Policy</Link>
+                  {
+                    currentUser && currentUser.providerId !== 0 ?
+                    <Link to="/for-provider" exact="true" className="list-nav-item">Provider Page</Link>
+                    :
+                    <Link to="/for-provider/register" exact="true" className="list-nav-item">Become a provider</Link>
+                  }
                   {
                     isLoading ?
                     <div className="loading-container list-nav-item">
