@@ -7,7 +7,7 @@ import axios from 'axios';
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineCloseCircle } from "react-icons/ai";
 import "../../Styles/login-page.scss";
 
-class Login extends Component {
+class AdminLogin extends Component {
     state = {
         username: '',
         password: '',
@@ -54,8 +54,6 @@ class Login extends Component {
         let {username, password} = this.state;
         username = username.trim();
 
-        let isAdminLogin = (this.props.location.pathname.split('/').at(-1)).toLowerCase() === "admin";
-
         this.setState({
             isCreating: true
         })
@@ -66,18 +64,10 @@ class Login extends Component {
         }
 
         try {
-            let res = {};
-            if(isAdminLogin) {
-                res = await axios.post(
-                    `${this.baseUrl}/api/Authen/Login/admin`,
-                    data
-                ); 
-            } else {
-                res = await axios.post(
-                  `${this.baseUrl}/api/Authen/Login`,
-                  data
-                );          
-            }
+            let res = await axios.post(
+              `${this.baseUrl}/api/Authen/Login`,
+              data
+            );          
             console.log(res);
             const user = {
                 username: res.data.username,
@@ -92,10 +82,6 @@ class Login extends Component {
             // set current user in local storage
             this.props.saveUserRedux(user);
             // redirect to previous page
-            if(isAdminLogin) {
-                this.props.history.push('/for-admin');
-                return;
-            }
             if(this.props.location.state) {
                 const prevPath = this.props.location.state.prevPath;
                 console.log(prevPath)
@@ -112,22 +98,18 @@ class Login extends Component {
 
         } catch (error) {
             if (!error.response) {
-                toast.error("Network error");
-                console.log(error)
-                return;
+              toast.error("Network error");
+              console.log(error)
+              return;
             }
             if (error.response.status === 400) {
-                console.log(error)
+              console.log(error)
             }
             if (error.response.status === 401) {
-                console.log(error);
-                this.setState({
-                    accountValid: false
-                })
-            }
-            if (error.response.status === 403) {
-                console.log(error);
-                toast.error("Not allowed");
+              console.log(error);
+              this.setState({
+                accountValid: false
+            })
             }
         } finally {
             setTimeout(() => {
@@ -143,8 +125,6 @@ class Login extends Component {
         const { username, password } = this.state;
         const { showPassword, isUsernameValid, isPasswordValid, accountValid } = this.state;
         const { isCreating } = this.state;
-        let isAdminLogin = (this.props.location.pathname.split('/').at(-1)).toLowerCase() === "admin";
-
         return (
             <div className="login-page-container">
                 {
@@ -160,7 +140,7 @@ class Login extends Component {
                     </div>
                 }
                 <div className="login-form">
-                    <h3 className="form-header">{isAdminLogin ? "Login Admin" : "Login"}</h3>
+                    <h3 className="form-header">Login</h3>
                     {
                         !accountValid &&
                         <div className="account-valid">
@@ -252,5 +232,5 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Login));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminLogin));
 

@@ -40,6 +40,10 @@
     }
     .registration-info-item.action {
         width: 17.83333333%;
+        svg {
+            font-size: 20px;
+            color: #64b450;
+        }
         .btn {
             padding: 10px 18px;
             border: none;

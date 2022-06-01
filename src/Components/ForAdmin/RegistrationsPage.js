@@ -67,12 +67,12 @@ class RegistrationsPage extends React.Component {
             if (error.response.status === 401) {
                 console.log(error);
                 // redirect to login page or show notification
-                this.props.history.push('/login');
+                this.props.history.push('/login/admin');
             }
             if (error.response.status === 403) {
                 console.log(error);
                 // redirect to login page or show notification
-                this.props.history.push('/login');
+                this.props.history.push('/login/admin');
             }
         } finally {
             this.setState({
@@ -117,7 +117,7 @@ class RegistrationsPage extends React.Component {
     approveRegistration = async(registrationId) => {
         const token = localStorage.getItem('user-token');
         if(!token) {
-            this.props.history.push('/admin/login', {prevPath: this.props.location.pathname});
+            this.props.history.push('/login/admin', {prevPath: this.props.location.pathname});
         }
         try {
             let res = await axios.put(
@@ -146,12 +146,12 @@ class RegistrationsPage extends React.Component {
             if (error.response.status === 401) {
                 toast.error("Login to continue");
                 console.log(error)
-                this.props.history.push('/admin/login', {prevPath: this.props.location.pathname});
+                this.props.history.push('/login/admin', {prevPath: this.props.location.pathname});
             }
             if (error.response.status === 403) {
                 toast.error("Not allowed");
                 // redirect to provider register page or show notification
-                this.props.history.push('/admin/login', {prevPath: this.props.location.pathname});
+                this.props.history.push('/login/admin', {prevPath: this.props.location.pathname});
             }
         }
     }

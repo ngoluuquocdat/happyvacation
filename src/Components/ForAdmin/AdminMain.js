@@ -18,7 +18,7 @@ class AdminMain extends React.Component {
     componentDidMount() {
         const currentUser = this.props.reduxData.baseUrl;
         if(currentUser.providerId === 0) {
-            this.props.history.push('/login');
+            this.props.history.push('/login/admin');
         }
     }
 
@@ -26,7 +26,7 @@ class AdminMain extends React.Component {
         if(prevProps.reduxData.user !== this.props.reduxData.user){
             // set state if new user data save in redux
             if(this.props.reduxData.user === null) {
-                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                this.props.history.push('/login/admin', {prevPath: this.props.location.pathname});
                 return;
             }
         }

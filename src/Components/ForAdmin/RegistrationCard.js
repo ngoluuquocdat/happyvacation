@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
-import { BsArrowRight } from 'react-icons/bs';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import ReactLoading from "react-loading";
-import { BsClock, BsPeople, BsPen } from 'react-icons/bs';
-import { BiCategoryAlt } from 'react-icons/bi';
-import { toast } from 'react-toastify';
+import { GiCheckMark } from 'react-icons/gi';
 import '../../Styles/ForAdmin/registration-card.scss'
 
 class RegistrationCard extends Component {
@@ -38,7 +32,9 @@ class RegistrationCard extends Component {
 
                 <div className='registration-info-item action'>
                     {
-                        !registration.isApproved &&
+                        registration.isApproved ?
+                        <GiCheckMark />
+                        :
                         <>
                             <button className='btn approve' onClick={() => this.approveRegistration(registration.id)}>Approve</button>
                             <button className='btn reject'>Reject</button>
