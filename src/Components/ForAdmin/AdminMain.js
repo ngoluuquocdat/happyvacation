@@ -12,6 +12,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import RegistrationsPage from './RegistrationsPage';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../Styles/ForAdmin/admin-main.scss';
+import ProvidersPage from './ProvidersPage';
 
 class AdminMain extends React.Component {
 
@@ -55,7 +56,7 @@ class AdminMain extends React.Component {
                             <div className='content-page'>
                                 <Switch>
                                     <Route path="/for-admin/providers" exact>
-                                        Providers list page
+                                        <ProvidersPage />
                                     </Route >
                                     <Route path="/for-admin/providers/disabled">
                                         Disabled providers list page

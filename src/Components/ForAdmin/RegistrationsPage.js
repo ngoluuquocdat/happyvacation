@@ -23,8 +23,6 @@ class RegistrationsPage extends React.Component {
         isLoading: false
     }
 
-    listPlaces = [];
-    categories =  [];
     baseUrl = this.props.reduxData.baseUrl;
 
     async getRegistrations(token, registrationId, providerName, contactPersonName, page, perPage) {
@@ -84,9 +82,9 @@ class RegistrationsPage extends React.Component {
     async componentDidMount() {
         // check jwt token
         const token = localStorage.getItem('user-token');
-        // if(!token) {
-        //     this.props.history.push('/admin/login', {prevPath: this.props.location.pathname});
-        // }
+        if(!token) {
+            this.props.history.push('/admin/login');
+        }
         
         // call api to get registrations
         let { registrationId, providerName, contactor, page, perPage } = this.state;
@@ -95,7 +93,7 @@ class RegistrationsPage extends React.Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
-        
+        // on page change
     } 
 
     // change page
