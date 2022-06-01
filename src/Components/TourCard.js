@@ -38,10 +38,15 @@ class TourCard extends Component {
                                     {tour.tourName}
                                 </span>
                                 <div className="tour-review">
-                                    <span className="rating">
-                                        {tour.rating}&nbsp;
-                                        <FiStar className="icon" />
-                                    </span>
+                                    {
+                                        tour.rating !== 0 ?
+                                        <span className="rating">
+                                            {tour.rating}&nbsp;
+                                            <FiStar className="icon" />
+                                        </span>
+                                        :
+                                        <span>Not rated</span>
+                                    }
                                     <span className="review-count">
                                         {tour.reviews} reviews
                                     </span>
