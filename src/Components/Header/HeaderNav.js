@@ -23,6 +23,9 @@ class HeaderNav extends Component {
 
     async componentDidMount() {
       window.scrollTo(0, 0);
+      // call api to get places
+      await this.getPlaces();
+
       console.log("call get user info")
       const token = localStorage.getItem('user-token');
       if(!token) {
@@ -74,10 +77,7 @@ class HeaderNav extends Component {
         this.setState({
           isLoading: false
         })
-      }
-
-      // call api to get places
-      this.getPlaces();
+      }      
     }
 
     // get places
