@@ -1,0 +1,278 @@
+
+
+
+
+.provider-manage-page-container {
+    width: 100%;
+    margin: 0 auto;
+    padding-top: 20px;
+    background-color: #fff;
+
+    .section-divide-hr {
+        margin-top: 36px;
+        width: 100%;
+        height: 1px;
+        margin-bottom: 40px;
+        background-color: #d6d6d6;
+        border: none;
+    }
+    .provider-section {
+        display: flex;
+        width: 1200px;
+        margin: 0 auto;
+        padding: 20px 0;
+        background-color: #f8f8f8;
+        margin-bottom: 60px;
+        position: relative;
+
+        .provider-section-left {
+            box-sizing: border-box;
+            width: 25%;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            .provider-avatar {
+                border-radius: 50%;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position-x: center;
+                background-position-y: center;
+                // this will set width = height dynamic
+                width: 90%;
+                height: 0;
+                padding-bottom: 90%;
+                // ------------------------------------
+                margin: 0 auto;
+                border: 1px solid #D7DCE3;
+            }
+        }
+        .provider-section-right {
+            box-sizing: border-box;
+            width: 75%;
+            padding: 15px 15px;
+            
+            .provider-name {
+                margin: 0;
+                text-align: left;
+                padding-left: 15px;
+                font-size: 32px;
+                font-weight: 500;
+            }
+            .provider-info {
+                display: flex;
+
+                .info-item {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 18px;
+                    .group {
+                        margin-left: 8px;
+                        .content {
+                            color: #d3224b;
+                            margin-left: 10px;
+                            font-size: 16px;
+                        }
+                    }
+                }
+                .provider-main-info,
+                .provider-contact-info {
+                    box-sizing: border-box;
+                    padding: 0 15px;
+                    padding-top: 18px;
+                    text-align: left;
+                    font-size: 16px;
+                    
+                }
+                .provider-main-info {
+                    width: 35%;
+                }
+                .provider-contact-info {  
+                    width: 65%;
+                    .info-item:last-child {
+                        align-items: baseline;
+                        .content {
+                            margin: 0;
+                        }
+                    }                   
+                }
+            }
+            .provider-description {
+                text-align: left;
+                padding: 0 15px;
+                span {
+                    font-style: italic;
+                    display: block;
+                    margin-bottom: 8px;
+                }
+                p {
+                    margin: 0;
+                }
+            }
+        }
+        .loading-container {
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f8f8;
+            position: absolute;
+            display: flex;
+        }
+    }
+    .tour-order-count-section {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 8%;
+        margin: 80px 0;
+        .title {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        .count-value {
+            font-size: 50px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .tour-count {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .tour-statistic {
+                height: 100px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                padding: 20px 0;
+                font-size: 18px;
+                // .main-places {
+    
+                // }
+                // .main-categories {
+    
+                // }
+            }
+        }
+        .order-count {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .donut-chart {
+                display: flex;
+                align-items: center;
+                .donut-chart__legends {
+                    margin-left: 10px;
+                    .legends-item {
+                        display: flex;
+                        min-width: 140px;
+                        font-size: 18px;
+                        margin-bottom: 20px;
+                        .legends__color {
+                            width: 16%;
+                            height: 0;
+                            padding-bottom: 16%;
+                            background-color: #64b450;
+                            display: inline-block;
+                            margin-right: 10px;
+                        }
+                        .legends__color.canceled {
+                            background-color: #cc3300;
+                        }
+                    }
+                    .legends-item:last-child {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+    
+    .all-tours-section {
+        width: 80%;
+        margin: 0 auto;       
+        .title {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        .list-tours {
+            box-shadow: 0 0 0 1px #e5e5e5;
+            border-radius: 4px;
+            margin-top: 20px; 
+            min-height: 220px; 
+            .list-tours-header {
+                display: flex;           
+                font-size: 18px;
+                padding: 12px 0;
+                color: #888;
+                background-color: rgb(246 246 246);
+                width: 100%;
+    
+                .header__tour-id {
+                    width: 4.16666666%;
+                    padding: 0 15px;
+                    text-align: center;
+                }
+                .header__tour-name {
+                    flex: 1;
+                    padding: 0 15px;
+                }
+                .header__tour-rating,
+                .header__tour-order {
+                    width: 10%;
+                    padding: 0 15px;
+                    text-align: center;
+                }
+                .header__tour-available {
+                    width: 12%;
+                    padding: 0 15px;
+                    text-align: center;
+                }
+            }
+            .tour-item {
+                display: flex;
+                align-items: center;
+                padding: 10px 0;
+                .tour-id {
+                    width: 4.16666666%;
+                    padding: 0 15px;
+                    text-align: center;
+                }
+                .tour-name {
+                    flex: 1;
+                    padding: 0 15px;
+                    cursor: pointer;
+                }
+                .tour-rating,
+                .tour-order {
+                    width: 10%;
+                    padding: 0 15px;
+                    text-align: center;
+                }
+                .tour-available {
+                    width: 12%;
+                    padding: 0 15px;
+                    text-align: center;
+                }
+            }
+        }
+        .pagination-container {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+        }
+    }
+    .revenue-section {
+        width: 80%;
+        margin: 0 auto;
+        .quarter-picker-section {
+            margin-bottom: 40px;
+        }
+        .revenue__chart {
+            width: 65%;
+            margin: 0 auto;
+        }
+    }
+}

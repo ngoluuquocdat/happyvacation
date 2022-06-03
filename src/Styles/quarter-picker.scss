@@ -1,0 +1,77 @@
+
+
+
+
+.quarter-picker-wrapper {
+    width: 100%;
+    max-width: 230px;
+    display: flex;
+
+    // .year-picker-section {
+    //     width: 50%;
+    //     .year-display {
+    //         padding: 10px 20px;
+    //         cursor: pointer;
+    //         user-select: none;
+    //         border: 1px solid #eee;
+    //     }
+    //     .year-list {
+    //         margin-top: 20px;
+    //         position: absolute;
+    //         width: 190px;
+    //         height: 290px;
+    //         background-color: #fff;
+    //         box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+    //         overflow-y: scroll;
+    //         .year-item {
+    //             cursor: pointer;
+    //             padding: 10px 20px;
+    //         }
+    //         .year-item:hover {
+    //             background-color: #eee;
+    //         }
+    //     }
+    // }
+    .quarter-picker-section,
+    .year-picker-section {
+        width: 50%;
+        position: relative;
+        .quarter-display,
+        .year-display {
+            padding: 10px 20px;
+            cursor: pointer;
+            user-select: none;
+            border: 1px solid #d6d6d6;
+            border-radius: 5px;
+        }
+        .quarter-list,
+        .year-list {
+            margin-top: 20px;
+            position: absolute;
+            width: 210px;           
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+            .quarter-item,
+            .year-item {
+                cursor: pointer;
+                padding: 10px 20px;
+
+                .month-item {
+                    text-align: left;
+                    margin: 0 10px;
+                    width: 30px;
+                    display: inline-block;
+                }
+            }
+            .quarter-item:hover,
+            .year-item:hover {
+                background-color: #eee;
+            }
+        }
+        .year-list {
+            width: auto;
+            max-height: 290px;
+            overflow-y: scroll;
+        }
+    }
+}

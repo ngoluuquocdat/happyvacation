@@ -11,8 +11,9 @@ import { requestForToken, onMessageListener } from '../../firebase';
 import { ToastContainer, toast } from 'react-toastify';
 import RegistrationsPage from './RegistrationsPage';
 import 'react-toastify/dist/ReactToastify.css';
-import '../../Styles/ForAdmin/admin-main.scss';
 import ProvidersPage from './ProvidersPage';
+import ProviderDetailManage from './ProviderDetailManage';
+import '../../Styles/ForAdmin/admin-main.scss';
 
 class AdminMain extends React.Component {
 
@@ -57,12 +58,15 @@ class AdminMain extends React.Component {
                                 <Switch>
                                     <Route path="/for-admin/providers" exact>
                                         <ProvidersPage />
-                                    </Route >
+                                    </Route >                                    
                                     <Route path="/for-admin/providers/disabled">
                                         Disabled providers list page
                                     </Route >
-                                    <Route path="/for-admin/providers/registrations">
+                                    <Route path="/for-admin/providers/registrations" exact>
                                         <RegistrationsPage />
+                                    </Route >
+                                    <Route path="/for-admin/providers/:id">
+                                        <ProviderDetailManage />
                                     </Route >
                                     <Route path="/for-admin/members" exact>
                                         Members list page

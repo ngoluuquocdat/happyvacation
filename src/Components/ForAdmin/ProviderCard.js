@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from "react-router-dom";
 import { GiCheckMark } from 'react-icons/gi';
 import '../../Styles/ForAdmin/provider-card.scss'
 
@@ -28,7 +29,7 @@ class ProviderCard extends Component {
                 <div className='provider-info-item rating'>{provider.averageRating}</div>
                 <div className='provider-info-item enable'>{provider.isEnabled ? "Enabled" : "Disabled"}</div>
                 <div className='provider-info-item action'>
-                    <button className='btn-view'>View</button>                  
+                    <button className='btn-view' onClick={() => this.props.history.push(`/for-admin/providers/${provider.id}`)}>View</button>                  
                 </div>
             </div>
         );
@@ -41,6 +42,6 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(ProviderCard);
+export default connect(mapStateToProps)(withRouter(ProviderCard));
 
   
