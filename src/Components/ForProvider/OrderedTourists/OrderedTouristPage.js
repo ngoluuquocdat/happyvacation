@@ -219,6 +219,11 @@ class OrderedTouristPage extends React.Component {
                 {
                     touristsCollection.departureDate !== '' &&
                     <div className='ordered-tourist-page-content'>
+                        <button className='btn-get-file' 
+                            onClick={() => { window.location.href = this.baseUrl+touristsCollection.exportFilePath}}
+                        >
+                            Get file
+                        </button>
                         <h2 className='tour-name'>{touristsCollection.tourName}</h2>
                         <div className='departure-total-wrapper'>
                             <div className='departure'>
