@@ -5,13 +5,14 @@ import {
     withRouter
 } from "react-router-dom";
 import { connect } from 'react-redux';
+import axios from 'axios';
 import HeaderNav from '../Header/HeaderNav'
 import SideNav from './SideNav';
 import ProviderTour from './ProviderTour';
 import ProfilePage from './ProfilePage';
 import ProviderOrder from './ProviderOrder';
 import { requestForToken, onMessageListener } from '../../firebase';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CreateTour from './CreateTour';
 import UpdateTour from './UpdateTour';
@@ -20,11 +21,18 @@ import OrderedTouristPage from './OrderedTourists/OrderedTouristPage';
 
 class ProviderMain extends React.Component {
 
+    state = {
+        isEnabled: true
+    }
+
+    baseUrl = this.props.reduxData.baseUrl;
+
     componentDidMount() {
         const currentUser = this.props.reduxData.baseUrl;
         if(currentUser.providerId === 0) {
             this.props.history.push('/for-provider/register');
         }
+        this.checkProviderEnabled();
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -40,8 +48,40 @@ class ProviderMain extends React.Component {
         }
     }
 
-    render() {
+    checkProviderEnabled = async() => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login', {prevPath: this.props.location.pathname});
+        }
+        try {            
+            let res = await axios.get(
+                `${this.baseUrl}/api/Providers/me/check-enabled`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );                     
+            this.setState({
+                isEnabled: res.data.isEnabled
+            })         
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+            }         
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
+            if (error.response.status === 403) {
+                console.log(error)
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
+        }
+    }
 
+    render() {
+        const { isEnabled } = this.state;
         // receive firebase cloud message
         onMessageListener()
         .then((payload) => {
@@ -68,6 +108,13 @@ class ProviderMain extends React.Component {
                             <SideNav />
                         </div>
                         <div className='content-page-wrap'>
+                            {
+                                !isEnabled &&
+                                <>
+                                    <h1 className='disable-title'>You have been disabled.</h1> 
+                                    <p className='disable-sub-title'>Please contact us to solve this problem.</p>
+                                </>
+                            }
                             <div className='content-page'>
                                 <Switch>
                                     <Route path="/for-provider/tours" exact>

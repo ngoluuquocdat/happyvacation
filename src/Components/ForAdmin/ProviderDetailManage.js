@@ -72,6 +72,7 @@ class ProviderDetailManage extends React.Component {
         }
     }
 
+    // get provider
     async getProvider(providerId) {
         const token = localStorage.getItem('user-token');
         if(!token) {
@@ -111,6 +112,61 @@ class ProviderDetailManage extends React.Component {
         }
 	}
 
+    // disable/enable provider
+    disableEnableProvider = async () => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/admin/login');
+        }
+        const providerId = this.props.match.params.id;
+        const isEnabled = this.state.provider.isEnabled;
+        let apiUrl = isEnabled 
+                    ? `${this.baseUrl}/api/providers/${providerId}/disable` 
+                    : `${this.baseUrl}/api/providers/${providerId}/enable`;
+        try {
+            this.setState({
+                isLoadingProvider: true,
+            });   
+
+            let res = await axios.put(
+                apiUrl,
+                {},
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );
+
+            this.setState({
+                provider: {
+                    ...this.state.provider,
+                    isEnabled: res.data.isEnabled
+                },
+            });
+            toast.success(res.data.isEnabled ? "Enabled this provider." : "Disabled this provider.");
+        } catch(error) {
+            if (!error.response) {
+                toast.error("Network error");
+            }
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login/admin');
+            }
+            if (error.response.status === 403) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login/admin');
+            }
+        } finally {
+            setTimeout(() => {
+                this.setState({
+                    isLoadingProvider: false
+                })
+            }, 1000);         
+        }
+    }
+
+    // get tours
     async fetchDataTour(providerId) {
 		try {  
             const token = localStorage.getItem('user-token');
@@ -186,6 +242,7 @@ class ProviderDetailManage extends React.Component {
         });
     };
 
+    // getRevenue
     getRevenue = async(quarter, year) => {
         const token = localStorage.getItem('user-token');
         if(!token) {
@@ -312,6 +369,12 @@ class ProviderDetailManage extends React.Component {
                         </div> 
                     </div>
                 </div>
+                <button 
+                    className={provider.isEnabled ? 'btn-disable' : 'btn-enable'}
+                    onClick={this.disableEnableProvider}
+                >
+                    {provider.isEnabled ? "Disable provider" : "Enable provider"}
+                </button>
                 <hr className="section-divide-hr"></hr>
                 <div className="tour-order-count-section">
                     <div className="tour-count">
