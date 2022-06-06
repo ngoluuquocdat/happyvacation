@@ -1,0 +1,88 @@
+
+
+
+
+.wish-list-page-wrapper {
+    background-color: #fff;
+    padding: 20px;
+
+    .wish-list-page-header {
+        padding-bottom: 20px;
+        border-bottom: 1px solid #D7DCE3;
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .sub-title {
+            font-size: 16px;
+            color: #6A6A6A;
+        }
+    }
+    .wish-list-page-body {
+        padding-top: 30px;
+        .wish-list {
+            .wish-item {
+                display: flex;
+                align-items: center;
+                padding: 20px;
+                border: 1px solid #dfdfdf;
+                margin-bottom: 10px;
+                .tour-thumbnail {
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    background-position-x: center;
+                    background-position-y: center;
+                    width: 12%;
+                    height: 0;
+                    padding-bottom: 12%;
+                    margin-right: 20px;
+                }
+                .tour-content {
+                    .tour-name {
+                        display: block;
+                        font-size: 20px;
+                        cursor: pointer;
+                        margin-bottom: 24px;
+                    }
+                    .tour-name:hover {
+                        color: #df385f;                     
+                    }
+                    .tour-provider {
+                        cursor: pointer;
+                        width: auto;
+                        .tour-provider-avatar {
+                            display: inline-block;
+                            vertical-align: middle;
+                            background-size: cover;
+                            background-repeat: no-repeat;
+                            background-position-x: center;
+                            background-position-y: center;
+                            width: 60px;
+                            height: 60px;
+                            border: 1px solid #dfdfdf;
+                            margin-right: 16px;
+                        }
+                    }
+                    .tour-provider:hover {
+                        color: #df385f;
+                    }
+                }
+                .favorite-btn {
+                    margin-left: auto;
+                    margin-right: 20px;
+                    cursor: pointer;
+                    background-color: transparent;
+                    border: none;
+                    svg {
+                        vertical-align: middle;
+                        font-size: 24px;
+                        color: #dd2953;
+                        margin-right: auto;
+                        margin-left: 0;
+                    }
+                }
+            }
+        }
+    }
+}

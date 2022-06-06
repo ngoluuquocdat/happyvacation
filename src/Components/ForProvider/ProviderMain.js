@@ -27,12 +27,17 @@ class ProviderMain extends React.Component {
 
     baseUrl = this.props.reduxData.baseUrl;
 
-    componentDidMount() {
-        const currentUser = this.props.reduxData.baseUrl;
-        if(currentUser.providerId === 0) {
-            this.props.history.push('/for-provider/register');
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps.reduxData.user !== this.props.reduxData.user){
+            // set state if new user data save in redux
+            if(this.props.reduxData.user === null) {
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                return;
+            }
+            if(this.props.reduxData.user.providerId === 0) {
+                this.props.history.push('/login');
+            }
         }
-        this.checkProviderEnabled();
     }
 
     componentDidUpdate(prevProps, prevState) {

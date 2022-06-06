@@ -14,7 +14,7 @@ import { Calendar } from 'react-date-range';
 import { FaCaretDown } from 'react-icons/fa';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai'
 import { VscLocation } from 'react-icons/vsc';
-import { BsClock, BsPeople, BsTag } from 'react-icons/bs';
+import { BsClock, BsPeople, BsTag, BsHeart, BsHeartFill } from 'react-icons/bs';
 import { FiStar } from 'react-icons/fi';
 import { BiCategoryAlt } from 'react-icons/bi';
 import 'slick-carousel/slick/slick.css';
@@ -217,17 +217,60 @@ class TourDetailPage extends React.Component {
     handleVisitProvider = () => {
         this.props.history.push(`/providers/${this.state.tour.providerId}`)
     }
-    
+
+    // add to wish list
+    addOrRemoveWishList = async(action) => {
+        let res = {};
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            toast.info('You need to login to continue.',
+            {
+                onClick: () => {this.props.history.push('/login', {prevPath: this.props.location.pathname});}
+            });
+            return;
+        }
+        try {
+            if(action === "ADD") {
+                res = await axios.post(
+                    `${this.baseUrl}/api/Users/me/wish-list?tourId=${this.state.tour.id}`,
+                    {},
+                    { headers: { Authorization:`Bearer ${token}` } }
+                );
+                toast.success("Added to your wish list.")
+            } 
+            if(action === "REMOVE") {
+                res = await axios.delete(
+                    `${this.baseUrl}/api/Users/me/wish-list?tourId=${this.state.tour.id}`,
+                    { headers: { Authorization:`Bearer ${token}` } }
+                );
+                toast.success("Removed from your wish list.");
+            }
+            this.setState({
+                tour: {
+                    ...this.state.tour,
+                    isInUserWishList: res.data.isInUserWishList
+                }
+            })
+        } catch(error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+                return;
+            }
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login');
+            }
+        }
+    }
     
     render() {
         const showDatePicker = this.state.showDatePicker; 
         const { date, adults, children, price } = this.state;
-        const { tour } = this.state;
-        const user_logged_in = !!localStorage.getItem('user-token');      
-        const { fullname, phone, email, pickingPlace } = this.state;
+        const { tour } = this.state; 
         const baseUrl = this.state.networkFailed ? '' : this.baseUrl;
         const { isLoading, isBooking } = this.state;
-        console.log('tour', tour)
         return (
             <div className="App">
                 <div className="small-header">
@@ -258,6 +301,11 @@ class TourDetailPage extends React.Component {
                                             <span className='not-rated-label'>Not rated</span>
                                         }
                                         <span className="review">{tour.reviews} reviews</span>
+                                        <button className="favorite-btn" 
+                                                onClick={() => this.addOrRemoveWishList(tour.isInUserWishList ? "REMOVE" : "ADD")}
+                                        >
+                                            {tour.isInUserWishList ? <BsHeartFill/> : <BsHeart/>}
+                                        </button>
                                     </div>
                                     <div className='tour-start-end'>
                                         <div className="tour-start">

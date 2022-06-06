@@ -57,12 +57,12 @@ class UserSideNav extends React.Component {
                     <li className='side-nav-item'>
                         <div className='header'>
                             <RiFileList3Line />
-                            <span className='item-text'>Wish list</span>
+                            <span className='item-text'>Favorite</span>
                             <FaCaretDown />
                         </div>
                         <ul className='side-nav-submenu'>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <NavLink className="item-link" to="/user/liked-tours">
+                                <NavLink className="item-link" to="/user/favorite-tours">
                                     Tours
                                 </NavLink>
                             </li>

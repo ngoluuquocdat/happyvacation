@@ -312,15 +312,15 @@ class Checkout extends React.Component {
                 toast.error("Network error");
                 console.log(error)
                 return;
-              }
-              if (error.response.status === 400) {
+            }
+            if (error.response.status === 400) {
                 console.log(error)
-              }
-              if (error.response.status === 401) {
+            }
+            if (error.response.status === 401) {
                 console.log(error);
                 // redirect to login page or show notification
                 this.props.history.push('/login');
-              }
+            }
         } finally {
             setTimeout(() => {
                 this.setState({
@@ -479,10 +479,13 @@ class Checkout extends React.Component {
                                                 <span>Adults: </span>
                                                 {bookingSubRequest.adults} X ${bookingSubRequest.pricePerAdult} <BsArrowRight className='arrow-icon'/> ${bookingSubRequest.adults * bookingSubRequest.pricePerAdult}
                                             </p>
-                                            <p className='tour-order-price'>
-                                                <span>Children: </span>
-                                                {bookingSubRequest.children} X ${bookingSubRequest.pricePerChild} <BsArrowRight className='arrow-icon'/> ${bookingSubRequest.children * bookingSubRequest.pricePerChild}
-                                            </p>
+                                            {
+                                                bookingSubRequest.pricePerChild >= 0 &&
+                                                <p className='tour-order-price'>
+                                                    <span>Children: </span>
+                                                    {bookingSubRequest.children} X ${bookingSubRequest.pricePerChild} <BsArrowRight className='arrow-icon'/> ${bookingSubRequest.children * bookingSubRequest.pricePerChild}
+                                                </p>
+                                            }
                                             <p className='tour-order-total-price'>
                                                 <span>Total price: </span>
                                                 ${bookingSubRequest.adults * bookingSubRequest.pricePerAdult + bookingSubRequest.children * bookingSubRequest.pricePerChild}

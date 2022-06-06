@@ -1,18 +1,39 @@
 import React from 'react';
 import {
     Switch,
-    Route
+    Route,
+    withRouter
 } from "react-router-dom";
+import { connect } from 'react-redux';
 import HeaderNav from '../Header/HeaderNav'
 import UserSideNav from '../User/UserSideNav';
 import UserProfile from './UserProfile/UserProfile';
 import UserOrder from './UserTourOrder/UserOrder';
 import ChangeEmail from './UserProfile/ChangeEmail';
+import WishList from './WishList';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../Styles/user-main.scss';
 
 class UserMain extends React.Component {
+
+    componentDidMount() {
+        const currentUser = this.props.reduxData.baseUrl;
+        if(!currentUser) {
+            this.props.history.push('/for-provider/register');
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps.reduxData.user !== this.props.reduxData.user){
+            // set state if new user data save in redux
+            if(this.props.reduxData.user === null) {
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                return;
+            }
+        }
+    }
+
     render() {
         return(
             <>
@@ -46,10 +67,10 @@ class UserMain extends React.Component {
                                     <Route path="/user/orders">
                                         <UserOrder />
                                     </Route >
-                                    <Route path="/for-provider/orders/pending" exact>
+                                    <Route path="/users/orders/pending" exact>
                                         <UserOrder orderState="Pending"/>
                                     </Route >
-                                    <Route path="/for-provider/orders/processed" exact>
+                                    <Route path="/users/orders/processed" exact>
                                         <UserOrder orderState="Processed"/>
                                     </Route >
                                     <Route path="/user/profile" exact>
@@ -57,6 +78,9 @@ class UserMain extends React.Component {
                                     </Route >
                                     <Route path="/user/profile/email" exact>
                                         <ChangeEmail />
+                                    </Route >
+                                    <Route path="/user/favorite-tours" exact>
+                                        <WishList />
                                     </Route >
                                 </Switch>
                             </div>
@@ -68,4 +92,10 @@ class UserMain extends React.Component {
     }
 }
 
-export default UserMain;
+const mapStateToProps = (state) => {
+    return {
+        reduxData: state
+    }
+}
+
+export default connect(mapStateToProps)(withRouter(UserMain));
