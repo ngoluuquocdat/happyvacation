@@ -3,7 +3,7 @@
 
 
 .user-chat-box-wrapper {
-    width: 340px;
+    width: 360px;
     height: 480px;
     background-color: #fff;
     border: 1px solid #dfdfdf;
@@ -39,6 +39,14 @@
             cursor: pointer;
             margin-left: auto
         }
+    }
+    .message-list {
+        padding: 0 12px;
+        overflow-y: scroll;
+        flex: 1;
+        border-bottom: 1px solid #dfdfdf;
+        display: flex;
+        flex-direction: column-reverse;
     }
     .message-input-section {
         margin-top: auto;

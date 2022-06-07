@@ -1,0 +1,37 @@
+
+
+
+
+.message-card-wrapper {
+    display: flex;
+    .message-card--right,
+    .message-card--left {
+        word-break: break-word;
+        background-color: #e4e6eb;
+        border-radius: 20px;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        width: auto;
+        min-width: 65px;      
+        max-width: 250px;  
+        margin-bottom: 3px;
+        text-align: left;
+        .message__content {
+            margin: 0;
+            font-size: 15px;
+            line-height: 22px;
+        }
+    }
+    .message-card--right {
+        margin-left: auto;
+        //background-color: rgb(0, 132, 255);
+        background-color: #df385f;
+        color: #fff;
+    }
+}
+.message-card-wrapper:first-child {
+    margin-bottom: 5px;
+}
+.message-card-wrapper:last-child {
+    margin-top: 5px;
+}

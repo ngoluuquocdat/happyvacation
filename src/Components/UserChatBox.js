@@ -5,6 +5,7 @@ import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { IoIosSend } from 'react-icons/io';
+import MessageCard from './MessageCard';
 import '../Styles/user-chat-box.scss';
 
 class UserChatBox extends React.Component {
@@ -12,7 +13,7 @@ class UserChatBox extends React.Component {
     state = {
         messages: [],
         message_content: '',
-        current_user_id: this.props.reduxData.user ? this.props.reduxData.user.id.toString() : localStorage.getItem('anonymous-guid'),
+        current_user_id: this.props.reduxData.user ? this.props.reduxData.user.id.toString() : localStorage.getItem('chat-guid'),
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -21,6 +22,8 @@ class UserChatBox extends React.Component {
         console.log('did mount, create a connection to chat hub');
         // connect user to chat hub
         await this.connectToChatHub();
+        // get list messages
+        await this.getMessages();
     }
 
     async componentWillUnmount() {
@@ -41,13 +44,49 @@ class UserChatBox extends React.Component {
         })
     }
 
+    // get messages 
+    getMessages = async () => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            try {
+                const current_user_id = this.state.current_user_id;
+                const withUserId = `provider${this.props.providerId}`;
+                let res = await axios.get(
+                    `${this.baseUrl}/api/Messages/for-guests?userId=${current_user_id}&withUserId=${withUserId}`
+                );  
+                this.setState({
+                    messages: res.data
+                })      
+            } catch(e) {
+                console.log(e)
+            }
+        } else {
+            try {
+                const withUserId = `provider${this.props.providerId}`;
+                let res = await axios.get(
+                    `${this.baseUrl}/api/Messages?withUserId=${withUserId}`,
+                    {
+                        headers: { Authorization:`Bearer ${token}` }
+                    }
+                );  
+                this.setState({
+                    messages: res.data
+                })      
+    
+            } catch(e) {
+                console.log(e)
+            }
+        }
+    }
+
     // ket noi signal R
     connectToChatHub = async () => {
         console.log("connect to chat hub")
-        let current_user_id = this.state.current_user_id ? this.state.current_user_id : '';
-        console.log('cur user id', current_user_id)
-        const connection = this.state.connection;
-        
+        let current_user_id = this.state.current_user_id ? this.state.current_user_id : 'ANONYMOUS';
+        console.log('current user id', current_user_id);
+
+        const connection = this.state.connection;  
+        console.log('current connection', connection)   
         if(connection) {
             console.log("connection exist")
             return;
@@ -61,20 +100,20 @@ class UserChatBox extends React.Component {
 
             // method to receive message from our server
             connection.on("ShakeHandMessage", (message) => {
-            console.log('message received:', message);
-            if(current_user_id === '') {
-                // current_user_id == 0 means anonymous mode, so message is guid, save the guid to current user id
-                localStorage.setItem('anonymous-guid', message)
-                this.setState({
-                    current_user: {
-                        id: message
-                    }
-                })
+            console.log('Shake hand message:', message);
+            if(current_user_id === 'ANONYMOUS') {
+                // current_user_id == 0 means anonymous mode, so message has a guid, save the guid to current user id
+                if(message.chatGuid && message.chatGuid !== '') {
+                    localStorage.setItem('chat-guid', message.chatGuid)
+                    this.setState({
+                        current_user_id: message.chatGuid
+                    })
+                }
             }
             });
             // method to receive message from our server
             connection.on("ReceiveMessage", async (message) => {
-                console.log('message received 2:', message);
+                console.log('message received:', message);
                 //console.log(`current: ${this.state.current_user.id}, sender: ${message.senderId}`)
                 //console.log('current != sender ?', this.state.current_user.id !== message.senderId)          
                 // update messages list logic
@@ -112,7 +151,7 @@ class UserChatBox extends React.Component {
         const connection = this.state.connection;
         const messageDto = {
             senderId: this.state.current_user_id.toString(),
-            receiverId: this.props.providerId.toString(),
+            receiverId: `provider${this.props.providerId.toString()}`,
             content: message_content
         }
         //console.log('message dto to send', messageDto);
@@ -137,7 +176,9 @@ class UserChatBox extends React.Component {
 
     render() {
         const messages = this.state.messages;
-        const { providerId, providerName, providerAvatar, closeChatBox } = this.props;
+        const { providerName, providerAvatar, closeChatBox } = this.props;
+        const { current_user_id } = this.state;
+        const providerId = `provider${this.props.providerId}`;  // format: provider1
         const { message_content } = this.state;
 
         return (
@@ -148,7 +189,23 @@ class UserChatBox extends React.Component {
                     <span className='close-chat-box-btn' onClick={() => closeChatBox()}>X</span>
                 </div>
                 <div className='message-list'>
-
+                {
+                        messages.length > 0 ?
+                        messages.slice().reverse().map((item, index, array) => {
+                            return (
+                                <MessageCard 
+                                    key={index} 
+                                    userId={current_user_id}
+                                    withUserId={providerId} 
+                                    message={item}
+                                    topSpacing={array[index+1] ? array[index+1].senderId !== item.senderId : false}
+                                    bottomSpacing={array[index-1] ? array[index-1].senderId !== item.senderId : false}
+                                />
+                            )
+                        })
+                        :
+                        <span>Nothing here yet! Say something!</span>
+                    }
                 </div>
                 <div className='message-input-section'>
                     <textarea className='message-input' onChange={this.handleMessageInput} value={message_content}/>
