@@ -42,6 +42,7 @@ class HeaderNav extends Component {
           }
         );          
         const user = {
+            id: res.data.id,
             username: res.data.username,
             firstName: res.data.firstName,
             lastName: res.data.lastName,

@@ -7,6 +7,7 @@ import ReactLoading from "react-loading";
 import Itinerary from './Itinerary';
 import ExpenseTable from './ExpenseTable';
 import ReviewSection from './ReviewSection';
+import UserChatBox from '../UserChatBox';
 import { connect } from 'react-redux';
 import { Left, Right } from '../Header/Arrows';
 import { withRouter } from 'react-router-dom';
@@ -37,7 +38,8 @@ class TourDetailPage extends React.Component {
         // pickingPlace: '',
         isLoading: true,    // must be true
         isBooking: false,
-        networkFailed: false      
+        networkFailed: false,
+        isOpenChatBox: false   
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -270,7 +272,7 @@ class TourDetailPage extends React.Component {
         const { date, adults, children, price } = this.state;
         const { tour } = this.state; 
         const baseUrl = this.state.networkFailed ? '' : this.baseUrl;
-        const { isLoading, isBooking } = this.state;
+        const { isLoading, isBooking, isOpenChatBox } = this.state;
         return (
             <div className="App">
                 <div className="small-header">
@@ -549,8 +551,20 @@ class TourDetailPage extends React.Component {
                                         <span className="provider-name">{tour.providerName}</span>
                                     </div>
                                     <button className='visit' onClick={this.handleVisitProvider}>VISIT</button>
+                                    <button className='visit' onClick={() => this.setState({isOpenChatBox: !this.state.isOpenChatBox})}>CHAT</button>
                                 </div>
-                        </div>            
+                        </div>  
+                        {
+                            isOpenChatBox &&
+                            <div className='user-chat-box-container'>
+                                <UserChatBox 
+                                    providerId={tour.providerId} 
+                                    providerName={tour.providerName}
+                                    providerAvatar={tour.providerAvatar}
+                                    closeChatBox={() => this.setState({isOpenChatBox: false})}
+                                />  
+                            </div>        
+                        }
                     </div>           
                 }
           </div>

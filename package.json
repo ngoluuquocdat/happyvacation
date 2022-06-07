@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
+    "@microsoft/signalr": "^6.0.5",
     "@mui/material": "^5.5.2",
     "@mui/x-date-pickers": "^5.0.0-alpha.2",
     "@paypal/react-paypal-js": "^7.7.0",
