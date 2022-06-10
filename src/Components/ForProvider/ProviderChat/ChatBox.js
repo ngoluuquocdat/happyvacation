@@ -52,7 +52,13 @@ class ChatBox extends Component {
                         messages.length > 0 ?
                         messages.slice().reverse().map((item, index) => {
                             return (
-                                <MessageCard key={index} userId={userId} withUserId={withUser.id} message={item}/>
+                                <MessageCard 
+                                    key={index} 
+                                    userId={userId} 
+                                    withUserId={withUser.id} 
+                                    message={item}
+                                    wide={true}
+                                />
                             )
                         })
                         :
