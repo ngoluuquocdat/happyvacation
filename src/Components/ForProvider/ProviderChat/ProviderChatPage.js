@@ -70,29 +70,29 @@ class ProviderChatPage extends Component {
         }
     }
 
-    getUserInfo = async () => {
-        const token = localStorage.getItem('user-token');
-        if(!token) {     
-            return;
-        }
-        try {
-            let res = await axios.get(
-                `${this.baseUrl}/api/Users/me`,
-                {
-                    headers: { Authorization:`Bearer ${token}` }
-                }
-            );  
-            this.setState({
-                current_user: res.data
-            })      
+    // getUserInfo = async () => {
+    //     const token = localStorage.getItem('user-token');
+    //     if(!token) {     
+    //         return;
+    //     }
+    //     try {
+    //         let res = await axios.get(
+    //             `${this.baseUrl}/api/Users/me`,
+    //             {
+    //                 headers: { Authorization:`Bearer ${token}` }
+    //             }
+    //         );  
+    //         this.setState({
+    //             current_user: res.data
+    //         })      
 
-        } catch(e) {
-            console.log(e)
-            if(e.response.status === 401) {
-                this.props.history.push('/');   
-            }
-        }
-    }
+    //     } catch(e) {
+    //         console.log(e)
+    //         if(e.response.status === 401) {
+    //             this.props.history.push('/');   
+    //         }
+    //     }
+    // }
 
     getChatUsers = async () => {
         const token = localStorage.getItem('user-token');
@@ -240,49 +240,17 @@ class ProviderChatPage extends Component {
         })
     }
 
-    // handle input user id (anonymous mode)
-    inputUserId = (e) => {
-        this.setState({
-            pickingUserId: e.target.value
-        })
-    }
-
-    // handle pick user (anonymous mode)
-    pickUser = async () => {
-        try {
-            const pickingUserId = this.state.pickingUserId;
-            let res = await axios.get(
-                `${this.baseUrl}/api/Users/${pickingUserId}`
-            );  
-            this.setState({
-                withUser: res.data
-            })      
-        } catch(e) {
-            console.log(e)
-        }
-    }
-
-    // handle cancel conversation (anonymous mode)
-    cancelConversation = () => {
-        localStorage.removeItem('anonymous-guid');
-        this.props.history.push('/');
-        // this.setState({
-        //     current_user: {},
-        //     withUser: {},
-        //     pickingUserId: 0
-        // })
-    }
-
     // delete anonymous conversation
     deleteAnonymousConversation = async(deleteUserId) => {
         const token = localStorage.getItem('user-token');
         if(!token) {     
+            this.props.history.push('/login');
             return;
         }
         // delete messages in database
         try {
             let res = await axios.delete(
-                `${this.baseUrl}/api/Users/me/conversation?withUserId=${deleteUserId}`,
+                `${this.baseUrl}/api/Messages/me/conversation?withUserId=${deleteUserId}`,
                 {
                     headers: { Authorization:`Bearer ${token}` }
                 }
@@ -296,7 +264,6 @@ class ProviderChatPage extends Component {
                 this.props.history.push('/');   
             }
         }
-        // if chatting with this user, 
     }
     
     render() {

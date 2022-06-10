@@ -4,30 +4,32 @@
 
 .user-card-wrapper {
     display: flex;
+    align-items: center;
     border-radius: 10px;
     border: 1px solid #dfdfdf;
-    padding: 5px;
+    padding: 10px;
     margin-bottom: 10px;
     cursor: pointer;
     .user-card__left {
         width: 25%;
         //padding: 0 15px;
+        text-align: center;
         .user-avatar {
             background-size: cover;
             background-repeat: no-repeat;
             background-position-x: center;
             background-position-y: center;
-            width: 80%;
+            width: 60%;
             height: 0;
-            padding-bottom: 80%;
+            padding-bottom: 60%;
             border-radius: 50%;
         }
     }
     .user-card__right {
-        width: 75%;
+        flex: 1;
         display: flex;
-        flex-direction: column;
         justify-content: center;
+        flex-direction: column;
         .full-name {
             padding: 0;
             font-size: 16px;
@@ -50,12 +52,29 @@
             width: 100%;
             overflow: hidden;
         }
+    }
+    .menu-btn {
+        font-size: 18px;
+        padding: 0 5px;
+        height: 100%;
+        position: relative;
+        .sub-menu {
+            background-color: #fff;
+            border: 1px solid #dfdfdf;
+            width: auto;
+            position: absolute;
+            z-index: 2;
+            top: 100%;
+            right: 0;
+            padding: 5px 10px;
+            box-sizing: border-box;
+        }
         .btn-delete {
-            width: 70px;
+            padding: 0 5px;
+            font-size: 14px;
         }
         .btn-delete:hover {
-            background-color: red;
-            color: #fff;
+            color: #cc3300;
         }
     }
 }
