@@ -8,6 +8,7 @@ import ProviderPage from './Components/TourProviderPage';
 import UserMain from './Components/User/UserMain';
 import ProviderMain from './Components/ForProvider/ProviderMain';
 import ProviderRegister from './Components/ForProvider/ProviderRegister';
+import ProviderChatPage from './Components/ForProvider/ProviderChat/ProviderChatPage';
 import AdminMain from './Components/ForAdmin/AdminMain';
 import Login from './Components/Login/LoginPage';
 import PlacePage from './Components/Place/PlacePage'
@@ -118,6 +119,9 @@ class App extends Component {
                 <Route path="/for-provider/register">
                   <ProviderRegister />
                   <Footer />
+                </Route >
+                <Route path="/for-provider/chat" exact>
+                    <ProviderChatPage />
                 </Route >
                 <Route path="/for-provider">
                   <ProviderMain />

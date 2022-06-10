@@ -7,23 +7,12 @@ import '../../Styles/ForProvider/side-nav.scss'
 
 class SideNav extends React.Component {
 
-    SideNavMenuRef = React.createRef();
-
-    handleItemSelect = (event) => {
-        // // remove active of other link
-        // var item_links = this.SideNavMenuRef.current.getElementsByClassName('item-link');
-        // for(let i = 0; i < item_links.length; i++){
-        //     item_links[i].classList.remove('active');
-        // } 
-        // // add active to this link
-        // if(event.target.className === 'submenu-item') {
-        //     event.target.getElementsByClassName('item-link')[0].classList.add('active');
-        // } else {
-        //     event.target.classList.add('active');
-        // }
+    onChatClick = () => {
+        this.props.onChatClick()
     }
 
     render() {
+        const { isChatNew } = this.props;
         return (
             <div className='side-nav-container'>
                 <div className="logo-section"> </div>
@@ -35,22 +24,22 @@ class SideNav extends React.Component {
                             <FaCaretDown />
                         </div>
                         <ul className='side-nav-submenu'>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
+                            <li className='submenu-item'>
                                 <NavLink className="item-link" to="/for-provider/orders" exact>
                                     Your Orders
                                 </NavLink>
                             </li>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
+                            <li className='submenu-item'>
                                 <NavLink className="item-link" to="/for-provider/orders/pending">
                                     Pending
                                 </NavLink>
                             </li>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
+                            <li className='submenu-item'>
                                 <NavLink className="item-link" to="/for-provider/orders/processed">
                                     Processed
                                 </NavLink>
                             </li>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
+                            <li className='submenu-item'>
                                 <NavLink className="item-link" to="/for-provider/orders/tourists">
                                     Tourist Groups
                                 </NavLink>
@@ -64,12 +53,12 @@ class SideNav extends React.Component {
                             <FaCaretDown />
                         </div>
                         <ul className='side-nav-submenu'>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
+                            <li className='submenu-item'>
                                 <NavLink className="item-link" to="/for-provider/tours" exact={true}>
                                     Your Tours
                                 </NavLink>
                             </li>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
+                            <li className='submenu-item'>
                                 <NavLink className="item-link" to="/for-provider/tours/new">
                                     Create new tour
                                 </NavLink>
@@ -83,9 +72,18 @@ class SideNav extends React.Component {
                             <FaCaretDown />
                         </div>
                         <ul className='side-nav-submenu'>
-                            <li className='submenu-item' onClick={this.handleItemSelect}>
+                            <li className='submenu-item'>
                                 <NavLink className="item-link" to="/for-provider/profile">
                                     Profile
+                                </NavLink>
+                            </li>
+                            <li className='submenu-item chat' onClick={this.onChatClick}>
+                                <NavLink className="item-link" to="/for-provider/chat" target="_blank">
+                                    Chat
+                                {
+                                    isChatNew &&
+                                    <span>New</span>
+                                }
                                 </NavLink>
                             </li>
                         </ul>

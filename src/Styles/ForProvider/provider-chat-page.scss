@@ -1,0 +1,29 @@
+
+
+
+
+.provider-chat-page-wrapper {
+    height: calc(100vh - 90px);
+    .provider-chat-page-container {
+        padding-top: 20px;
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        .provider-chat-page__left {
+            width: 25%;
+            padding: 0 15px;
+            .user-list {
+                width: 100%;
+                height: 100%;
+                overflow-y: scroll;
+                background-color: #fff;
+                padding: 10px;
+            }
+        }
+        .provider-chat-page__right {
+            width: 75%;
+            background-color: #fff;
+        }
+    }
+}
