@@ -6,6 +6,7 @@
         width: 100%;
         margin: 0 auto;
         padding-top: 80px;
+        text-align: left;
 
         .section-divide-hr {
             margin-top: 36px;
@@ -114,6 +115,19 @@
                 position: absolute;
                 display: flex;
             }
+            .open-chat-btn {
+                margin-top: 15px;
+                margin-right: auto;
+                border: 1px solid #df385f;
+                font-size: 14px;
+                font-weight: 500;
+                background: #FFF;
+                border-radius: 3px;
+                width: 150px;
+                padding: 8px;
+                font-size: 15px;
+                cursor: pointer;
+            }
         }
         .available-tours-section {
             width: 80%;
@@ -202,6 +216,11 @@
                 display: flex;
                 justify-content: center;
             }
+        }
+        .user-chat-box-container {
+            position: fixed;
+            right: 8%;
+            bottom: 0;
         }
     }
 }
