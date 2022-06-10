@@ -6,28 +6,38 @@ import {
 } from "react-router-dom";
 import { connect } from 'react-redux';
 import axios from 'axios';
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
+import { requestForToken, onMessageListener } from '../../firebase';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import HeaderNav from '../Header/HeaderNav'
 import SideNav from './SideNav';
 import ProviderTour from './ProviderTour';
 import ProfilePage from './ProfilePage';
 import ProviderOrder from './ProviderOrder';
-import { requestForToken, onMessageListener } from '../../firebase';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import CreateTour from './CreateTour';
 import UpdateTour from './UpdateTour';
-import '../../Styles/ForProvider/provider-main.scss';
 import OrderedTouristPage from './OrderedTourists/OrderedTouristPage';
+import '../../Styles/ForProvider/provider-main.scss';
 
 class ProviderMain extends React.Component {
 
     state = {
-        isEnabled: true
+        isEnabled: true,
+        isChatNew: false
     }
 
     baseUrl = this.props.reduxData.baseUrl;
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidMount() {
+        // const currentUser = this.props.reduxData.user;
+        // if(currentUser.providerId === 0) {
+        //     this.props.history.push('/login');
+        // }
+        this.checkProviderEnabled();
+    }
+
+    async componentDidUpdate(prevProps, prevState) {
         if(prevProps.reduxData.user !== this.props.reduxData.user){
             // set state if new user data save in redux
             if(this.props.reduxData.user === null) {
@@ -37,18 +47,19 @@ class ProviderMain extends React.Component {
             if(this.props.reduxData.user.providerId === 0) {
                 this.props.history.push('/login');
             }
+            // connect signal r again if current_user change
+            await this.connectToChatHub();
         }
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if(prevProps.reduxData.user !== this.props.reduxData.user){
-            // set state if new user data save in redux
-            if(this.props.reduxData.user === null) {
-                this.props.history.push('/login', {prevPath: this.props.location.pathname});
-                return;
-            }
-            if(this.props.reduxData.user.providerId === 0) {
-                this.props.history.push('/login');
+    async componentWillUnmount() {
+        // close current connection before un mount
+        const connection = this.state.connection;      
+        if(connection) {
+            try {              
+                await connection.stop();
+            } catch(e) {
+                console.log(e)
             }
         }
     }
@@ -85,8 +96,60 @@ class ProviderMain extends React.Component {
         }
     }
 
+    // connect to chat hub to receive message notification 
+    connectToChatHub = async () => {
+        let current_user_id = `provider${this.props.reduxData.user.providerId}`;   // format: provider1
+        console.log('current user id', current_user_id)
+
+        try {
+            const connection = new HubConnectionBuilder()
+            .withUrl(`${this.baseUrl}/chat`)
+            .configureLogging(LogLevel.Information)
+            .build();
+    
+            // method to receive message from our server
+            connection.on("ShakeHandMessage", (message) => {
+                console.log('Shake hand message:', message);
+            });
+
+            // method to receive message from our server
+            connection.on("ReceiveMessage", async (message) => {
+                console.log('message received:', message); 
+                // check if the sender is not provider       
+                if(!message.senderId.includes('provider')) {
+                    this.setState({
+                        isChatNew: true
+                    })
+                    toast.info('You have a new message',
+                    {
+                        onClick: () => {
+                            window.open(`/for-provider/chat`, "_blank");
+                            this.setState({
+                                isChatNew: false
+                            })
+                        }
+                    });                   
+                }
+            });
+        
+            // connection stop handler
+            connection.onclose(e => {
+                //setConnection();
+                //setMessages([]);
+            });
+        
+            await connection.start();
+            await connection.invoke("ConnectUserToChatHub", current_user_id.toString());
+            this.setState({
+                connection: connection
+            })
+        } catch(e) {
+            console.log(e);
+        }
+    }
+
     render() {
-        const { isEnabled } = this.state;
+        const { isEnabled, isChatNew } = this.state;
         // receive firebase cloud message
         onMessageListener()
         .then((payload) => {
@@ -110,7 +173,7 @@ class ProviderMain extends React.Component {
                     </div>
                     <div className='provider-main-container'>
                         <div className='side-nav-wrap'>
-                            <SideNav />
+                            <SideNav isChatNew={isChatNew} onChatClick={() => this.setState({isChatNew: false})}/>
                         </div>
                         <div className='content-page-wrap'>
                             {
