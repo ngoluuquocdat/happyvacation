@@ -118,7 +118,7 @@ class UserChatBox extends React.Component {
                 //console.log('current != sender ?', this.state.current_user.id !== message.senderId)          
                 // update messages list logic
                 let messages = this.state.messages;
-                if(message.senderId === this.props.providerId.toString() || message.senderId === this.state.current_user_id) {
+                if(message.senderId === `provider${this.props.providerId}` || message.senderId === this.state.current_user_id) {
                     messages = [...messages, message]
                     console.log('update list messages')
                 }
@@ -165,6 +165,18 @@ class UserChatBox extends React.Component {
 
     // handle click send button
     handleSendClick = async () => {
+        if(!this.state.current_user_id && !localStorage.getItem('chat-guid')) {
+            // if chat-guid removed 
+            // stop current connection 
+            console.log('reconnect due to lost chat-guid');
+            await this.state.connection.stop();
+            // create a new connection
+            await this.connectToChatHub();
+            // get list messages
+            await this.getMessages();
+            return;
+        }
+        // send message
         const message_content = this.state.message_content;
         if(message_content.trim().length > 0) {
             this.setState({

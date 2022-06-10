@@ -101,6 +101,10 @@ class TourDetailPage extends React.Component {
     
     componentDidUpdate(prevProps, prevState) {
         if(prevProps.reduxData.user !== this.props.reduxData.user){
+            if(this.props.reduxData.user === null) {
+                window.location.reload();
+                return;
+            }
             // set state if new user data save in redux
             this.setState({
                 fullname: this.props.reduxData.user ? this.props.reduxData.user.fullName : '',
