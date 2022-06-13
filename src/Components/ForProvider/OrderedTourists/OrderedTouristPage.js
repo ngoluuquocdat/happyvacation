@@ -141,9 +141,11 @@ class OrderedTouristPage extends React.Component {
             console.log(e);
             toast.error('Error occurred');
         } finally {
-            this.setState({
-                isLoading: false
-            })
+            setTimeout(() => {
+                this.setState({
+                    isLoading: false
+                })
+            }, 1500)            
         }
     }
 
@@ -158,9 +160,7 @@ class OrderedTouristPage extends React.Component {
     render() {
         const { tourId, date } = this.state;
         const { tours, openTours, showDatePicker } = this.state;
-        const { touristsCollection } = this.state;
-
-        console.log('tours', tours)
+        const { touristsCollection, isLoading } = this.state;
 
         return (
             <div className='ordered-tourist-page-container'>
@@ -218,76 +218,51 @@ class OrderedTouristPage extends React.Component {
                 </div>
                 {
                     touristsCollection.departureDate !== '' &&
-                    <div className='ordered-tourist-page-content'>
-                        <button className='btn-get-file' 
-                            onClick={() => { window.location.href = this.baseUrl+touristsCollection.exportFilePath}}
-                        >
-                            Get file
-                        </button>
-                        <h2 className='tour-name'>{touristsCollection.tourName}</h2>
-                        <div className='departure-total-wrapper'>
-                            <div className='departure'>
-                                <span className='label'>Departure:&nbsp; </span>
-                                <span className='value'>{touristsCollection.departureDate}</span>
+                    <>
+                        {
+                            isLoading ?
+                            <div className="loading-container">
+                                <ReactLoading
+                                    className="loading-component"
+                                    type={"spin"}
+                                    color={"#df385f"}
+                                    height={50}
+                                    width={50}
+                                />
                             </div>
-                            <div className='total-count'>
-                                <span className='value'>{touristsCollection.totalCount} tourists</span>
-                            </div>
-                        </div>
-                        <div className='tourist-groups-list'>
-                            {
-                                touristsCollection.touristGroups.map(item => {
-                                    return (
-                                        <TouristsGroupByOrder key={item.orderId} touristGroup={item} />
-                                    )
-                                })
-                            }
-                        </div>
-                    </div>
+                            :
+                            <div className='ordered-tourist-page-content'>
+                                <button className='btn-get-file' 
+                                    onClick={() => { window.location.href = this.baseUrl+touristsCollection.exportFilePath}}
+                                >
+                                    Get file
+                                </button>
+                                <h2 className='tour-name'>{touristsCollection.tourName}</h2>
+                                <div className='departure-total-wrapper'>
+                                    <div className='departure'>
+                                        <span className='label'>Departure:&nbsp; </span>
+                                        <span className='value'>{touristsCollection.departureDate}</span>
+                                    </div>
+                                    <div className='total-count'>
+                                        <span className='value'>{touristsCollection.totalCount} tourists</span>
+                                    </div>
+                                </div>
+                                <div className='tourist-groups-list'>
+                                    {
+                                        touristsCollection.touristGroups.map(item => {
+                                            return (
+                                                <TouristsGroupByOrder key={item.orderId} touristGroup={item} />
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </div>                
+                        }
+                    </>                    
                 }                               
             </div>
         )
     }
-}
-
-const touristsCollection = {
-    tourId: 8,
-    tourName: "HALF-DAY NHA TRANG CITY TOUR",
-    departureDate: "30-05-2022",
-    touristGroups: [
-        {
-            orderId: 106,
-            startPoint: "CustomerPoint&2/20 Le Loi, Minh An &Nha Trang",
-            endPoint: "CustomerPoint&2/20 Le Loi, Minh An &Nha Trang",
-            adultsList: [
-                {
-                    identityNumber: "123321",
-                    fullName: "Dat NGO",
-                    dob: "18/10/2000"
-                }
-            ],
-            childrenList: []
-        },
-        {
-            orderId: 107,
-            startPoint: "CustomerPoint&60 Quang Trung, Minh An &Nha Trang",
-            endPoint: "CustomerPoint&60 Quang Trung, Minh An &Nha Trang",
-            adultsList: [
-                {
-                    identityNumber: "205383060",
-                    fullName: "Quang Bao Pham",
-                    dob: "30/03/2000"
-                },
-                {
-                    identityNumber: "250363285",
-                    fullName: "Van An Ho",
-                    dob: "10/09/2000"
-                }
-            ],
-            childrenList: []
-        }
-    ],
-    totalCount: 3
 }
 
 const mapStateToProps = (state) => {

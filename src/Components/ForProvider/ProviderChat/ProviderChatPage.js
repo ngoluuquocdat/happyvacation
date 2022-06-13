@@ -23,25 +23,11 @@ class ProviderChatPage extends Component {
     baseUrl = this.props.reduxData.baseUrl;
 
     async componentDidMount() {
-    //     console.log('run did mount')
-    //     if(!this.props.reduxData.user || this.props.reduxData.user.providerId === 0) {
-    //         this.props.history.push('/login');
-    //         return;
-    //     }
-    //     this.setState({
-    //         current_user_id: `provider${this.props.reduxData.user.providerId}`
-    //     })
-    //     // call api get user info
-    //     //await this.getUserInfo();
-
         // call api get list chat users
         const list_users = await this.getChatUsers();
         this.setState({
             list_users: list_users
         })   
-
-    //     // connect user to chat hub
-    //     await this.connectToChatHub();
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -70,30 +56,6 @@ class ProviderChatPage extends Component {
         }
     }
 
-    // getUserInfo = async () => {
-    //     const token = localStorage.getItem('user-token');
-    //     if(!token) {     
-    //         return;
-    //     }
-    //     try {
-    //         let res = await axios.get(
-    //             `${this.baseUrl}/api/Users/me`,
-    //             {
-    //                 headers: { Authorization:`Bearer ${token}` }
-    //             }
-    //         );  
-    //         this.setState({
-    //             current_user: res.data
-    //         })      
-
-    //     } catch(e) {
-    //         console.log(e)
-    //         if(e.response.status === 401) {
-    //             this.props.history.push('/');   
-    //         }
-    //     }
-    // }
-
     getChatUsers = async () => {
         const token = localStorage.getItem('user-token');
         if(!token) {
@@ -106,10 +68,7 @@ class ProviderChatPage extends Component {
                 {
                     headers: { Authorization:`Bearer ${token}` }
                 }
-            );  
-            // this.setState({
-            //     list_users: res.data
-            // })    
+            );    
             return res.data  
         } catch(e) {
             console.log(e)
