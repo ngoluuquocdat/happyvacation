@@ -419,6 +419,7 @@ class TourDetailPage extends React.Component {
                                 <div className='tour-itinerary'>
                                     <h3 className="tour-detail-title">Itinerary</h3>    
                                     <div className="itinerary-content">
+                                        <span className="start-time">Departure time: {tour.startTime}</span>
                                         {
                                             (tour.itineraries && tour.itineraries.length > 0) &&
                                             tour.itineraries.map((item) => {
@@ -493,41 +494,6 @@ class TourDetailPage extends React.Component {
                                                         </div>
                                                     </div>
                                                 </div>
-                                            }
-                                            {
-                                                // user_logged_in &&
-                                                // <>
-                                                //     <div className="customer-info-group">
-                                                //         <label className='title'>Full name</label>
-                                                //         <input 
-                                                //             type="text" 
-                                                //             name="fullname"
-                                                //             className='input-field' 
-                                                //             value={fullname} 
-                                                //             onChange={this.handleInputChange}
-                                                //         />
-                                                //     </div>
-                                                //     <div className="customer-info-group">
-                                                //         <label className='title'>Phone</label>
-                                                //         <input 
-                                                //             type="phone" 
-                                                //             name="phone"
-                                                //             className='input-field'
-                                                //             value={phone}  
-                                                //             onChange={this.handleInputChange}
-                                                //         />
-                                                //     </div>
-                                                //     <div className="customer-info-group">
-                                                //         <label className='title'>Email</label>
-                                                //         <input 
-                                                //             type="email" 
-                                                //             name="email"
-                                                //             className='input-field'
-                                                //             value={email} 
-                                                //             onChange={this.handleInputChange}
-                                                //         />
-                                                //     </div>
-                                                // </>
                                             }
                                             <div className="submit-booking">
                                                 <button className="submit" onClick={this.handleBookingSubmit}>
