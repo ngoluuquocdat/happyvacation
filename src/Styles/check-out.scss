@@ -154,17 +154,17 @@
             .date-picker {
                 position: absolute;
                 right: 0;
-                top: 100%;
+                top: 0;
                 background-color: #fff;
                 border: 1px solid #D7DCE3;
-                z-index: 1;
+                z-index: 999;
                 animation: listGrowth ease 0.3s;
                 transform-origin: 50% top;
                 box-shadow: 0 6px 12px rgb(0 0 0 / 18%);
             }
         }
         .information-policy {
-            margin-top: 36px;
+            margin-top: 80px;
             .information-policy__content {
                 font-size: 14px;
                 .policy-link {
@@ -277,7 +277,8 @@
         width: 100%;
         display: flex;
         justify-content: center;
-        margin-top: 40px;
+        align-items: center;
+        margin-top: 80px;
         .btn {
             width: 100px;
             padding: 12px 16px;          
@@ -286,13 +287,8 @@
             border-radius: 3px;
             cursor: pointer;
             font-size: 15px;
-            position: relative;
-            margin-right: 60px;
-        }
-        .btn--confirm {
-            background-color: #df385f;  // a bit lighter than booking header
-            color: #fff;
-            margin: 0;
+            margin-right: 100px;
+            background-color: #cecece;
         }
     }
 }

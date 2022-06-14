@@ -92,23 +92,29 @@ class Checkout extends React.Component {
     // dob adult select
     handleDobAdultSelect = (date, index) => {
         let adultsList = this.state.adultsList;
+        let showDatePickerAdult = this.state.showDatePickerAdult;
         adultsList[index] = {
             ...adultsList[index],
             dob: date
         }
+        showDatePickerAdult[index] = false;
         this.setState({
-            adultsList: adultsList
+            adultsList: adultsList,
+            showDatePickerAdult: showDatePickerAdult
         })
     }
     // dob child select
     handleDobChildSelect = (date, index) => {
         let childrenList = this.state.childrenList;
+        let showDatePickerChild = this.state.showDatePickerChild;
         childrenList[index] = {
             ...childrenList[index],
             dob: date
         }
+        showDatePickerChild[index] = false;
         this.setState({
-            childrenList: childrenList
+            childrenList: childrenList,
+            showDatePickerChild: showDatePickerChild
         })
     }
 
@@ -359,6 +365,9 @@ class Checkout extends React.Component {
         // valid adults list
         for(let i=0; i<adultsList.length; i++) {
             if(this.checkAdultItem(i) === false) {
+                listsValid = false;
+            }
+            if(this.checkChildAge(childrenList[i].dob) === true) {
                 listsValid = false;
             }
         }
@@ -642,7 +651,11 @@ class Checkout extends React.Component {
                                                                                 onChange={(date) => this.handleDobAdultSelect(date, index)}
                                                                             />
                                                                         </div>
-                                                                    }                                        
+                                                                    }  
+                                                                    {
+                                                                        this.checkChildAge(item.dob) &&
+                                                                        <span className='age-warning'>This is not a valid age for an adult.</span>                                   
+                                                                    }                                      
                                                                 </div>
                                                             </div>
                                                         </div>                                                            
