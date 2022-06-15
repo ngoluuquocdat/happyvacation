@@ -77,6 +77,11 @@ class SideNav extends React.Component {
                                     Profile
                                 </NavLink>
                             </li>
+                            <li className='submenu-item'>
+                                <NavLink className="item-link" to="/for-provider/statistic">
+                                    Statistic
+                                </NavLink>
+                            </li>
                             <li className='submenu-item chat' onClick={this.onChatClick}>
                                 <NavLink className="item-link" to="/for-provider/chat" target="_blank">
                                     Chat

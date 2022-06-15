@@ -289,13 +289,6 @@ class ProviderDetailManage extends React.Component {
         const isLoadingProvider = this.state.isLoadingProvider;
         const url = `url('${this.baseUrl+provider.avatarUrl}')`;
 
-        const revenueLabels = ['January', 'February', 'March'];
-        const revenueData = {
-            label: "revenue",
-            data: [100, 300, 500],
-            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        };
-
         return (
             <div className="provider-manage-page-container">
                 <div className="provider-section">

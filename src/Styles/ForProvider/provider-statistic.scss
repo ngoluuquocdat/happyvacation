@@ -1,0 +1,183 @@
+
+
+
+
+.provider-statistic-wrapper {
+    background-color: #fff;
+    padding: 20px;
+    min-height: calc(100vh - 100px);
+
+    .section-divide-hr {
+        margin-top: 36px;
+        width: 100%;
+        height: 1px;       
+        background-color: #d6d6d6;
+        border: none;
+    }
+
+    .section-title {
+        display: block;
+        font-size: 28px;
+        margin-left: 20px;
+        margin-top: 40px;
+        margin-bottom: 24px;
+    }
+
+    .provider-order-header {
+        padding-bottom: 20px;
+        border-bottom: 1px solid #D7DCE3;
+        .title {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .sub-title {
+            font-size: 16px;
+            color: #491d1d;
+        }
+    }
+
+    .donut-chart {
+        display: flex;
+        align-items: center;
+        .donut-chart__legends {
+            margin-left: 10px;
+            .legends-item {
+                display: flex;
+                min-width: 140px;
+                font-size: 18px;
+                margin-bottom: 20px;
+                .legends__color {
+                    width: 16%;
+                    height: 0;
+                    padding-bottom: 16%;
+                    background-color: #64b450;
+                    display: inline-block;
+                    margin-right: 10px;
+                }
+                .legends__color.canceled {
+                    background-color: #cc3300;
+                }
+            }
+            .legends-item:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .tour-order-count-section {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 8%;
+        margin: 80px 0;
+        .title {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        .count-value {
+            font-size: 50px;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .tour-count {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .tour-statistic {
+                height: 100px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                padding: 20px 0;
+                font-size: 18px;
+                // .main-places {
+    
+                // }
+                // .main-categories {
+    
+                // }
+            }
+        }
+        .order-count {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;            
+        }
+    }
+    .revenue-section {
+        width: 80%;
+        margin: 0 auto;
+        margin-top: 40px;
+        .revenue-type {
+            margin-bottom: 30px;
+            .revenue-type-title {
+                font-size: 20px;
+            }
+            .quarter-month-btn {
+                margin-left: 20px;
+                font-style: italic;
+                cursor: pointer;
+            }
+            .quarter-month-btn:hover {
+                color: #df385f;
+            }
+        }
+        .quarter-picker-section {
+            margin-bottom: 30px;
+        }
+        .charts {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            .revenue__chart {
+                width: 65%;
+                //margin: 0 auto;           
+            }
+        }
+        .statistic-info {
+            margin-top: 80px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            .statistic-report {
+                width: 35%;
+                .title {
+                    display: block;
+                    margin-bottom: 10px;
+                }
+                .statistic-table {
+                    border: 1px solid #000;
+                    //padding-bottom: 8px;
+                    .statistic-row {
+                        padding: 8px 5px;
+                        display: flex;
+                        border-bottom: 1px solid #d6d6d6;
+                        .row-item {                        
+                            text-align: center;
+                            padding: 0 8px;                           
+                            box-sizing: border-box;
+                        }
+                        .row-item:first-child{
+                            width: 16.66666666%;
+                        }
+                        .row-item:nth-child(2) {
+                            flex: 1;
+                            text-align: left;
+                        }
+                        .row-item:last-child {
+                            width: 25%;
+                        }
+                    }
+                    .statistic-row.header {
+                        //padding-bottom: 8px;
+                        border-bottom: 1px solid #000;
+                        color: #888;
+                        background-color: rgb(246 246 246);                        
+                    }
+                }
+            }
+        }
+    }
+}

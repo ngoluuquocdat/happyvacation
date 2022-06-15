@@ -1,5 +1,4 @@
 import React from 'react'
-import OrderCardManage from '../ForProvider/OrderCardManage'
 import { toast } from 'react-toastify';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';

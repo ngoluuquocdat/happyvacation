@@ -210,10 +210,6 @@ class AdminLogin extends Component {
                     >
                         Login
                     </button>
-                    <div className="form-footer">
-                        New to Happy Vacation?
-                        <Link className="link" to="/register">Sign up</Link>
-                    </div>
                 </div>
             </div>
         );

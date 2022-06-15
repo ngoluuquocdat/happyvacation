@@ -19,6 +19,7 @@ import CreateTour from './CreateTour';
 import UpdateTour from './UpdateTour';
 import OrderedTouristPage from './OrderedTourists/OrderedTouristPage';
 import '../../Styles/ForProvider/provider-main.scss';
+import ProviderStatistic from './ProviderStatistic';
 
 class ProviderMain extends React.Component {
 
@@ -208,6 +209,9 @@ class ProviderMain extends React.Component {
                                     </Route >
                                     <Route path="/for-provider/profile" exact>
                                         <ProfilePage />
+                                    </Route >
+                                    <Route path="/for-provider/statistic" exact>
+                                        <ProviderStatistic />
                                     </Route >
                                 </Switch>
                             </div>
