@@ -367,7 +367,7 @@ class Checkout extends React.Component {
             if(this.checkAdultItem(i) === false) {
                 listsValid = false;
             }
-            if(this.checkChildAge(childrenList[i].dob) === true) {
+            if(this.checkChildAge(adultsList[i].dob) === true) {
                 listsValid = false;
             }
         }
@@ -390,13 +390,11 @@ class Checkout extends React.Component {
 
         if(customerValid === false || listsValid === false) {
             toast.warning('Your information is invalid!');
+            console.log('toasted', 'invalid')
             return false;
         }
         return true;
     }
-
-
-    
     
     render() {
         const { bookingSubRequest } = this.props.location.state;
@@ -768,7 +766,6 @@ class Checkout extends React.Component {
                         </div>
                         <div className='check-out-controls'>
                             <button className='btn btn--cancel' onClick={this.handleCancel}>Cancel</button>
-                            {/* <button className='btn btn--confirm' onClick={this.handleConfirm}>CONFIRM</button> */}
                             <PayPalButtons
                                 onClick={(data, actions) => {
                                     if(!this.valid()){
@@ -781,11 +778,9 @@ class Checkout extends React.Component {
                                     return actions.order.create({
                                         purchase_units: [
                                             {
-
-                                                descriptions: `${bookingSubRequest.tourName} from ${bookingSubRequest.providerName}`,
+                                                description: `${bookingSubRequest.tourName} from ${bookingSubRequest.providerName}`,
                                                 amount: {
                                                     value: bookingSubRequest.adults * bookingSubRequest.pricePerAdult + bookingSubRequest.children * bookingSubRequest.pricePerChild
-
                                                 }
                                             }
                                         ]
@@ -799,6 +794,7 @@ class Checkout extends React.Component {
                                     await this.handleConfirm(transactionId);
                                 }}
                                 onCancel={(data, actions) => {
+                                    console.log('tat giua chung');
 
                                 }}
                                 onError={(err) => {
