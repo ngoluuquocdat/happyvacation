@@ -67,6 +67,11 @@ class WishList extends React.Component {
             });
             return;
         }
+        // check if user is disable
+        if(!await this.checkUserEnabled()) {
+            toast.info('Your account is disabled');
+            return;
+        }
         try {
             if(action === "ADD") {
                 res = await axios.post(
@@ -102,6 +107,33 @@ class WishList extends React.Component {
                 console.log(error);
                 // redirect to login page or show notification
                 this.props.history.push('/login');
+            }
+        }
+    }
+
+    // check if user is disabled or not
+    checkUserEnabled = async() => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login');
+        }
+        try {            
+            let res = await axios.get(
+                `${this.baseUrl}/api/Users/me/check-enabled`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );                     
+            return res.data.isEnabled;       
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+            }         
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
             }
         }
     }

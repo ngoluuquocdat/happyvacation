@@ -18,7 +18,14 @@
         //margin-left: 250px;
         width: 100%;
         background-color: #f6f6f6;
-
+        .disable-title {
+            color: #c30;
+            margin: 20px 0 10px 20px;
+        }
+        .disable-sub-title {
+            margin: 0 0 0 20px;
+            color: #c30;
+        }
         .content-page {
             padding: 20px;
         }

@@ -188,7 +188,7 @@ class TourDetailPage extends React.Component {
             [key]: value
         })
     }
-    // booking submit
+    // booking submit click
     handleBookingSubmit = async() => {
         const token = localStorage.getItem('user-token');
         if(!token) {
@@ -198,7 +198,12 @@ class TourDetailPage extends React.Component {
             });
             return;
         }
-        // call api post order
+        // check if user is disable
+        if(!await this.checkUserEnabled()) {
+            toast.info('Your account is disabled');
+            return;
+        }
+        // redirect to check out page
         console.log('state date type', typeof this.state.date)
         console.log(this.state.tour.images[0].url)
         let bookingSubRequest = {
@@ -235,6 +240,11 @@ class TourDetailPage extends React.Component {
             });
             return;
         }
+        // check if user is disable
+        if(!await this.checkUserEnabled()) {
+            toast.info('Your account is disabled');
+            return;
+        }
         try {
             if(action === "ADD") {
                 res = await axios.post(
@@ -267,6 +277,44 @@ class TourDetailPage extends React.Component {
                 console.log(error);
                 // redirect to login page or show notification
                 this.props.history.push('/login');
+            }
+        }
+    }
+
+    // handle open/close chat
+    handleOpenChatClick = async () => {
+        // check if user is disable
+        if(!await this.checkUserEnabled()) {
+            toast.info('Your account is disabled');
+            this.setState({isOpenChatBox: false})
+            return;
+        }
+        this.setState({isOpenChatBox: !this.state.isOpenChatBox})
+    }
+
+    // check if user is disabled or not
+    checkUserEnabled = async() => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login');
+        }
+        try {            
+            let res = await axios.get(
+                `${this.baseUrl}/api/Users/me/check-enabled`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );                     
+            return res.data.isEnabled;       
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+            }         
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
             }
         }
     }
@@ -521,7 +569,7 @@ class TourDetailPage extends React.Component {
                                         <span className="provider-name">{tour.providerName}</span>
                                     </div>
                                     <button className='visit' onClick={this.handleVisitProvider}>VISIT</button>
-                                    <button className='visit' onClick={() => this.setState({isOpenChatBox: !this.state.isOpenChatBox})}>CHAT</button>
+                                    <button className='visit' onClick={this.handleOpenChatClick}>CHAT</button>
                                 </div>
                         </div>  
                         {
