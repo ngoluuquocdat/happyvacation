@@ -14,6 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ProvidersPage from './ProvidersPage';
 import ProviderDetailManage from './ProviderDetailManage';
 import '../../Styles/ForAdmin/admin-main.scss';
+import MembersPage from './MembersPage';
 
 class AdminMain extends React.Component {
 
@@ -69,7 +70,7 @@ class AdminMain extends React.Component {
                                         <ProviderDetailManage />
                                     </Route >
                                     <Route path="/for-admin/members" exact>
-                                        Members list page
+                                        <MembersPage />
                                     </Route >
                                     <Route path="/for-admin/members/disabled">
                                         Disabled members list page
