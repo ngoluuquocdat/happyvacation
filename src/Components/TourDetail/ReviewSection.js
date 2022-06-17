@@ -19,7 +19,8 @@ class ReviewSection extends Component {
         ratingLabel: '',
         flag: 1,    // this is changed between 1 and 2, to detect if new review posted or not in componentDidUpdate
         networkFailed: false,
-        isPosting: false
+        isPosting: false,
+        isUserEnabled: true
     }
     tourId = this.props.tourId ? this.props.tourId : 0;
     ratingLabels = ['','Terrible', 'Poor', 'Average', 'Good', 'Excellent'];
@@ -63,9 +64,10 @@ class ReviewSection extends Component {
                 }
             } finally {
                 
-            }
-            
+            }            
         }
+        // call api to check if user is disabled or not
+        await this.checkUserEnabled();
     }
 
     async componentDidUpdate (prevProps, prevState) {
@@ -217,11 +219,41 @@ class ReviewSection extends Component {
         })
     }
 
+    // check if user is disabled or not
+    checkUserEnabled = async() => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login');
+        }
+        try {            
+            let res = await axios.get(
+                `${this.baseUrl}/api/Users/me/check-enabled`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );                     
+            this.setState({
+                isUserEnabled: res.data.isEnabled
+            })       
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+            }         
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
+        }
+    }
+
     render() {
         //const currentUser = this.props.reduxData.user;
         // const isCurrentUserExist = ((currentUser!=null)&&(Object.keys(currentUser).length !== 0 && currentUser.constructor === Object));
         const isCurrentUserExist = localStorage.getItem('user-token') && localStorage.getItem('user-token').length > 0;
-        const reviews = this.state.reviews;
+        const isOrderedByUser = this.props.isOrderedByUser;
+        const { reviews, isUserEnabled } = this.state;
         const { totalCount, page, totalPage } = this.state;
         const { content, rating, hoverLabel, ratingLabel } = this.state;
         const baseUrl = this.state.networkFailed ? '' : this.baseUrl;
@@ -229,25 +261,41 @@ class ReviewSection extends Component {
         return (           
             <div className='review-section'>
                 {
-                    isCurrentUserExist ? 
-                    <div className='review-form'>
-                        <span className='review-form-title'>Leave your review for this tour!</span>
-                        <Rating
-                            name="simple-controlled"
-                            value={rating}
-                            onChange={this.handleOnChangeRating}
-                            onChangeActive={this.handleOnHoverRating}
-                            size="large"
-                        />
-                        <span className='rating-label'>{hoverLabel.length>0 ? hoverLabel : ratingLabel}&nbsp;</span>
-                        <textarea 
-                            className='comment-input'
-                            placeholder='Your review...' 
-                            value={content}
-                            onChange={this.handleOnChangeContent}                          
-                        />
-                        <button className='submit-btn' onClick={this.handleOnSubmitReview}>LEAVE REVIEW</button>
-                    </div>
+                    isCurrentUserExist ?                     
+                    <>
+                        {
+                            // isOrderedByUser ?
+                            isUserEnabled ?
+                            <>
+                                {
+                                    isOrderedByUser ? 
+                                    <div className='review-form'>
+                                        <span className='review-form-title'>Leave your review for this tour!</span>
+                                        <Rating
+                                            name="simple-controlled"
+                                            value={rating}
+                                            onChange={this.handleOnChangeRating}
+                                            onChangeActive={this.handleOnHoverRating}
+                                            size="large"
+                                        />
+                                        <span className='rating-label'>{hoverLabel.length>0 ? hoverLabel : ratingLabel}&nbsp;</span>
+                                        <textarea 
+                                            className='comment-input'
+                                            placeholder='Your review...' 
+                                            value={content}
+                                            onChange={this.handleOnChangeContent}                          
+                                        />
+                                        <button className='submit-btn' onClick={this.handleOnSubmitReview}>LEAVE REVIEW</button>
+                                    </div>
+                                    :
+                                    <span className='notify'>You can leave your review after experiencing this tour!</span>
+                                }
+                            </>
+                            :
+                            // <span className='notify'>You can leave your review after experiencing this tour!</span>
+                            <span className='notify'>You have been disabled.</span>
+                        }
+                    </>                                           
                     : 
                     <span className='notify'>Login to leave your review!</span>
                 }
