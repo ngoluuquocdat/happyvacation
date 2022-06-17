@@ -1,6 +1,7 @@
 .slider-div {
   /* padding-top: 77px; */
   padding-top: 0;
+  overflow: hidden;
 }
 
 .background-image-div {
