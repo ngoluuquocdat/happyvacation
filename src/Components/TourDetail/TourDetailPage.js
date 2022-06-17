@@ -25,8 +25,14 @@ import '../../Styles/tour-detail.scss'
 
 class TourDetailPage extends React.Component {
 
+    getTomorrow = () => {
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow;
+    }
+
     state = {
-        date: new Date(),
+        date: this.getTomorrow(),
         adults: 1,
         children: 0,
         price: 0,
@@ -286,7 +292,7 @@ class TourDetailPage extends React.Component {
         // check if user is disable
         if(!await this.checkUserEnabled()) {
             toast.info('Your account is disabled');
-            this.setState({isOpenChatBox: false})
+            //this.setState({isOpenChatBox: false})
             return;
         }
         this.setState({isOpenChatBox: !this.state.isOpenChatBox})
@@ -296,7 +302,7 @@ class TourDetailPage extends React.Component {
     checkUserEnabled = async() => {
         const token = localStorage.getItem('user-token');
         if(!token) {
-            this.props.history.push('/login');
+            return true;
         }
         try {            
             let res = await axios.get(
@@ -324,7 +330,8 @@ class TourDetailPage extends React.Component {
         const { date, adults, children, price } = this.state;
         const { tour } = this.state; 
         const baseUrl = this.state.networkFailed ? '' : this.baseUrl;
-        const { isLoading, isBooking, isOpenChatBox } = this.state;
+        const { isLoading, isBooking, isOpenChatBox } = this.state;       
+        
         return (
             <div className="App">
                 <div className="small-header">
@@ -487,7 +494,7 @@ class TourDetailPage extends React.Component {
                                 </div>
                                 <div className='tour-reviews'>
                                     <h3 className="tour-detail-title">Reviews</h3>
-                                    <ReviewSection tourId={this.props.match.params.id}/>
+                                    <ReviewSection tourId={this.props.match.params.id} isOrderedByUser={tour.isOrderedByUser}/>
                                 </div>
                             </div>                          
                         </div>
@@ -510,7 +517,7 @@ class TourDetailPage extends React.Component {
                                                     <div className="date-picker" onClick={(event) => event.stopPropagation()}>
                                                         <Calendar
                                                             date={date}
-                                                            minDate={new Date()}
+                                                            minDate={this.getTomorrow()}
                                                             onChange={this.handleDateSelect}
                                                         />
                                                     </div>

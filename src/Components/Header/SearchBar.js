@@ -58,14 +58,21 @@ const categories_temp = [
 ];
 
 class SearchBar extends React.Component {
+
+    getTomorrow = () => {
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow;
+    }
+
     state = {
         categories: [],
         listPlaces: [],
         
         filter: ((this.props.filter!=null)&&(Object.keys(this.props.filter).length !== 0 && this.props.filter.constructor === Object)) ? this.props.filter :  {
                 selectedPlace: null,
-                startDate: new Date(),
-                endDate: new Date(),
+                startDate: this.getTomorrow(),
+                endDate: this.getTomorrow(),
                 keyword: '',
                 priceRange: [0, 3000],
                 selectedCategories: [],
@@ -336,7 +343,7 @@ class SearchBar extends React.Component {
                                     onChange={this.handleDateRangeChange}
                                     moveRangeOnFirstSelection={false}
                                     ranges={[dateSelectionRange]}
-                                    minDate={new Date()}
+                                    minDate={this.getTomorrow()}
                                 />
                             </div>
                         }
