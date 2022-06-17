@@ -22,6 +22,41 @@ class Login extends Component {
 
     componentDidMount() {
         window.scrollTo(0, 0);
+        // add event listener
+        window.addEventListener("storage", this.localStorageUpdated);
+        // if already have token, redirect to home
+        const token = localStorage.getItem('user-token');
+        //let isAdminLogin = (this.props.location.pathname.split('/').at(-1)).toLowerCase() === "admin";
+        if(token) {
+            this.props.history.push('/');
+        }
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener("storage", this.localStorageUpdated);
+    }
+
+    localStorageUpdated = (e) => {
+        console.log(e)
+        if(e.key === 'user-token'){         
+            if(e.newValue === null) {
+                this.props.history.push('/login');
+            } else {
+                if(this.props.location.state) {
+                    const prevPath = this.props.location.state.prevPath;
+                    console.log(prevPath)
+                    if(prevPath && prevPath.length > 0) {
+                        if(this.props.location.state.filter) {
+                            this.props.history.push(this.props.location.state.prevPath, {filter: this.props.location.state.filter});
+                        } else {
+                            this.props.history.push(this.props.location.state.prevPath);
+                        }
+                    }
+                } else {
+                    this.props.history.push('/');
+                }
+            }  
+        }       
     }
 
     // toggle show password

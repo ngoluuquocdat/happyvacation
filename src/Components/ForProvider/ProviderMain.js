@@ -31,11 +31,9 @@ class ProviderMain extends React.Component {
     baseUrl = this.props.reduxData.baseUrl;
 
     componentDidMount() {
-        // const currentUser = this.props.reduxData.user;
-        // if(currentUser.providerId === 0) {
-        //     this.props.history.push('/login');
-        // }
         this.checkProviderEnabled();
+        // add storage event listener
+        //window.addEventListener("storage", this.localStorageUpdated);
     }
 
     async componentDidUpdate(prevProps, prevState) {
@@ -63,7 +61,19 @@ class ProviderMain extends React.Component {
                 console.log(e)
             }
         }
+        // // remove storage event listener
+        //window.removeEventListener("storage", this.localStorageUpdated);
     }
+
+    // localStorageUpdated = (e) => {
+    //     if(e.key === 'user-token'){         
+    //         if(e.newValue === null) {
+    //             this.props.history.push('/login', {prevPath: this.props.location.pathname});
+    //         }
+    //     } else {
+    //         this.props.history.push('/for-provider');
+    //     }       
+    // }
 
     checkProviderEnabled = async() => {
         const token = localStorage.getItem('user-token');
@@ -93,6 +103,7 @@ class ProviderMain extends React.Component {
             if (error.response.status === 403) {
                 console.log(error)
                 this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                toast.info("Only tour provider can visit the page.")
             }
         }
     }

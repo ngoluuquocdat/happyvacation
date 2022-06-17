@@ -25,6 +25,9 @@ class HeaderNav extends Component {
       window.scrollTo(0, 0);
       // call api to get places
       await this.getPlaces();
+      
+      // add storage event listener
+      window.addEventListener("storage", this.localStorageUpdated);  
 
       console.log("call get user info")
       const token = localStorage.getItem('user-token');
@@ -78,8 +81,20 @@ class HeaderNav extends Component {
         this.setState({
           isLoading: false
         })
-      }      
+      }         
     }
+
+    componentWillUnmount() {   
+      // remove storage event listener
+      window.removeEventListener("storage", this.localStorageUpdated);
+    }
+
+  localStorageUpdated = (e) => {
+      console.log(e)
+      if(e.key === 'user-token'){    
+        window.location.reload();     
+      }       
+  }
 
     // get places
     getPlaces = async() => {

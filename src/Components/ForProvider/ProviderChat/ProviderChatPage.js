@@ -23,16 +23,27 @@ class ProviderChatPage extends Component {
     baseUrl = this.props.reduxData.baseUrl;
 
     async componentDidMount() {
+        console.log('run did mount');
         // call api get list chat users
         const list_users = await this.getChatUsers();
         this.setState({
-            list_users: list_users
-        })   
+            list_users: list_users,
+            withUser: list_users[0]
+        })          
+
+        // add storage event listener
+        //window.addEventListener("storage", this.localStorageUpdated);
     }
 
-    async componentDidUpdate(prevProps, prevState) {
+    async componentDidUpdate(prevProps, prevState) {       
         // connect signal r again if current_user change
         if(prevProps.reduxData.user !== this.props.reduxData.user) {
+            // redirect to login when user log out
+            if(this.props.reduxData.user === null) {
+                console.log('user log out')
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                return;
+            }
             this.setState({
                 current_user_id: `provider${this.props.reduxData.user.providerId}`
             })
@@ -53,11 +64,25 @@ class ProviderChatPage extends Component {
             } catch(e) {
                 console.log(e)
             }
-        }
+        }      
+        // remove storage event listener
+        //window.removeEventListener("storage", this.localStorageUpdated);
     }
+
+    // localStorageUpdated = (e) => {
+    //     console.log(e)
+    //     if(e.key === 'user-token'){         
+    //         if(e.newValue === null) {
+    //             this.props.history.push('/login', {prevPath: this.props.location.pathname});
+    //         } else {
+    //             this.props.history.push('/for-provider/chat');
+    //         }  
+    //     }       
+    // }
 
     getChatUsers = async () => {
         const token = localStorage.getItem('user-token');
+        
         if(!token) {
             this.props.history.push('/login');
             return [];
