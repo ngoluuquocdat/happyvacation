@@ -65,21 +65,26 @@ class ChatBox extends Component {
                         <span>Nothing here yet! Say something!</span>
                     }
                 </div>
-                <div className="new-message-input">
-                    <div className="input-controls">
-                        <BsFillPlusCircleFill className='icon'/>
-                        <BsCardImage className='icon'/>
-                        <BsFillStickyFill className='icon'/>
-                        <RiFileGifFill className='icon'/>
+                {
+                    withUser.isUserEnabled ?
+                    <div className="new-message-input">
+                        <div className="input-controls">
+                            <BsFillPlusCircleFill className='icon'/>
+                            <BsCardImage className='icon'/>
+                            <BsFillStickyFill className='icon'/>
+                            <RiFileGifFill className='icon'/>
+                        </div>
+                        <input 
+                            className='input-field' 
+                            placeholder='Your message...'
+                            value={message_content}
+                            onChange={this.inputMessage}
+                        />
+                        <button className='send-btn' onClick={this.sendMessage}>Send</button>
                     </div>
-                    <input 
-                        className='input-field' 
-                        placeholder='Your message...'
-                        value={message_content}
-                        onChange={this.inputMessage}
-                    />
-                    <button className='send-btn' onClick={this.sendMessage}>Send</button>
-                </div>
+                    :
+                    <div className='disabled-label'>This user has been disabled.</div>
+                }
             </div>
         )
     }

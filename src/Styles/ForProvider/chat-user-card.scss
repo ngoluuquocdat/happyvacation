@@ -30,7 +30,8 @@
         display: flex;
         justify-content: center;
         flex-direction: column;
-        .full-name {
+        .full-name,
+        .full-name--disabled {
             padding: 0;
             font-size: 16px;
             font-weight: 400;
@@ -38,6 +39,9 @@
             margin: 0;
             margin-bottom: 5px;
         }
+        .full-name--disabled {
+            color: #999;
+        }   
         .full-name--bold {
             font-size: 17px;
             font-weight: 500;

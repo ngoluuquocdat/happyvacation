@@ -41,7 +41,12 @@ class ChatUserCard extends Component {
                     <div className="user-avatar" style={{backgroundImage: avatarUrl}}></div>
                 </div>
                 <div className="user-card__right">
-                    <h3 className={highlight ? "full-name--bold" : "full-name"}>{user.fullName}</h3>
+                    {
+                        user.isUserEnabled ?
+                        <h3 className={highlight ? "full-name--bold" : "full-name"}>{user.fullName}</h3>
+                        :
+                        <h3 className="full-name--disabled">{user.fullName}</h3>
+                    }
                     <p className="latest-message">{user.latestMessage}</p>
                 </div>
                 {
@@ -58,7 +63,7 @@ class ChatUserCard extends Component {
                             </div>                      
                         }
                     </div>
-                }
+                }               
             </div>
         )
     }
