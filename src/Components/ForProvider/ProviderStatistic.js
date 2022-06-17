@@ -293,48 +293,80 @@ class ProviderTour extends React.Component {
                         </div>
                     </div>
                     <div className="statistic-info">
-                        <div className="statistic-report">
-                            <span className="title">Top places in this { byQuarter ? "quarter" : "month" }:&nbsp;</span>
-                            <div className="statistic-table">
-                                <div className="statistic-row header">
-                                    <div className="row-item">No.</div>
-                                    <div className="row-item">Place</div>
-                                    <div className="row-item">Orders</div>
+                        <div className="statistic-info-place-category">
+                            <div className="statistic-report">
+                                <span className="title">Top ordered places in this { byQuarter ? "quarter" : "month" }:&nbsp;</span>
+                                <div className="statistic-table">
+                                    <div className="statistic-row header">
+                                        <div className="row-item">No.</div>
+                                        <div className="row-item">Place</div>
+                                        <div className="row-item">Orders</div>
+                                    </div>
+                                    {
+                                        revenueReport.topOrderedPlaces && 
+                                        revenueReport.topOrderedPlaces.map((item, index) => {
+                                            return (
+                                                <div className="statistic-row">
+                                                    <div className="row-item">{index+1}</div>
+                                                    <div className="row-item">{item.placeName}</div>
+                                                    <div className="row-item">{item.orderCount}</div>
+                                                </div>
+                                            )
+                                        })
+                                    }
                                 </div>
-                                {
-                                    revenueReport.topOrderedPlaces && 
-                                    revenueReport.topOrderedPlaces.map((item, index) => {
-                                        return (
-                                            <div className="statistic-row">
-                                                <div className="row-item">{index+1}</div>
-                                                <div className="row-item">{item.placeName}</div>
-                                                <div className="row-item">{item.orderCount}</div>
-                                            </div>
-                                        )
-                                    })
-                                }
+                            </div>
+                            <div className="statistic-report">
+                                <span className='title'>Top ordered categories in this { byQuarter ? "quarter" : "month" }:&nbsp;</span>
+                                <div className="statistic-table">
+                                    <div className="statistic-row header">
+                                        <div className="row-item">No.</div>
+                                        <div className="row-item">Category</div>
+                                        <div className="row-item">Orders</div>
+                                    </div>
+                                    {
+                                        revenueReport.topOrderedCategories && 
+                                        revenueReport.topOrderedCategories.map((item, index) => {
+                                            return (
+                                                <div className="statistic-row">
+                                                    <div className="row-item">{index+1}</div>
+                                                    <div className="row-item">{item.categoryName}</div>
+                                                    <div className="row-item">{item.orderCount}</div>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
                             </div>
                         </div>
-                        <div className="statistic-report">
-                            <span className='title'>Top categories in this { byQuarter ? "quarter" : "month" }:&nbsp;</span>
-                            <div className="statistic-table">
-                                <div className="statistic-row header">
-                                    <div className="row-item">No.</div>
-                                    <div className="row-item">Category</div>
-                                    <div className="row-item">Orders</div>
-                                </div>
-                                {
-                                    revenueReport.topOrderedCategories && 
-                                    revenueReport.topOrderedCategories.map((item, index) => {
-                                        return (
-                                            <div className="statistic-row">
-                                                <div className="row-item">{index+1}</div>
-                                                <div className="row-item">{item.categoryName}</div>
-                                                <div className="row-item">{item.orderCount}</div>
-                                            </div>
-                                        )
-                                    })
-                                }
+                        <div className="statistic-info-tour">
+                            <div className="statistic-report">
+                                <span className='title'>Top ordered tours in this { byQuarter ? "quarter" : "month" }:&nbsp;</span>
+                                <div className="statistic-table">
+                                    <div className="statistic-row header">
+                                        <div className="info-tour__row-item">No.</div>
+                                        <div className="info-tour__row-item">Id</div>
+                                        <div className="info-tour__row-item">Tour</div>
+                                        <div className="info-tour__row-item">Total</div>
+                                        <div className="info-tour__row-item">Confirmed</div>
+                                        <div className="info-tour__row-item">Canceled</div>
+                                    </div>
+                                    {
+                                        revenueReport.topOrderedTours && 
+                                        revenueReport.topOrderedTours.map((item, index) => {
+                                            return (
+                                                <div className="statistic-row">
+                                                    <div className="info-tour__row-item">{index+1}</div>
+                                                    <div className="info-tour__row-item">{item.tourId}</div>
+                                                    <div className="info-tour__row-item">{item.tourName}</div>
+                                                    <div className="info-tour__row-item">{item.totalOrderCount}</div>
+                                                    <div className="info-tour__row-item">{item.confirmedOrderCount}</div>
+                                                    <div className="info-tour__row-item">{item.canceledOrderCount}</div>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>    
                             </div>
                         </div>
                     </div>       

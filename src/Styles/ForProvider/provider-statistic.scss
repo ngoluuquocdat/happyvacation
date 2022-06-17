@@ -107,7 +107,7 @@
         }
     }
     .revenue-section {
-        width: 80%;
+        width: 90%;
         margin: 0 auto;
         margin-top: 40px;
         .revenue-type {
@@ -138,44 +138,72 @@
         }
         .statistic-info {
             margin-top: 80px;
-            display: flex;
-            justify-content: space-between;
             font-size: 18px;
-            .statistic-report {
-                width: 35%;
-                .title {
-                    display: block;
-                    margin-bottom: 10px;
-                }
-                .statistic-table {
-                    border: 1px solid #000;
-                    //padding-bottom: 8px;
-                    .statistic-row {
-                        padding: 8px 5px;
-                        display: flex;
-                        border-bottom: 1px solid #d6d6d6;
-                        .row-item {                        
-                            text-align: center;
-                            padding: 0 8px;                           
-                            box-sizing: border-box;
-                        }
-                        .row-item:first-child{
-                            width: 16.66666666%;
-                        }
-                        .row-item:nth-child(2) {
-                            flex: 1;
-                            text-align: left;
-                        }
-                        .row-item:last-child {
-                            width: 25%;
-                        }
+            .statistic-info-place-category,
+            .statistic-info-tour {
+                display: flex;
+                justify-content: space-between;
+                .statistic-report {
+                    width: 35%;
+                    .title {
+                        display: block;
+                        margin-bottom: 10px;
                     }
-                    .statistic-row.header {
+                    .statistic-table {
+                        border: 1px solid #000;
                         //padding-bottom: 8px;
-                        border-bottom: 1px solid #000;
-                        color: #888;
-                        background-color: rgb(246 246 246);                        
+                        .statistic-row {
+                            padding: 8px 5px;
+                            display: flex;
+                            border-bottom: 1px solid #d6d6d6;
+                            .row-item {                        
+                                text-align: center;
+                                padding: 0 8px;                           
+                                box-sizing: border-box;
+                            }
+                            .row-item:first-child{
+                                width: 16.66666666%;
+                            }
+                            .row-item:nth-child(2) {
+                                flex: 1;
+                                text-align: left;
+                            }
+                            .row-item:last-child {
+                                width: 25%;
+                            }
+                        }
+                        .statistic-row.header {
+                            //padding-bottom: 8px;
+                            border-bottom: 1px solid #000;
+                            color: #888;
+                            background-color: rgb(246 246 246);                        
+                        }
                     }
+                }
+            }
+            .statistic-info-tour {
+                margin-top: 60px;
+                .statistic-report {
+                    width: 100%;
+                    .info-tour__row-item {
+                        text-align: center;
+                        padding: 0 8px;                           
+                        box-sizing: border-box;
+                        width: 10%;
+                    }
+                    .info-tour__row-item:first-child{
+                        width: 4.16666667%;
+                    }
+                    .info-tour__row-item:nth-child(2) {
+                        width: 4.16666667%;
+                    }
+                    .info-tour__row-item:nth-child(3) {
+                        flex: 1;
+                        text-align: left;
+                    }
+                    // .row-item:last-child {
+                    //     width: 25%;
+                    // }
                 }
             }
         }
