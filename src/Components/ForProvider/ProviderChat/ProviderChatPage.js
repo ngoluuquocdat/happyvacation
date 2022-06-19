@@ -123,12 +123,13 @@ class ProviderChatPage extends Component {
         }
     }
 
-    sendMessage = async (message_content) => {
+    sendMessage = async (message_content, image_url) => {
         const connection = this.state.connection;
         const messageDto = {
             senderId: this.state.current_user_id.toString(),
             receiverId: this.state.withUser.id.toString(),
-            content: message_content
+            content: message_content,
+            imageUrl: image_url
         }
         //console.log('message dto to send', messageDto);
         try {

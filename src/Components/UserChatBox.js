@@ -5,6 +5,8 @@ import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { IoIosSend } from 'react-icons/io';
+import { BsCardImage } from 'react-icons/bs';
+import { AiOutlineCloseCircle } from 'react-icons/ai'
 import MessageCard from './MessageCard';
 import '../Styles/user-chat-box.scss';
 
@@ -13,6 +15,7 @@ class UserChatBox extends React.Component {
     state = {
         messages: [],
         message_content: '',
+        image: { url: '', file: null },
         current_user_id: this.props.reduxData.user ? this.props.reduxData.user.id.toString() : localStorage.getItem('chat-guid'),
     }
 
@@ -43,6 +46,25 @@ class UserChatBox extends React.Component {
             message_content: e.target.value
         })
     }
+
+    // on image change
+    onImageChange = (event) => {
+        if (event.target.files && event.target.files[0]) {
+            let image = this.state.image;
+            image.url = URL.createObjectURL(event.target.files[0]);
+            image.file = event.target.files[0];
+            this.setState({
+                image: image
+            });
+        }
+    }
+
+    // remove image
+    handleRemoveImageClick = () => {
+        this.setState({
+            image: { url: '', file: null }
+        })
+    } 
 
     // get messages 
     getMessages = async () => {
@@ -191,7 +213,7 @@ class UserChatBox extends React.Component {
         const { providerName, providerAvatar, closeChatBox } = this.props;
         const { current_user_id } = this.state;
         const providerId = `provider${this.props.providerId}`;  // format: provider1
-        const { message_content } = this.state;
+        const { message_content, image } = this.state;
 
         return (
             <div className='user-chat-box-wrapper'>
@@ -220,7 +242,23 @@ class UserChatBox extends React.Component {
                     }
                 </div>
                 <div className='message-input-section'>
+                    <label className='control-label' htmlFor='input-image'>
+                        <BsCardImage className='icon' />
+                    </label>
                     <textarea className='message-input' onChange={this.handleMessageInput} value={message_content}/>
+                    <input
+                        className='input-image'
+                        id='input-image'
+                        type='file'
+                        onChange={(event)=>this.onImageChange(event)}
+                    />
+                    {
+                        image.url.length > 0 &&
+                        <div className='image-preview' style={{backgroundImage: `url('${image.url}')`}}>
+                            <div className='image-overlay'></div>
+                            <div className='remove-btn' onClick={this.handleRemoveImageClick}><AiOutlineCloseCircle/></div>
+                        </div>
+                    }
                     <button className='send-btn' onClick={this.handleSendClick}><IoIosSend/></button>
                 </div>
             </div>
