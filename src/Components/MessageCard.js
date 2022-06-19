@@ -9,7 +9,6 @@ class MessageCard extends Component {
     render() {
         const { userId, withUserId, topSpacing, bottomSpacing, wide } = this.props;
         const message = this.props.message;
-
         return (
             <div className="message-card-wrapper">
                <div 
@@ -21,11 +20,11 @@ class MessageCard extends Component {
                     style={{marginTop: topSpacing ? '10px' : '',
                             marginBottom: bottomSpacing ? '10px' : ''}}>
                     {
-                        message.content.length > 0 &&
+                        (message.content && message.content.length > 0) &&
                         <p className="message__content">{message.content}</p>
                     }
                     {
-                        message.imageUrl.length > 0 &&
+                        (message.imageUrl && message.imageUrl.length > 0) &&
                         <img className='message__image' src={this.baseUrl+message.imageUrl} onClick={() => window.open(this.baseUrl+message.imageUrl, '_blank')}/>
                     }
                </div>
