@@ -908,7 +908,7 @@ class UpdateTour extends React.Component {
                                 <label className="form-title">Tour Images</label>
                                 <div className='tour-images-list'>
                                     {
-                                        images.filter((element) => element.deleted==false).map((item, index) => {
+                                        images.filter((element) => element.deleted === false).map((item, index) => {
                                             return (
                                                 <div key={'image'+index} className='tour-image-wrapper'>
                                                     <div 

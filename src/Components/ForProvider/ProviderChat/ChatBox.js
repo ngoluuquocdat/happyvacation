@@ -1,23 +1,34 @@
 import React, { Component } from 'react';
 import axios from "axios";
-import MessageCard from '../../MessageCard';
 import { BsFillPlusCircleFill, BsCardImage, BsFillStickyFill } from 'react-icons/bs';
 import { RiFileGifFill } from 'react-icons/ri';
 import { connect } from 'react-redux';
-import { AiOutlineCloseCircle } from 'react-icons/ai'
+import { AiOutlineCloseCircle } from 'react-icons/ai';
+import ReactLoading from "react-loading";
+import MessageCard from '../../MessageCard';
 import "../../../Styles/ForProvider/provider-chat-box.scss";
 
 class ChatBox extends Component {
 
     state = {
         message_content: '',
-        image: { url: '', file: null }
+        image: { url: '', file: null },
+        isSending: false,
+        isTyping: true
     }
 
     baseUrl = this.props.reduxData.baseUrl;
 
     // input message
     inputMessage = (e) => {
+        if(e.target.value.length === 0) {
+            this.props.changeTypingState(false);
+        } else {
+            const message__content = this.state.message_content;
+            if(message__content.length === 0) {
+                this.props.changeTypingState(true);
+            }
+        }
         this.setState({
             message_content: e.target.value
         })
@@ -52,6 +63,9 @@ class ChatBox extends Component {
 
         if(message_content.trim().length > 0 || image.file !== null) {
             if(image.file !== null) {
+                this.setState({
+                    isSending: true
+                });
                 // upload file to my server
                 const formData = new FormData();
                 formData.append("image", image.file);
@@ -70,24 +84,49 @@ class ChatBox extends Component {
             })
         }
     }
+
+    // change typing state
+    changeTypingState = (isTyping) => {
+        const message__content = this.state.message_content;
+        if(isTyping === true && message__content.length === 0) {
+            return;
+        }
+        if(isTyping === false && message__content.length === 0) {
+            return;
+        }
+        this.props.changeTypingState(isTyping);
+    }
     
     render() {
-        const { userId, withUser, messages } = this.props
+        const { userId, withUser, messages, userTyping } = this.props
         const avatarUrl = `url('${this.baseUrl+withUser.avatarUrl}')`;
-        const { message_content, image } = this.state;
+        const { message_content, image, isSending } = this.state;
+
+        const showTypingEffect = (userTyping.isTyping === true) && (withUser.id === userTyping.id);
 
         return (
             <div className="chat-box-wrapper">
                 <div className="chat-box__header">
-                    {/* <span>{userId}</span>
-                    with
-                    <span>{withUserId}</span> */}
                     <div className="user-info">
                         <div className="user-avatar" style={{backgroundImage: avatarUrl}}></div>
                         <span className="full-name">{withUser.fullName}</span>
                     </div>
                 </div>
                 <div className="chat-box__message-list">
+                    {
+                        showTypingEffect && 
+                        <div className="typing-effect">
+                            Typing
+                            <ReactLoading
+                                className="loading-component"
+                                type={"bubbles"}
+                                color={"#000"}
+                                height={30}
+                                width={40}
+                                delay={5}
+                                />
+                        </div>
+                    }
                     {
                         messages.length > 0 ?
                         messages.slice().reverse().map((item, index, array) => {
@@ -129,12 +168,14 @@ class ChatBox extends Component {
                             placeholder='Your message...'
                             value={message_content}
                             onChange={this.inputMessage}
+                            onFocus={() => this.changeTypingState(true)}
+                            onBlur={() => this.changeTypingState(false)}
                         />
                         <input
                             className='input-image'
                             id='input-image'
                             type='file'
-                            onChange={(event)=>this.onImageChange(event)}
+                            onChange={(event)=>this.onImageChange(event)}                            
                         />
                         {
                             image.url.length > 0 &&

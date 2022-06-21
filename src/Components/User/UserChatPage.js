@@ -19,7 +19,11 @@ class UserChatPage extends Component {
         messages: [],
         connection: null,
         pickingUserId: '',
-        unseenSenderIds: []
+        unseenSenderIds: [],
+        userTyping: {
+            id: 0,
+            isTyping: false
+        }
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -62,24 +66,10 @@ class UserChatPage extends Component {
                 console.log(e)
             }
         }      
-        // remove storage event listener
-        //window.removeEventListener("storage", this.localStorageUpdated);
     }
 
-    // localStorageUpdated = (e) => {
-    //     console.log(e)
-    //     if(e.key === 'user-token'){         
-    //         if(e.newValue === null) {
-    //             this.props.history.push('/login', {prevPath: this.props.location.pathname});
-    //         } else {
-    //             this.props.history.push('/for-provider/chat');
-    //         }  
-    //     }       
-    // }
-
     getChatProviders = async () => {
-        const token = localStorage.getItem('user-token');
-        
+        const token = localStorage.getItem('user-token');        
         if(!token) {
             this.props.history.push('/login');
             return [];
@@ -137,6 +127,19 @@ class UserChatPage extends Component {
         }
     }   
 
+    changeTypingState = async (isTyping) => {
+        const connection = this.state.connection;
+        if(connection) {
+            const senderId = this.state.current_user_id.toString();
+            const receiverId = this.state.withUser.id.toString();
+            try {
+                await connection.invoke("ChangeTypingState", isTyping, senderId, receiverId);
+            } catch(e) {
+                console.log(e);
+            }
+        }
+    }
+
     // ket noi signal R
     connectToChatHub = async () => {
         let current_user_id = `${this.props.reduxData.user.id}`;
@@ -191,6 +194,16 @@ class UserChatPage extends Component {
                     unseenSenderIds: unseenSenderIds
                 })
             });
+
+            connection.on("ChangeTypingState", (message) => {
+                console.log('typing received:', message);
+                this.setState({
+                    userTyping: {
+                        id: message.senderId,
+                        isTyping: message.isTyping
+                    }
+                })
+            });
                
             await connection.start();
             await connection.invoke("ConnectUserToChatHub", current_user_id.toString());
@@ -211,7 +224,7 @@ class UserChatPage extends Component {
     }
     
     render() {
-        const { current_user_id, withUser, list_providers, messages } = this.state;
+        const { current_user_id, withUser, list_providers, messages, userTyping } = this.state;
         const { unseenSenderIds } = this.state;
 
         return (
@@ -241,7 +254,14 @@ class UserChatPage extends Component {
                     <div className="provider-chat-page__right">
                         {
                             withUser.id !== 0 &&
-                            <ChatBox userId={current_user_id} withUser={withUser} messages={messages} sendMessage={this.sendMessage}/>
+                            <ChatBox 
+                                userId={current_user_id}
+                                withUser={withUser}
+                                messages={messages}
+                                sendMessage={this.sendMessage}
+                                userTyping={userTyping}
+                                changeTypingState={this.changeTypingState}
+                            />
                         }
                     </div>
                 </div>

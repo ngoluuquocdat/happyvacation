@@ -6,7 +6,8 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { IoIosSend } from 'react-icons/io';
 import { BsCardImage } from 'react-icons/bs';
-import { AiOutlineCloseCircle } from 'react-icons/ai'
+import { AiOutlineCloseCircle } from 'react-icons/ai';
+import ReactLoading from "react-loading";
 import MessageCard from './MessageCard';
 import '../Styles/user-chat-box.scss';
 
@@ -17,12 +18,15 @@ class UserChatBox extends React.Component {
         message_content: '',
         image: { url: '', file: null },
         current_user_id: this.props.reduxData.user ? this.props.reduxData.user.id.toString() : localStorage.getItem('chat-guid'),
+        userTyping: {
+            id: 0,
+            isTyping: false
+        }
     }
 
     baseUrl = this.props.reduxData.baseUrl;
 
     async componentDidMount() {
-        console.log('did mount, create a connection to chat hub');
         // connect user to chat hub
         await this.connectToChatHub();
         // get list messages
@@ -42,6 +46,14 @@ class UserChatBox extends React.Component {
     }
 
     handleMessageInput = (e) => {
+        if(e.target.value.length === 0) {
+            this.changeTypingState(false);
+        } else {
+            const message__content = this.state.message_content;
+            if(message__content.length === 0) {
+                this.changeTypingState(true);
+            }
+        }
         this.setState({
             message_content: e.target.value
         })
@@ -101,6 +113,20 @@ class UserChatBox extends React.Component {
         }
     }
 
+    // change typing state
+    changeTypingState = async (isTyping) => {
+        const connection = this.state.connection;
+        if(connection) {
+            const senderId = this.state.current_user_id.toString();
+            const receiverId = `provider${this.props.providerId}`;
+            try {
+                await connection.invoke("ChangeTypingState", isTyping, senderId, receiverId);
+            } catch(e) {
+                console.log(e);
+            }
+        }
+    }
+
     // ket noi signal R
     connectToChatHub = async () => {
         console.log("connect to chat hub")
@@ -122,16 +148,16 @@ class UserChatBox extends React.Component {
 
             // method to receive message from our server
             connection.on("ShakeHandMessage", (message) => {
-            console.log('Shake hand message:', message);
-            if(current_user_id === 'ANONYMOUS') {
-                // current_user_id == 0 means anonymous mode, so message has a guid, save the guid to current user id
-                if(message.chatGuid && message.chatGuid !== '') {
-                    localStorage.setItem('chat-guid', message.chatGuid)
-                    this.setState({
-                        current_user_id: message.chatGuid
-                    })
+                console.log('Shake hand message:', message);
+                if(current_user_id === 'ANONYMOUS') {
+                    // current_user_id == 0 means anonymous mode, so message has a guid, save the guid to current user id
+                    if(message.chatGuid && message.chatGuid !== '') {
+                        localStorage.setItem('chat-guid', message.chatGuid)
+                        this.setState({
+                            current_user_id: message.chatGuid
+                        })
+                    }
                 }
-            }
             });
             // method to receive message from our server
             connection.on("ReceiveMessage", async (message) => {
@@ -150,10 +176,14 @@ class UserChatBox extends React.Component {
                 })
             });
 
-            // connection stop handler
-            connection.onclose(e => {
-            //setConnection();
-            //setMessages([]);
+            connection.on("ChangeTypingState", (message) => {
+                console.log('typing received:', message);
+                this.setState({
+                    userTyping: {
+                        id: message.senderId,
+                        isTyping: message.isTyping
+                    }
+                })
             });
 
             await connection.start();
@@ -222,12 +252,26 @@ class UserChatBox extends React.Component {
         }
     }
 
+    // handle focus and blur event from message input
+    handleFocusBlurMessage = (isTyping) => {
+        const message__content = this.state.message_content;
+        if(isTyping === true && message__content.length === 0) {
+            return;
+        }
+        if(isTyping === false && message__content.length === 0) {
+            return;
+        }
+        this.changeTypingState(isTyping);
+    }
+
     render() {
         const messages = this.state.messages;
         const { providerName, providerAvatar, closeChatBox } = this.props;
-        const { current_user_id } = this.state;
+        const { current_user_id, userTyping } = this.state;
         const providerId = `provider${this.props.providerId}`;  // format: provider1
         const { message_content, image } = this.state;
+
+        const showTypingEffect = (userTyping.isTyping === true) && (providerId === userTyping.id);
 
         return (
             <div className='user-chat-box-wrapper'>
@@ -237,6 +281,20 @@ class UserChatBox extends React.Component {
                     <span className='close-chat-box-btn' onClick={() => closeChatBox()}>X</span>
                 </div>
                 <div className='message-list'>
+                {
+                    showTypingEffect && 
+                    <div className="typing-effect">
+                        Typing
+                        <ReactLoading
+                            className="loading-component"
+                            type={"bubbles"}
+                            color={"#000"}
+                            height={30}
+                            width={40}
+                            delay={5}
+                            />
+                    </div>
+                }
                 {
                         messages.length > 0 ?
                         messages.slice().reverse().map((item, index, array) => {
@@ -259,12 +317,18 @@ class UserChatBox extends React.Component {
                     <label className='control-label' htmlFor='input-image'>
                         <BsCardImage className='icon' />
                     </label>
-                    <textarea className='message-input' onChange={this.handleMessageInput} value={message_content}/>
+                    <textarea 
+                        className='message-input' 
+                        value={message_content}
+                        onChange={this.handleMessageInput} 
+                        onFocus={() => this.handleFocusBlurMessage(true)}
+                        onBlur={() => this.handleFocusBlurMessage(false)}
+                    />
                     <input
                         className='input-image'
                         id='input-image'
                         type='file'
-                        onChange={(event)=>this.onImageChange(event)}
+                        onChange={(event)=>this.onImageChange(event)}                       
                     />
                     {
                         image.url.length > 0 &&

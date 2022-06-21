@@ -17,7 +17,11 @@ class ProviderChatPage extends Component {
         messages: [],
         connection: null,
         pickingUserId: '',
-        unseenSenderIds: []
+        unseenSenderIds: [],
+        userTyping: {
+            id: 0,
+            isTyping: false
+        }
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -62,20 +66,7 @@ class ProviderChatPage extends Component {
                 console.log(e)
             }
         }      
-        // remove storage event listener
-        //window.removeEventListener("storage", this.localStorageUpdated);
     }
-
-    // localStorageUpdated = (e) => {
-    //     console.log(e)
-    //     if(e.key === 'user-token'){         
-    //         if(e.newValue === null) {
-    //             this.props.history.push('/login', {prevPath: this.props.location.pathname});
-    //         } else {
-    //             this.props.history.push('/for-provider/chat');
-    //         }  
-    //     }       
-    // }
 
     getChatUsers = async () => {
         const token = localStorage.getItem('user-token');
@@ -136,6 +127,19 @@ class ProviderChatPage extends Component {
             console.log(e);
         }
     }   
+
+    changeTypingState = async (isTyping) => {
+        const connection = this.state.connection;
+        if(connection) {
+            const senderId = this.state.current_user_id.toString();
+            const receiverId = this.state.withUser.id.toString();
+            try {
+                await connection.invoke("ChangeTypingState", isTyping, senderId, receiverId);
+            } catch(e) {
+                console.log(e);
+            }
+        }
+    }
 
     // ket noi signal R
     connectToChatHub = async () => {
@@ -198,10 +202,14 @@ class ProviderChatPage extends Component {
                 })
             });
         
-            // connection stop handler
-            connection.onclose(e => {
-                //setConnection();
-                //setMessages([]);
+            connection.on("ChangeTypingState", (message) => {
+                console.log('typing received:', message);
+                this.setState({
+                    userTyping: {
+                        id: message.senderId,
+                        isTyping: message.isTyping
+                    }
+                })
             });
         
             await connection.start();
@@ -249,7 +257,7 @@ class ProviderChatPage extends Component {
     }
     
     render() {
-        const { current_user_id, withUser, list_users, messages } = this.state;
+        const { current_user_id, withUser, list_users, messages, userTyping } = this.state;
         const { unseenSenderIds } = this.state;
 
         return (
@@ -279,7 +287,14 @@ class ProviderChatPage extends Component {
                     <div className="provider-chat-page__right">
                         {
                             withUser.id !== 0 &&
-                            <ChatBox userId={current_user_id} withUser={withUser} messages={messages} sendMessage={this.sendMessage}/>
+                            <ChatBox 
+                                userId={current_user_id} 
+                                withUser={withUser} 
+                                messages={messages} 
+                                sendMessage={this.sendMessage}
+                                userTyping={userTyping}
+                                changeTypingState={this.changeTypingState}
+                            />
                         }
                     </div>
                 </div>
