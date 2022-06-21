@@ -11,7 +11,9 @@ import "../../Styles/ForProvider/provider-chat-page.scss";
 class UserChatPage extends Component {
 
     state = {
-        withUser: {},
+        withUser: {
+            id: 0
+        },
         current_user_id: '',
         list_providers: [],
         messages: [],
@@ -27,7 +29,7 @@ class UserChatPage extends Component {
         const list_providers = await this.getChatProviders();
         this.setState({
             list_providers: list_providers,
-            withUser: list_providers[0]
+            withUser: (list_providers && list_providers.length > 0) ? list_providers[0] : { id:0 }
         })          
     }
 

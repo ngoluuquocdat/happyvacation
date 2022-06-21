@@ -28,11 +28,8 @@ class ProviderChatPage extends Component {
         const list_users = await this.getChatUsers();
         this.setState({
             list_users: list_users,
-            withUser: list_users[0]
+            withUser: (list_users && list_users.length > 0) ? list_users[0] : { id:0 }
         })          
-
-        // add storage event listener
-        //window.addEventListener("storage", this.localStorageUpdated);
     }
 
     async componentDidUpdate(prevProps, prevState) {       

@@ -169,12 +169,13 @@ class UserChatBox extends React.Component {
     }
 
     // send message function
-    sendMessage = async (message_content) => {
+    sendMessage = async (message_content, image_url) => {
         const connection = this.state.connection;
         const messageDto = {
             senderId: this.state.current_user_id.toString(),
             receiverId: `provider${this.props.providerId.toString()}`,
-            content: message_content
+            content: message_content,
+            imageUrl: image_url
         }
         //console.log('message dto to send', messageDto);
         try {
@@ -200,11 +201,24 @@ class UserChatBox extends React.Component {
         }
         // send message
         const message_content = this.state.message_content;
-        if(message_content.trim().length > 0) {
+        let image_url = '';
+        const image = this.state.image;
+        if(message_content.trim().length > 0 || image.file !== null) {
+            if(image.file !== null) {
+                // upload file to my server
+                const formData = new FormData();
+                formData.append("image", image.file);
+                let res = await axios.post(
+                    `${this.baseUrl}/api/Messages/images`,
+                    formData
+                );   
+                image_url = res.data.imageUrl;
+            }
+            await this.sendMessage(message_content, image_url);
             this.setState({
-                message_content: ''
+                message_content: '',
+                image: { url: '', file: null }
             })
-            await this.sendMessage(message_content);
         }
     }
 
