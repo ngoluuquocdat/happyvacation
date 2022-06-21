@@ -15,6 +15,10 @@ import { Left, Right } from '../Header/Arrows';
 import MapMarker from '../../Images/map-marker.jpg'
 import "../../Styles/place-page.scss";
 
+import mapboxgl from 'mapbox-gl';
+// @ts-ignore
+// eslint-disable-next-line import/no-webpack-loader-syntax, import/no-unresolved
+mapboxgl.workerClass = require('worker-loader!mapbox-gl/dist/mapbox-gl-csp-worker').default;
 class PlacePage extends React.Component {
 
     state = {        
@@ -137,12 +141,10 @@ class PlacePage extends React.Component {
         const { latitude, longitude } = this.state.place;
         try {
             let res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${latitude}&lon=${longitude}&appid=${this.openWeatherApiKey}`);
-            console.log(res)
             this.setState({
                 temperature: Math.round(res.data.main.temp),
                 weatherIconUrl: `https://openweathermap.org/img/w/${res.data.weather[0].icon}.png` ,
             })
-
         } catch (error) {
             console.log(error)
             if(!error.response) {
