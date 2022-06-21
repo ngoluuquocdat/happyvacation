@@ -15,6 +15,7 @@ import WishList from './WishList';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../Styles/user-main.scss';
+import UserChatPage from './UserChatPage';
 
 class UserMain extends React.Component {
 
@@ -126,7 +127,7 @@ class UserMain extends React.Component {
                                     </Route >
                                     <Route path="/user/favorite-tours" exact>
                                         <WishList />
-                                    </Route >
+                                    </Route >                                   
                                 </Switch>
                             </div>
                         </div>

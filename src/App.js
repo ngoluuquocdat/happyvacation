@@ -28,6 +28,7 @@ import {
   Link
 } from "react-router-dom";
 import { ToastContainer} from 'react-toastify';
+import UserChatPage from './Components/User/UserChatPage';
 
 
 
@@ -113,9 +114,12 @@ class App extends Component {
                 <Route path="/register" >
                   <Register />
                 </Route >
+                <Route path="/user/chat" >
+                  <UserChatPage />
+                </Route >
                 <Route path="/user" >
                   <UserMain />
-                </Route >
+                </Route >                
                 <Route path="/for-provider/register">
                   <ProviderRegister />
                   <Footer />

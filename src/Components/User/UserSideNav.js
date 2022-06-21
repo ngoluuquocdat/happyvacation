@@ -68,6 +68,20 @@ class UserSideNav extends React.Component {
                             </li>
                         </ul>
                     </li>
+                    <li className='side-nav-item'>
+                        <div className='header'>
+                            <RiFileList3Line />
+                            <span className='item-text'>Chat</span>
+                            <FaCaretDown />
+                        </div>
+                        <ul className='side-nav-submenu'>
+                            <li className='submenu-item' onClick={this.handleItemSelect}>
+                                <NavLink className="item-link" to="/user/chat">
+                                    Chat page
+                                </NavLink>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
             </div>
         )
