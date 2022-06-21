@@ -136,11 +136,11 @@ class PlacePage extends React.Component {
         }
         const { latitude, longitude } = this.state.place;
         try {
-            let res = await axios.get(`http://api.openweathermap.org/data/2.5/weather?units=metric&lat=${latitude}&lon=${longitude}&appid=${this.openWeatherApiKey}`);
+            let res = await axios.get(`https://api.openweathermap.org/data/2.5/weather?units=metric&lat=${latitude}&lon=${longitude}&appid=${this.openWeatherApiKey}`);
             console.log(res)
             this.setState({
                 temperature: Math.round(res.data.main.temp),
-                weatherIconUrl: `http://openweathermap.org/img/w/${res.data.weather[0].icon}.png` ,
+                weatherIconUrl: `https://openweathermap.org/img/w/${res.data.weather[0].icon}.png` ,
             })
 
         } catch (error) {
@@ -267,23 +267,12 @@ class PlacePage extends React.Component {
                                                     <img src={MapMarker} alt="pin" height="30px" width="30px" />
                                                 </Marker>
                                             </ReactMapGL>
-                                            // <Map 
-                                            //     latitude={place.latitude}
-                                            //     longitude={place.longitude}
-                                            //     defaultZoom={12}
-                                            //     googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${this.googleMapApiKey}`}
-                                            //     loadingElement={<div style={{ height: `100%` }} />}
-                                            //     containerElement={<div style={{ height: `500px`, margin: `auto`, border: '1px solid black' }} />}
-                                            //     mapElement={<div style={{ height: `100%` }} />}
-                                            // />
                                         }
                                     </div>
-                                {/* </div> */}
                             </div>
                         </div>                   
                     </div>
                     <div className='place-page__image-section'>
-                        {/* <h1 className='section__title'>The beauty of {place.placeName}</h1> */}
                         <ImageSlider backgroundImagesData={place.images} baseUrl={this.baseUrl}/>
                     </div>
                     <div className='place-page__travel-tips-section'>
@@ -306,7 +295,7 @@ class PlacePage extends React.Component {
                         {
                             expandVideoSection &&
                             <div className='video-wrapper'>
-                                <dl8-video
+                                {/* <dl8-video
                                     title={place.placeName}
                                     format="MONO_360"
                                     className={'dl8-video-player'}
@@ -314,7 +303,7 @@ class PlacePage extends React.Component {
                                     height={'80vh'}
                                 >
                                     <source src={`${this.baseUrl+place.overviewVideoUrl}`} type="video/mp4" />
-                                </dl8-video>
+                                </dl8-video> */}
                             </div>
                         }
                         <button

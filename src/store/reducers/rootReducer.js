@@ -10,7 +10,8 @@ const initState = {
     // },
     user: null,
     //baseUrl: "https://localhost:7079",
-    baseUrl: "http://quocdat-001-site1.etempurl.com",
+    // baseUrl: "http://quocdat-001-site1.etempurl.com",
+    baseUrl: "https://happy-vacation.somee.com",
     fcm_token: ''
 }
 

@@ -193,7 +193,7 @@ class TouristSitePage extends React.Component {
                         {
                             expandVideoSection &&
                             <div className='video-wrapper'>
-                                <dl8-video
+                                {/* <dl8-video
                                     title={site.siteName}
                                     format="MONO_360"
                                     className={'dl8-video-player'}
@@ -201,7 +201,7 @@ class TouristSitePage extends React.Component {
                                     height={'80vh'}
                                 >
                                     <source src={`${this.baseUrl+site.overviewVideoUrl}`} type="video/mp4" />
-                                </dl8-video>
+                                </dl8-video> */}
                             </div>
                         }
                         <button
