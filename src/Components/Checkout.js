@@ -628,14 +628,6 @@ class Checkout extends React.Component {
                                                             </div>
                                                             <div className="member-form-group">
                                                                 <label className='input-label'>Date of Birth</label>
-                                                                {/* <input 
-                                                                    type="date" 
-                                                                    className='input-field' 
-                                                                    placeholder='Date of birth...'
-                                                                    name='dob'
-                                                                    value={item.dob}
-                                                                    onChange={(event) => this.handleInputAdultsList(event, index)} 
-                                                                /> */}
                                                                 <div className="date-input" onClick={() => this.handleAdultDateClick(index)}>
                                                                     <div className="date-display">
                                                                         <span>{`${("0" + item.dob.getDate()).slice(-2)}/${("0" + (item.dob.getMonth()+1)).slice(-2)}/${item.dob.getFullYear()}`} <FaCaretDown /></span>
@@ -778,7 +770,7 @@ class Checkout extends React.Component {
                                     return actions.order.create({
                                         purchase_units: [
                                             {
-                                                description: `${bookingSubRequest.tourName} from ${bookingSubRequest.providerName}`,
+                                                description: `${bookingSubRequest.tourId} - ${bookingSubRequest.tourName} from ${bookingSubRequest.providerName}`,
                                                 amount: {
                                                     value: bookingSubRequest.adults * bookingSubRequest.pricePerAdult + bookingSubRequest.children * bookingSubRequest.pricePerChild
                                                 }
@@ -799,7 +791,8 @@ class Checkout extends React.Component {
                                 }}
                                 onError={(err) => {
                                     console.log("ERROR PAYPAL", err)
-                                    window.location.reload();
+                                    //window.location.reload();
+                                    this.handleFailedPayment();
                                 }}
                             />
                         </div>
