@@ -311,13 +311,16 @@ class ReviewSection extends Component {
                     }
                 </div>
                 <div className='pagination'>
-                    <Pagination 
-                        count={totalPage} 
-                        shape="rounded" 
-                        siblingCount={1}
-                        page={page}
-                        onChange={(event, page) => this.handleOnChangePage(event, page)}
-                    />
+                    {
+                        totalPage > 1 &&
+                        <Pagination 
+                            count={totalPage} 
+                            shape="rounded" 
+                            siblingCount={1}
+                            page={page}
+                            onChange={(event, page) => this.handleOnChangePage(event, page)}
+                        />
+                    }
                 </div>
             </div>
         );

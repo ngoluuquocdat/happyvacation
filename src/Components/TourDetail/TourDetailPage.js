@@ -330,7 +330,8 @@ class TourDetailPage extends React.Component {
         const { date, adults, children, price } = this.state;
         const { tour } = this.state; 
         const baseUrl = this.state.networkFailed ? '' : this.baseUrl;
-        const { isLoading, isBooking, isOpenChatBox } = this.state;       
+        const { isLoading, isBooking, isOpenChatBox } = this.state;   
+        const current_user_providerId = this.props.reduxData.user ? this.props.reduxData.user.providerId : 0;    
         
         return (
             <div className="App">
@@ -363,7 +364,7 @@ class TourDetailPage extends React.Component {
                                         }
                                         <span className="review">{tour.reviews} reviews</span>
                                         {
-                                            (tour.isAvailable && tour.isProviderEnabled) &&
+                                            (tour.isAvailable && tour.isProviderEnabled && current_user_providerId !== tour.providerId) &&
                                             <button className="favorite-btn" 
                                                     onClick={() => this.addOrRemoveWishList(tour.isInUserWishList ? "REMOVE" : "ADD")}
                                             >
@@ -514,66 +515,69 @@ class TourDetailPage extends React.Component {
                                                     <span className='value'>${price},00</span>
                                                 </div>
                                             </div>
-                                            <div className="booking-body">
-                                                <div className="date-booking" onClick={() => this.handleDateClick()}>
-                                                    <div className="date-display">
-                                                        <label className='title'>Date</label>
-                                                        <span>{`${("0" + date.getDate()).slice(-2)}/${("0" + (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`} <FaCaretDown /></span>
-                                                    </div>
-                                                    {
-                                                        showDatePicker && 
-                                                        <div className="date-picker" onClick={(event) => event.stopPropagation()}>
-                                                            <Calendar
-                                                                date={date}
-                                                                minDate={this.getTomorrow()}
-                                                                onChange={this.handleDateSelect}
-                                                            />
+                                            {
+                                                current_user_providerId !== tour.providerId &&
+                                                <div className="booking-body">
+                                                    <div className="date-booking" onClick={() => this.handleDateClick()}>
+                                                        <div className="date-display">
+                                                            <label className='title'>Date</label>
+                                                            <span>{`${("0" + date.getDate()).slice(-2)}/${("0" + (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`} <FaCaretDown /></span>
                                                         </div>
-                                                    }                                        
-                                                </div>
-                                                <div className="adults-booking">
-                                                    <div>
-                                                        <label className='title'>Adults</label>                                            
+                                                        {
+                                                            showDatePicker && 
+                                                            <div className="date-picker" onClick={(event) => event.stopPropagation()}>
+                                                                <Calendar
+                                                                    date={date}
+                                                                    minDate={this.getTomorrow()}
+                                                                    onChange={this.handleDateSelect}
+                                                                />
+                                                            </div>
+                                                        }                                        
                                                     </div>
-                                                    <div className='quantity-picker-wrap'>
-                                                        <div className='quantity-picker'>
-                                                            <span className='minus-btn' onClick={() => this.handleAdultsMinus()}><AiOutlineMinus /></span>
-                                                            <span className='quantity-value'>{adults}</span>
-                                                            <span className='add-btn' onClick={() => this.handleAdultsAdd()}><AiOutlinePlus /></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                {
-                                                    tour.pricePerChild >= 0 &&
-                                                    <div className="children-booking">
+                                                    <div className="adults-booking">
                                                         <div>
-                                                            <label className='title'>Children</label>
+                                                            <label className='title'>Adults</label>                                            
                                                         </div>
                                                         <div className='quantity-picker-wrap'>
                                                             <div className='quantity-picker'>
-                                                                <span className='minus-btn' onClick={() => this.handleChildrenMinus()}><AiOutlineMinus /></span>
-                                                                <span className='quantity-value'>{children}</span>
-                                                                <span className='add-btn' onClick={() => this.handleChildrenAdd()}><AiOutlinePlus /></span>
+                                                                <span className='minus-btn' onClick={() => this.handleAdultsMinus()}><AiOutlineMinus /></span>
+                                                                <span className='quantity-value'>{adults}</span>
+                                                                <span className='add-btn' onClick={() => this.handleAdultsAdd()}><AiOutlinePlus /></span>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                }
-                                                <div className="submit-booking">
-                                                    <button className="submit" onClick={this.handleBookingSubmit}>
-                                                        BOOK NOW
-                                                        {
-                                                            isBooking &&
-                                                            <ReactLoading
-                                                                className="loading-component"
-                                                                type={"spin"}
-                                                                color={"#fff"}
-                                                                height={20}
-                                                                width={20}
-                                                            />
-                                                        }
-                                                    </button>
+                                                    {
+                                                        tour.pricePerChild >= 0 &&
+                                                        <div className="children-booking">
+                                                            <div>
+                                                                <label className='title'>Children</label>
+                                                            </div>
+                                                            <div className='quantity-picker-wrap'>
+                                                                <div className='quantity-picker'>
+                                                                    <span className='minus-btn' onClick={() => this.handleChildrenMinus()}><AiOutlineMinus /></span>
+                                                                    <span className='quantity-value'>{children}</span>
+                                                                    <span className='add-btn' onClick={() => this.handleChildrenAdd()}><AiOutlinePlus /></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }                                                                                               
+                                                    <div className="submit-booking">
+                                                        <button className="submit" onClick={this.handleBookingSubmit}>
+                                                            BOOK NOW
+                                                            {
+                                                                isBooking &&
+                                                                <ReactLoading
+                                                                    className="loading-component"
+                                                                    type={"spin"}
+                                                                    color={"#fff"}
+                                                                    height={20}
+                                                                    width={20}
+                                                                />
+                                                            }
+                                                        </button>
+                                                    </div>                                                
                                                 </div>
-                                            </div>
+                                            }
                                         </>
                                     }
                                         
@@ -590,7 +594,10 @@ class TourDetailPage extends React.Component {
                                         tour.isProviderEnabled &&
                                         <>
                                             <button className='visit' onClick={this.handleVisitProvider}>VISIT</button>
-                                            <button className='visit' onClick={this.handleOpenChatClick}>CHAT</button>
+                                            {
+                                                current_user_providerId !== tour.providerId &&
+                                                <button className='visit' onClick={this.handleOpenChatClick}>CHAT</button>
+                                            }
                                         </>
                                     }
                                 </div>
