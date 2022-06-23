@@ -214,7 +214,13 @@
 
         .booking-section {
             border: 1px solid #D7DCE3;
-
+            .cannot-book {
+                display: block;
+                background-color: #d3224b;
+                padding: 14px 20px;
+                color: #fff;
+                font-size: 20px;
+            }
             .booking-header {
                 background-color: #d3224b;
                 padding: 14px 20px;
