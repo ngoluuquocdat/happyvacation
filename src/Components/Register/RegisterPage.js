@@ -15,6 +15,7 @@ class Register extends Component {
         phone: '',
         email: '',
         password: '',
+        confirmPassword: '',
         passwordShow: false,
         confirmPasswordShow: false,
         usernameValid: true,
@@ -35,6 +36,35 @@ class Register extends Component {
         window.scrollTo(0, 0);
     }
 
+    // valid 
+    isValid = () =>  {
+        let {username, firstName, lastName, phone, email, password, confirmPassword} = this.state;
+        username = username.trim();
+        firstName = firstName.trim();
+        lastName = lastName.trim();
+        phone = phone.trim();
+        email = email.trim();
+        password = password.trim();
+        confirmPassword = confirmPassword.trim();
+
+        let isValid = true;
+        if(username === '' || firstName === '' || lastName === '' || phone === '' || 
+            email === '' || password === '' || confirmPassword === '') {
+                isValid = false;
+        }
+        if(!phone.match(/\+?\d{2}[- ]?\d{3}[- ]?\d{5}$/)) {
+            isValid = false;
+        }
+        if(!email.match(/^[a-z][a-z0-9_\-\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/)) {
+            isValid = false;
+        }
+        if(password !== confirmPassword) {
+            isValid = false;
+        }
+        
+        return isValid;
+    }
+
     // toggle show password/confirm password
     handleTogglePassword = (event) => {
         event.stopPropagation();
@@ -48,6 +78,7 @@ class Register extends Component {
     // handle input 
     handleInput = (event) => {
         const key = event.target.name;
+        let isValid = event.target.value.length > 0;
         let isMatch = true;
         if(key === 'confirmPassword') {
             const { password } = this.state;
@@ -55,9 +86,15 @@ class Register extends Component {
                 isMatch = false;
             }
         }
+        if(key === 'phone') {
+            isValid = event.target.value.match(/^\+?\d{2}[- ]?\d{3}[- ]?\d{5}$/);
+        }
+        if(key === 'email') {
+            isValid = event.target.value.match(/^[a-z][a-z0-9_\-\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/);
+        }
         this.setState({
             [key]: event.target.value,
-            [`${key}Valid`]: event.target.value.length > 0,
+            [`${key}Valid`]: isValid,
             isMatch: isMatch
         })        
     }
@@ -80,14 +117,16 @@ class Register extends Component {
 
     // handle register 
     handleRegister = async () => {
-        let {username, firstName, lastName, phone, email, password} = this.state;
+        let {username, firstName, lastName, phone, email, password, confirmPassword} = this.state;
         username = username.trim();
         firstName = firstName.trim();
         lastName = lastName.trim();
         email = email.trim();
         password = password.trim();
+        confirmPassword = confirmPassword.trim();
         console.log(username);
         console.log(password);
+        console.log(confirmPassword);
 
         this.setState({
             isCreating: true
@@ -99,7 +138,8 @@ class Register extends Component {
             lastName: lastName,
             phone: phone,
             email: email,
-            password: password
+            password: password,
+            confirmPassword: confirmPassword
         }
 
         try {
@@ -119,20 +159,8 @@ class Register extends Component {
             localStorage.setItem('user-token', res.data.token)
             // set current user in local storage
             this.props.saveUserRedux(user);
-            // redirect to previous page
-            if(this.props.location.state) {
-                const prevPath = this.props.location.state.prevPath;
-                console.log(prevPath)
-                if(prevPath && prevPath.length > 0) {
-                    if(this.props.location.state.filter) {
-                        this.props.history.push(this.props.location.state.prevPath, {filter: this.props.location.state.filter});
-                    } else {
-                        this.props.history.push(this.props.location.state.prevPath);
-                    }
-                }
-            } else {
-                this.props.history.push('/');
-            }
+            // redirect to home page
+            this.props.history.push('/');
 
         } catch (error) {
             if (!error.response) {
@@ -161,7 +189,7 @@ class Register extends Component {
     render() {
         const { username, firstName, lastName, email, phone, password, confirmPassword } = this.state;
         const { usernameValid, firstNameValid, lastNameValid, phoneValid, emailValid, passwordValid, confirmPasswordValid, isMatch } = this.state;
-        const isDataValid = usernameValid && firstNameValid && lastNameValid && phoneValid && emailValid && passwordValid && confirmPasswordValid;
+        const isDataValid = this.isValid();
         const { passwordShow, confirmPasswordShow } = this.state;
         const { isCreating } = this.state;
         return (
@@ -241,7 +269,7 @@ class Register extends Component {
                     {
                         !phoneValid &&
                         <div className="valid-warning">
-                            Please fill in this field.                     
+                            Invalid data.                     
                         </div>
                     }  
                     <div className={emailValid ? "form-group" : "form-group invalid"}>
@@ -339,10 +367,10 @@ class Register extends Component {
                     }  
                     <button 
                     className={
-                        (username != '' && password != '' && isDataValid) ? 
+                        (isDataValid) ? 
                         "login-btn" : "login-btn disabled"
                     }
-                    disabled={!(username != '' && password != '' && isDataValid)}
+                    disabled={!isDataValid}
                     onClick={this.handleRegister}
                     >
                         Create Account
