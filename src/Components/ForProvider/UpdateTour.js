@@ -93,7 +93,7 @@ class UpdateTour extends React.Component {
                 isLoading: true
             })
             let res = await axios.get(
-                `https://localhost:7079/api/Tours/${tourId}`
+                `${this.baseUrl}/api/Tours/${tourId}`
             );       
             console.log('call api')
             //console.log(res);

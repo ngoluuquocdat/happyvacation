@@ -113,7 +113,6 @@ class Login extends Component {
                   data
                 );          
             }
-            console.log(res);
             const user = {
                 username: res.data.username,
                 fullName: res.data.fullName,
@@ -133,7 +132,6 @@ class Login extends Component {
             }
             if(this.props.location.state) {
                 const prevPath = this.props.location.state.prevPath;
-                console.log(prevPath)
                 if(prevPath && prevPath.length > 0) {
                     if(this.props.location.state.filter) {
                         this.props.history.push(this.props.location.state.prevPath, {filter: this.props.location.state.filter});
@@ -165,11 +163,11 @@ class Login extends Component {
                 toast.error("Not allowed");
             }
         } finally {
-            setTimeout(() => {
-                this.setState({
-                    isCreating: false,
-                });
-            }, 1000);
+            // setTimeout(() => {
+            //     this.setState({
+            //         isCreating: false,
+            //     });
+            // }, 1000);
         }  
     }
 

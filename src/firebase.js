@@ -70,3 +70,32 @@ export const subscribeToTopic = (topicName, handler = () => {}) =>
         }
     });
 
+
+
+  export const unSubscribeToTopic = (topicName, handler = () => {}) =>
+    messaging.getToken( { vapidKey: "BCi_3lAlaiEN1U2kP-Z8Q65AQ28voEO1lGwipIEwFIjbtebUDFVo4ZhL3h21udY4CwxnSQvJilf2oTm-ofTijcw"})
+    .then((currentToken) => {
+        if (currentToken) {
+          console.log('current token for client: ', currentToken);
+            const FCM_SERVER_KEY = "AAAAdu2dNuM:APA91bGsH2OY569rWyVyDUhOhxNYgGLj8l-rDLg_8S_KKCwjLTpSCfwcwY_zXZS5mulfjXyACMBDt0YXKOJwXDLEmTI7CuPl0aRQyQ8gdpj6VMGMXQvCqKBlfC4ZKq5b3qGCaae4cy1w";
+            // Subscribe to the topic
+            const topicURL = `https://iid.googleapis.com/iid/v1:batchRemove`;
+            axios.post(
+              topicURL,
+              // { data: 'data'},
+              {
+                to: `/topics/${topicName}`,
+                registration_tokens: [`${currentToken}`]
+              },
+              {
+                headers: { Authorization:`key=${FCM_SERVER_KEY}` }
+              }
+            ).then((response) => {
+              console.log('Successfully un subscribed to topic: ' + topicName);
+            })
+            .catch(() => {
+              console.log('Cannot un subscribe to topic: ' + topicName)
+            })
+        }
+    });
+

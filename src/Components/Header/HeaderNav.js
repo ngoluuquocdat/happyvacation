@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import {  subscribeToTopic } from '../../firebase';
+import {  subscribeToTopic, unSubscribeToTopic } from '../../firebase';
 import ReactLoading from "react-loading";
 import { withRouter } from 'react-router-dom';
 import { FaCaretDown } from 'react-icons/fa';
@@ -141,6 +141,12 @@ class HeaderNav extends Component {
 
     // sign out
     signOut = () => {
+      //un subscribe To Topic
+      const current_user = this.props.reduxData.user;
+      if(current_user.providerId !== 0) {
+        const topic = `Tour_Provider_${current_user.providerId}`;
+        unSubscribeToTopic(topic);
+      }
       localStorage.removeItem('user-token');
       // set current user in redux to null
       this.props.saveUserRedux(null);
