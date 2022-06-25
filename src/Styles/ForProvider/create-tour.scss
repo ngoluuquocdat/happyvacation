@@ -37,7 +37,15 @@
     }
     .create-tour-body {
         padding-top: 30px;
-
+        .valid-label {
+            display: block;
+            margin-top: 5px;  
+            visibility: hidden;     
+        }
+        .valid-label.invalid {
+            color: red;
+            visibility: visible;    
+        }
         .tourist-number,
         .price {
             width: 45%;
@@ -51,6 +59,7 @@
                 margin-bottom: 0;
                 .input-number {
                     margin-left: 10px;
+                    margin-bottom: 6px;
                 }
                 .form-title {
                     font-size: 20px;

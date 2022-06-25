@@ -37,6 +37,15 @@
     }
     .update-tour-body {
         padding-top: 30px;
+        .valid-label {
+            display: block;
+            margin-top: 5px;  
+            visibility: hidden;     
+        }
+        .valid-label.invalid {
+            color: red;
+            visibility: visible;    
+        }
         .loading-container {
             width: 100%;
             height: 100%;

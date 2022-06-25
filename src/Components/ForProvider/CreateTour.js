@@ -11,7 +11,8 @@ import TextField from '@mui/material/TextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import '../../Styles/ForProvider/create-tour.scss'
+import { withRouter, Link } from 'react-router-dom';
+import '../../Styles/ForProvider/create-tour.scss';
 
 class CreateTour extends React.Component {
 
@@ -34,13 +35,23 @@ class CreateTour extends React.Component {
         durationUnit: 'Days',
         groupSize: 1,
         minAdults: 1,
-        pricePerAdult: 0,
+        pricePerAdult: 1,
         includeChildren: true,
         pricePerChild: 0,
         itineraries: [ { title: '', content: ''} ],
         expenses: [ { content: '', isIncluded: true } ],
         images: [ { url: '', file: null } ],
-        isCreating: false   
+        isCreating: false,   
+
+        tourNameValid: true,
+        overviewValid: true,
+        categoryValid: true,
+        placeValid: true,
+        locationsValid: true,
+        startTimeValid: true,
+        itineraryValid: true,
+        expenseValid: true,
+        imagesValid: true
     }
 
     listPlaces = [];
@@ -75,7 +86,8 @@ class CreateTour extends React.Component {
     handleInputText = (event) => {
         const key = event.target.name;
         this.setState({
-            [key]: event.target.value
+            [key]: event.target.value,
+            [key+'Valid']: event.target.value.length > 0
         })
     }
 
@@ -99,17 +111,20 @@ class CreateTour extends React.Component {
         const selectedCategories = this.state.selectedCategories;
         if(isChecked) {
             this.setState({
+                categoryValid: true,    // add this
                 selectedCategories: [...selectedCategories, item]           
             })
         } else {
             this.setState({
+                categoryValid: selectedCategories.length !== 1, // this selectedCategories is before setState
                 selectedCategories: selectedCategories.filter((element) => element.id !== item.id)
             })
-        }
+        }      
     }
 
     // handle place checkbox click
     handlePlaceSelect = (event, item, index) => {
+        let placeValid = false; // add this
         const isChecked = event.target.checked;
         // set state checked place States
         const checkedPlaceStates = this.state.checkedPlaceStates;
@@ -120,8 +135,10 @@ class CreateTour extends React.Component {
         // add or remove place item in filter
         let selectedPlaces = this.state.selectedPlaces;
         if(isChecked) {
+            placeValid = true;    // add this
             selectedPlaces = [...selectedPlaces, item]; 
         } else {
+            placeValid = selectedPlaces.length !== 1; // this selectedPlaces is before setState
             selectedPlaces = selectedPlaces.filter((element) => element.id !== item.id);
         }
         // check about pickup range
@@ -132,7 +149,8 @@ class CreateTour extends React.Component {
         // set state
         this.setState({
             selectedPlaces: selectedPlaces,
-            pickUpRange: pickUpRange
+            pickUpRange: pickUpRange,
+            placeValid: placeValid
         })
     }
 
@@ -192,13 +210,35 @@ class CreateTour extends React.Component {
     onChangeInputNumber = (event) => {
         const key = event.target.name;
         let value = event.target.value;
-        if(key === 'duration') {
-            const durationUnit = this.state.durationUnit;           
-            value = durationUnit === 'Hours' ? value/24 : value;
-        }
-        this.setState({
-            [key]: value
-        })
+        console.log('input number', value);
+        if(Number(value) !== 0) {
+            if(Number.isInteger(Number(value))) {
+                if(key === 'duration') {
+                    const durationUnit = this.state.durationUnit;    
+                    if(durationUnit === 'Hours')  {
+                        if(Number(value) < 25) {
+                            value = value/24
+                        } else {
+                            value = 1
+                        }
+                        this.setState({
+                            duration: value
+                        })
+                        return;
+                    }     
+                    //value = durationUnit === 'Hours' ? value/24 : value;
+                }               
+                this.setState({
+                    [key]: value
+                })
+            }
+        } else {
+            if(key === 'pricePerChild') {
+                this.setState({
+                    pricePerChild: value
+                })      
+            }
+        }     
     }
 
     // toggle include children
@@ -305,8 +345,60 @@ class CreateTour extends React.Component {
             this.setState({
                 images: images
             })
+        } else {
+            toast.info("Must have at least 01 image.")
         }
     }     
+
+    // valid
+    valid = () => {
+        const { tourName, overview} = this.state;
+        const { selectedCategories, selectedPlaces } = this.state;
+        const { startingLocation, endingLocation, startingAddress, endingAddress, startingTime } = this.state;
+        const { pickUpAsChoice, pickUpRange } = this.state;
+        const { isPrivate, duration, groupSize, minAdults, pricePerAdult, includeChildren, pricePerChild } = this.state;
+        let { itineraries, expenses, images } = this.state;
+        itineraries = itineraries.filter(element => (element.title !== '') && (element.content !== ''));
+        expenses = expenses.filter(element => element.content !== '');
+        images = images.filter(element => element.file !== null);
+
+        // valid flags
+        let tourNameValid = false, overviewValid = false;
+        let categoryValid = false, placeValid = false;
+        let locationsValid = false, startTimeValid = false, priceValid = false;
+        let itineraryValid = false, expenseValid = false, imagesValid = false;
+
+        if(tourName !== '') tourNameValid = true;
+        if(overview !== '') overviewValid = true;
+        if(selectedCategories.length > 0) categoryValid = true;
+        if(selectedPlaces.length > 0) placeValid = true;
+
+        if(pickUpAsChoice === true && pickUpRange.id !== 0) {
+            locationsValid = true;
+        }
+        if(pickUpAsChoice === false) {
+            locationsValid = (startingLocation !== '') && (startingAddress !== '') &&
+            (endingLocation !== '') && (endingAddress !== '');
+        }
+        if(startingTime !== '') startTimeValid = true;
+        if(pricePerAdult > 0)   priceValid = true;
+
+        if(itineraries.length > 0) itineraryValid = true;
+        if(expenses.length > 0) expenseValid = true;
+        if(images.length > 0) imagesValid = true;
+
+        // set state for valid flags:
+        this.setState({
+            tourNameValid: tourNameValid, overviewValid: overviewValid,
+            categoryValid: categoryValid, placeValid: placeValid,locationsValid: locationsValid, 
+            startTimeValid: startTimeValid, priceValid: priceValid,
+            itineraryValid: itineraryValid, expenseValid: expenseValid, imagesValid: imagesValid
+        })
+
+        return tourNameValid && overviewValid && categoryValid && placeValid &&
+               locationsValid && startTimeValid && priceValid &&
+               itineraryValid && expenseValid && imagesValid;
+    }
 
     // handle on submit 
     handleOnSave = async() => {
@@ -325,26 +417,10 @@ class CreateTour extends React.Component {
         expenses = expenses.filter(element => element.content !== '');
         images = images.filter(element => element.file !== null);
 
-        let isLocationsValid = false;
-        if(pickUpAsChoice === true && pickUpRange.id !== 0) {
-            isLocationsValid = true;
+        if(!this.valid()) {
+            toast.warning('Please fill all information!');
+            return;
         }
-        if(pickUpAsChoice === false) {
-            isLocationsValid = (startingLocation !== '') && (startingAddress !== '') &&
-            (endingLocation !== '') && (endingAddress !== '');
-        }
-        console.log('location check', isLocationsValid);
-
-        const isValid = (tourName !== '') && (overview !== '') &&
-                        (selectedCategories.length > 0) && (selectedPlaces.length > 0) &&
-                        isLocationsValid &&
-                        (startingTime !== '') &&
-                        (itineraries.length > 0) && (expenses.length > 0) && (images.length > 0);
-        
-        // if(!isValid) {
-        //     toast.warning('Please fill all information!');
-        //     return;
-        // }
         this.setState({
             isCreating: true
         })
@@ -352,7 +428,8 @@ class CreateTour extends React.Component {
         let period = startingTime.getHours() >= 12 ? 'PM' : 'AM';
         let hour = startingTime.getHours() % 12;
         let minute = startingTime.getMinutes() < 10 ? '0'+startingTime.getMinutes() : startingTime.getMinutes();
-        let startTime = `${hour}:${minute} ${period}`
+        let startTime = `${hour}:${minute} ${period}`;
+
         // starting/ending point format
         let startPoint='';
         let endPoint='';
@@ -410,7 +487,7 @@ class CreateTour extends React.Component {
             // redirect to list tours management page
             setTimeout(() => {              
                 this.props.history.push('/for-provider/tours');
-            }, 2000)
+            }, 1000)
         } catch (error) {
             if (!error.response) {
               toast.error("Network error");
@@ -445,9 +522,11 @@ class CreateTour extends React.Component {
         const { selectedPlaces } = this.state;
         const { itineraries, expenses, images } = this.state;        
         const { isCreating } = this.state;
+        const { tourNameValid, overviewValid, categoryValid, placeValid,
+            locationsValid, startTimeValid, itineraryValid, expenseValid, imagesValid } = this.state;
+
         return (
             <div className='create-tour-container'>
-                
                 <div className='create-tour-header'>
                     <div className='title'>Create new tour</div>
                     <div className='sub-title'>Create your new tour with detailed information</div>
@@ -460,10 +539,12 @@ class CreateTour extends React.Component {
                     <div className='form-group'>
                         <label className="form-title tour-name">Tour name</label>
                         <input className="input-field tour-name" name='tourName' type='text' value={tourName} onChange={this.handleInputText}/>
+                        <span className={tourNameValid ? "valid-label" : "valid-label invalid"}>*This field is required.</span>
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Overview</label>
                         <textarea className="input-area" name='overview' value={overview} onChange={this.handleInputText}/>
+                        <span className={overviewValid ? "valid-label" : "valid-label invalid"}>*This field is required.</span>
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Tour Type</label>
@@ -497,6 +578,7 @@ class CreateTour extends React.Component {
                                 })
                             }
                         </div>
+                        <span className={categoryValid ? "valid-label" : "valid-label invalid"}>*Please choose at least 01 category.</span>
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Tourist Sites</label>
@@ -518,9 +600,10 @@ class CreateTour extends React.Component {
                                 })
                             }
                         </div>
+                        <span className={placeValid ? "valid-label" : "valid-label invalid"}>*Please choose at least 01 place.</span>
                     </div>
                     <div className='location-options'>
-                        <label className="location-label">Location</label>    
+                        <label className="location-label">Location</label>     
                         <label htmlFor='include-children' className='location-option-name'>
                             {
                                 pickUpAsChoice ?
@@ -556,7 +639,7 @@ class CreateTour extends React.Component {
                                         :
                                         <span className="no-tourist-sites-warn">You need to choose tourist sites first.</span>
                                     }
-                                </div>
+                                </div>                                
                             </div>
                         </div>
                         :
@@ -573,7 +656,7 @@ class CreateTour extends React.Component {
                                     value={startingAddress}
                                     name='startingAddress'
                                     onChange={this.handleInputText}
-                                />
+                                />                                  
                             </div>
                             <div className='form-group'>
                                 <label className="form-title--small">Ending</label>
@@ -587,10 +670,11 @@ class CreateTour extends React.Component {
                                     value={endingAddress}
                                     name='endingAddress'
                                     onChange={this.handleInputText}
-                                />
+                                />    
                             </div>
                         </>
-                    }
+                    }   
+                    <span className={locationsValid ? "valid-label" : "valid-label invalid"}>*Please provide valid locations and try again.</span>                    
                     <div className='form-group'>
                         <label className="form-title">Starting Time</label>
                         <div className="starting-time">
@@ -601,7 +685,8 @@ class CreateTour extends React.Component {
                                     renderInput={(params) => <TextField {...params} />}
                                 />
                             </LocalizationProvider>
-                        </div>                       
+                        </div>
+                        <span className={startTimeValid ? "valid-label" : "valid-label invalid"}>*This field is required.</span>                       
                     </div>
                     <div className='form-group'>
                         <label className="form-title">Duration</label>
@@ -655,7 +740,7 @@ class CreateTour extends React.Component {
                     </div>
                     <div className='price'>
                         <div className='form-group'>
-                            <label className="form-title">Price per Adult</label>
+                            <label className="form-title">Price per Adult ($)</label>
                             <input 
                                 className="input-number" 
                                 type="number" 
@@ -666,7 +751,7 @@ class CreateTour extends React.Component {
                             />
                         </div>
                         <div className='form-group'>
-                            <label className={includeChildren ? 'form-title' : 'form-title disabled'}>Price per Child</label>
+                            <label className={includeChildren ? 'form-title' : 'form-title disabled'}>Price per Child ($)</label>
                             <input 
                                 className="input-number" 
                                 type="number" 
@@ -717,6 +802,7 @@ class CreateTour extends React.Component {
                             })
                         }
                         <p className="more-btn" onClick={this.handleMoreItineraryClick}>More...</p>
+                        <span className={itineraryValid ? "valid-label" : "valid-label invalid"}>*Please provide tour's itinerary.</span>
                     </div>   
                     <div className='form-group'>
                         <label className="form-title">Expense</label>
@@ -750,6 +836,7 @@ class CreateTour extends React.Component {
                             })
                         }
                         <p className="more-btn" onClick={this.handleMoreExpenseClick}>More...</p>
+                        <span className={expenseValid ? "valid-label" : "valid-label invalid"}>*Please provide tour's expense.</span>
                     </div> 
                     <div className='form-group'>
                         <label className="form-title">Tour Images</label>
@@ -772,6 +859,7 @@ class CreateTour extends React.Component {
                             }
                         </div>
                         <p className="more-btn" onClick={this.handleMoreImageClick}>More...</p>
+                        <span className={imagesValid ? "valid-label" : "valid-label invalid"}>*Please provide as least 01 image.</span>
                     </div>   
                     <div className="save-btn-wrapper">
                         <button className="save-btn" onClick={this.handleOnSave}>CREATE</button>
@@ -852,4 +940,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(CreateTour);
+export default connect(mapStateToProps)(withRouter(CreateTour));
