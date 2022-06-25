@@ -10,6 +10,7 @@ import "../../Styles/ForProvider/provider-register.scss";
 
 class ProviderRegister extends Component {
     state = {
+        isMemberDisabled: false,
         providerName: '',
         contactPersonName: '',
         providerEmail: '',
@@ -42,6 +43,15 @@ class ProviderRegister extends Component {
         const token = localStorage.getItem('user-token');
         if(!token) {
             this.props.history.push('/login');
+        }
+
+        // check if user is disable
+       if(!await this.checkUserEnabled()) {
+            toast.info('Your account is disabled');
+            this.setState({
+                isMemberDisabled: true
+            })
+            return;
         }
 
         try {
@@ -84,6 +94,38 @@ class ProviderRegister extends Component {
             })
         }
     }
+
+    // check if user is disabled or not
+    checkUserEnabled = async() => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            return true;
+        }
+        try {    
+            this.setState({
+                isLoading: true
+            })        
+            let res = await axios.get(
+                `${this.baseUrl}/api/Users/me/check-enabled`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );                     
+            return res.data.isEnabled;       
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+            }         
+            console.log(error)
+        } finally {           
+            setTimeout(() => {
+                this.setState({
+                    isLoading: false
+                })
+            }, 1200);
+        }
+      }
 
     // handle input 
     handleInput = (event) => {
@@ -170,6 +212,8 @@ class ProviderRegister extends Component {
         const { providerNameValid, contactPersonNameValid, providerEmailValid, providerPhoneValid } = this.state;
         const isDataValid = providerName !== '' && contactPersonName !== '' && providerEmail !== '' && providerPhone !== '';
         const { isLoading, isDone, isRegistered, registration } = this.state;
+        const isMemberDisabled = this.state.isMemberDisabled;
+
         return (
             <div className="provider-register-page-container">
                 {
@@ -186,112 +230,120 @@ class ProviderRegister extends Component {
                 }
                 <div className="provider-register-form">
                     {
-                        isRegistered ?
-                        <div className="registered-notification">
-                            <div className="logo-section">
-                                <img className="logo" src={HappyVacationLogo} alt="Headout" 
-                                    onClick={() => this.props.history.push('/')}/>
-                            </div>
-                            <span className="main-notification">
-                                You have already registered! 
-                            </span>
-                            <p>
-                                Your registration id: {registration.id}
-                            </p>
-                            <p>Company name:&nbsp;{registration.providerName}</p>
-                            <p>Contact person:&nbsp;{registration.contactPersonName}</p>
-                            <p>Email:&nbsp;{registration.providerEmail}</p>
-                            <p>Phone:&nbsp;{registration.providerPhone}</p>
-                            <p>If you need any support, feel free to contact us.</p>
-                        </div>
-                        :
+                        !isMemberDisabled ?
                         <>
-                            <div className="logo-section">
-                                <img className="logo" src={HappyVacationLogo} alt="Headout" 
-                                    onClick={() => this.props.history.push('/')}/>
-                            </div>
-                            <h3 className="form-header">Register to become a tour provider!</h3>
-                            <div className={providerNameValid ? "form-group" : "form-group invalid"}>
-                                <p className="label">Company/Provider name</p>
-                                <input
-                                    className="form-input"
-                                    type="text"
-                                    placeholder="Company name"
-                                    name="providerName"
-                                    value={providerName}
-                                    onChange={this.handleInput}
-                                />
-                            </div>                        
                             {
-                                !providerNameValid &&
-                                <div className="valid-warning">
-                                    Please fill in this field.                     
+                                isRegistered ?
+                                <div className="registered-notification">
+                                    <div className="logo-section">
+                                        <img className="logo" src={HappyVacationLogo} alt="Headout" 
+                                            onClick={() => this.props.history.push('/')}/>
+                                    </div>
+                                    <span className="main-notification">
+                                        You have already registered! 
+                                    </span>
+                                    <p>
+                                        Your registration id: {registration.id}
+                                    </p>
+                                    <p>Company name:&nbsp;{registration.providerName}</p>
+                                    <p>Contact person:&nbsp;{registration.contactPersonName}</p>
+                                    <p>Email:&nbsp;{registration.providerEmail}</p>
+                                    <p>Phone:&nbsp;{registration.providerPhone}</p>
+                                    <p>If you need any support, feel free to contact us.</p>
                                 </div>
-                            }  
-                            <div className={contactPersonNameValid ? "form-group" : "form-group invalid"}>
-                                <p className="label">Contact person name</p>
-                                <input
-                                    className="form-input"
-                                    type="text"
-                                    placeholder="Contact person name"
-                                    name="contactPersonName"
-                                    value={contactPersonName}
-                                    onChange={this.handleInput}
-                                />
-                            </div>                        
-                            {
-                                !contactPersonNameValid &&
-                                <div className="valid-warning">
-                                    Please fill in this field.                     
-                                </div>
-                            } 
-                            <div className={providerEmailValid ? "form-group" : "form-group invalid"}>
-                                <p className="label">Email</p>
-                                <input
-                                    className="form-input"
-                                    type="text"
-                                    placeholder="Email"
-                                    name="providerEmail"
-                                    value={providerEmail}
-                                    onChange={this.handleInput}
-                                />
-                            </div>                        
-                            {
-                                !providerEmailValid &&
-                                <div className="valid-warning">
-                                    Please fill in this field.                     
-                                </div>
-                            }      
-                            <div className={providerPhoneValid ? "form-group" : "form-group invalid"}>
-                                <p className="label">Phone</p>
-                                <input
-                                    className="form-input"
-                                    type="text"
-                                    placeholder="Phone"
-                                    name="providerPhone"
-                                    value={providerPhone}
-                                    onChange={this.handleInput}
-                                />
-                            </div>                        
-                            {
-                                !providerPhoneValid &&
-                                <div className="valid-warning">
-                                    Please fill in this field.                     
-                                </div>
-                            }  
-                            
-                            <button 
-                            className={
-                                (providerName != '' && contactPersonName != '' && isDataValid) ? 
-                                "submit-btn" : "submit-btn disabled"
+                                :
+                                <>
+                                    <div className="logo-section">
+                                        <img className="logo" src={HappyVacationLogo} alt="Headout" 
+                                            onClick={() => this.props.history.push('/')}/>
+                                    </div>
+                                    <h3 className="form-header">Register to become a tour provider!</h3>
+                                    <div className={providerNameValid ? "form-group" : "form-group invalid"}>
+                                        <p className="label">Company/Provider name</p>
+                                        <input
+                                            className="form-input"
+                                            type="text"
+                                            placeholder="Company name"
+                                            name="providerName"
+                                            value={providerName}
+                                            onChange={this.handleInput}
+                                        />
+                                    </div>                        
+                                    {
+                                        !providerNameValid &&
+                                        <div className="valid-warning">
+                                            Please fill in this field.                     
+                                        </div>
+                                    }  
+                                    <div className={contactPersonNameValid ? "form-group" : "form-group invalid"}>
+                                        <p className="label">Contact person name</p>
+                                        <input
+                                            className="form-input"
+                                            type="text"
+                                            placeholder="Contact person name"
+                                            name="contactPersonName"
+                                            value={contactPersonName}
+                                            onChange={this.handleInput}
+                                        />
+                                    </div>                        
+                                    {
+                                        !contactPersonNameValid &&
+                                        <div className="valid-warning">
+                                            Please fill in this field.                     
+                                        </div>
+                                    } 
+                                    <div className={providerEmailValid ? "form-group" : "form-group invalid"}>
+                                        <p className="label">Email</p>
+                                        <input
+                                            className="form-input"
+                                            type="text"
+                                            placeholder="Email"
+                                            name="providerEmail"
+                                            value={providerEmail}
+                                            onChange={this.handleInput}
+                                        />
+                                    </div>                        
+                                    {
+                                        !providerEmailValid &&
+                                        <div className="valid-warning">
+                                            Please fill in this field.                     
+                                        </div>
+                                    }      
+                                    <div className={providerPhoneValid ? "form-group" : "form-group invalid"}>
+                                        <p className="label">Phone</p>
+                                        <input
+                                            className="form-input"
+                                            type="text"
+                                            placeholder="Phone"
+                                            name="providerPhone"
+                                            value={providerPhone}
+                                            onChange={this.handleInput}
+                                        />
+                                    </div>                        
+                                    {
+                                        !providerPhoneValid &&
+                                        <div className="valid-warning">
+                                            Please fill in this field.                     
+                                        </div>
+                                    }  
+                                    
+                                    <button 
+                                    className={
+                                        (providerName != '' && contactPersonName != '' && isDataValid) ? 
+                                        "submit-btn" : "submit-btn disabled"
+                                    }
+                                    disabled={!(providerName != '' && contactPersonName != '' && isDataValid)}
+                                    onClick={this.handleRegister}
+                                    >
+                                        Send Request
+                                    </button>
+                                </>
                             }
-                            disabled={!(providerName != '' && contactPersonName != '' && isDataValid)}
-                            onClick={this.handleRegister}
-                            >
-                                Send Request
-                            </button>
                         </>
-                    }
+                        :
+                        <h3>Your account is disabled.</h3>
+                    } 
+                    
                 </div>
             </div>
         );

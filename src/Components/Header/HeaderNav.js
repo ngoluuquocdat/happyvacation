@@ -126,6 +126,17 @@ class HeaderNav extends Component {
       this.props.history.push(`/places/${item.id}`);
     }
 
+    // handle click become a provider
+    becomeProvider = async() => {
+       // check if user is disable
+       if(!await this.checkUserEnabled()) {
+        toast.info('Your account is disabled');
+        //this.setState({isOpenChatBox: false})
+        return;
+      }
+      this.props.history.push('/for-provider/register');
+    }
+
     // click open user menu
     handleClickUserMenu = () => {
       const isShowUserMenu = this.state.isShowUserMenu;     
@@ -150,6 +161,29 @@ class HeaderNav extends Component {
       localStorage.removeItem('user-token');
       // set current user in redux to null
       this.props.saveUserRedux(null);
+    }
+
+    // check if user is disabled or not
+    checkUserEnabled = async() => {
+      const token = localStorage.getItem('user-token');
+      if(!token) {
+          return true;
+      }
+      try {            
+          let res = await axios.get(
+              `${this.baseUrl}/api/Users/me/check-enabled`,
+              {
+                  headers: { Authorization:`Bearer ${token}` }
+              }
+          );                     
+          return res.data.isEnabled;       
+      } catch (error) {
+          if (!error.response) {
+              toast.error("Network error");
+              console.log(error)
+          }         
+          console.log(error)
+      }
     }
 
   render() {
@@ -195,7 +229,7 @@ class HeaderNav extends Component {
                     currentUser && currentUser.providerId !== 0 ?
                     <Link to="/for-provider" exact="true" className="list-nav-item">Provider Page</Link>
                     :
-                    <Link to="/for-provider/register" exact="true" className="list-nav-item">Become a provider</Link>
+                    <span className="list-nav-item" onClick={this.becomeProvider}>Become a provider</span>
                   }
                   {
                     isLoading ?
