@@ -272,6 +272,16 @@
                 border: none
             }
         }
+        .valid-label {
+            display: block;
+            margin-top: 5px;  
+            visibility: hidden;   
+            text-align: left;  
+        }
+        .valid-label.invalid {
+            color: red;
+            visibility: visible;    
+        }
     }
     .check-out-controls {
         width: 100%;

@@ -31,9 +31,29 @@ class Checkout extends React.Component {
         showDatePickerAdult: [],     // list of true/false values
         showDatePickerChild: [],     // list of true/false values
         isBooking: false,
+
+        firstNameValid: true,
+        lastNameValid: true,
+        phoneValid: true,
+        emailValid: true,
+        identifyNumberValid: true,
+        pickingPlaceValid: true
     }
 
     baseUrl = this.props.reduxData.baseUrl;
+
+    phoneRegex = /^\+?\d{2}[- ]?\d{3}[- ]?\d{5}$/;
+    emailRegex = /^[a-z][a-z0-9_\-\.]{5,32}@[a-z0-9]{2,}(\.[a-z0-9]{2,4}){1,2}$/;
+    cmndRegex = /^[0-9]{9}$/;
+    passportRegex = /^(?!^0+$)[a-zA-Z0-9]{3,20}$/;
+    cccdRegex = /^[0-9]{12}$/;
+
+    identityNumValid = (value) => {
+        console.log('match passport', value.match(this.passportRegex));
+        console.log('match cmnd', value.match(this.cmndRegex));
+        console.log('match cccd', value.match(this.cccdRegex));
+        return value.match(this.cmndRegex) || value.match(this.passportRegex) || value.match(this.cccdRegex);
+    }
 
     componentDidMount() {
         const token = localStorage.getItem('user-token');
@@ -53,8 +73,23 @@ class Checkout extends React.Component {
             lastName: this.props.reduxData.user ? this.props.reduxData.user.lastName : '',
             phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
             email: this.props.reduxData.user ? this.props.reduxData.user.email : '',
-            adultsList: new Array(adults).fill({identityNumber: '', firstName: '', lastName: '', dob: new Date()}),
-            childrenList: new Array(children).fill({identityNumber: '', firstName: '', lastName: '', dob: new Date()}),
+            adultsList: new Array(adults).fill({
+                identityNumber: '', 
+                firstName: '', 
+                lastName: '', 
+                dob: new Date(),
+                identityNumberValid: true,
+                firstNameValid: true,
+                lastNameValid: true
+            }),
+            childrenList: new Array(children).fill({
+                identityNumber: '', 
+                firstName: '', 
+                lastName: '', 
+                dob: new Date(),
+                firstNameValid: true,
+                lastNameValid: true
+            }),
             showDatePickerAdult: new Array(adults).fill(false),
             showDatePickerChild: new Array(adults).fill(false),
         })
@@ -161,22 +196,62 @@ class Checkout extends React.Component {
 
     // check adult item valid
     checkAdultItem = (adult_index) => {
-        let adult = this.state.adultsList[adult_index];
-        const values = Object.values(adult)
-        if(values.includes('')) {
-            return false;
+        let adult = {...this.state.adultsList[adult_index]};
+        adult.firstName = adult.firstName.trim();
+        adult.lastName = adult.lastName.trim();
+        adult.identityNumber = adult.identityNumber.replace(/\s/g, ''). trim();
+        // valid flags
+        let identityNumberValid = false, firstNameValid = false, lastNameValid = false;
+
+        if(adult.firstName !== '') firstNameValid = true;
+        if(adult.lastName !== '') lastNameValid = true;
+        if(this.identityNumValid(adult.identityNumber)) identityNumberValid = true;
+
+        // set state for valid flags
+        let adultsList = this.state.adultsList;
+        adultsList[adult_index] = {
+            ...adultsList[adult_index],
+            identityNumberValid: identityNumberValid,
+            firstNameValid: firstNameValid,
+            lastNameValid: lastNameValid
         }
-        return true;
+        this.setState({
+            adultsList: adultsList
+        }) 
+
+        // const values = Object.values(adult)
+        // if(values.includes('')) {
+        //     return false;
+        // }
+        return identityNumberValid && firstNameValid && lastNameValid;
     }
 
     // check child item valid
     checkChildItem = (child_index) => {
         let child = this.state.childrenList[child_index];
-        const values = Object.values(child)
-        if(values.includes('')) {
-            return false;
+        child.firstName = child.firstName.trim();
+        child.lastName = child.lastName.trim();
+        child.identityNumber = child.identityNumber.replace(/\s/g, ''). trim();
+        // valid flags
+        let identityNumberValid = false, firstNameValid = false, lastNameValid = false;
+
+        if(child.firstName !== '') firstNameValid = true;
+        if(child.lastName !== '') lastNameValid = true;
+        if(child.identityNumber === '' || child.identityNumber.match(this.passportRegex)) identityNumberValid = true;
+
+        // set state for valid flags
+        let childrenList = this.state.childrenList;
+        childrenList[child_index] = {
+            ...childrenList[child_index],
+            identityNumberValid: identityNumberValid,
+            firstNameValid: firstNameValid,
+            lastNameValid: lastNameValid
         }
-        return true;
+        this.setState({
+            childrenList: childrenList
+        }) 
+
+        return identityNumberValid && firstNameValid && lastNameValid;
     }
 
     // handle show more adult
@@ -244,7 +319,12 @@ class Checkout extends React.Component {
         }
         const bookingSubRequest = this.props.location.state.bookingSubRequest;
         // check valid
-        const { firstName, lastName, phone, email, identifyNumber, pickingPlace } = this.state;
+        let { firstName, lastName, phone, email, identifyNumber, pickingPlace } = this.state;
+        firstName = firstName.trim();
+        lastName = lastName.trim();
+        phone = phone.trim();
+        email = email.trim();
+        identifyNumber = identifyNumber.replace(/\s/g, ''). trim();
         const adultsList = [...this.state.adultsList];   
         const childrenList = [...this.state.childrenList];    
 
@@ -344,17 +424,105 @@ class Checkout extends React.Component {
             }); 
     }
 
+    // valid customer info
+    validCustomer = () => {
+        const bookingSubRequest = this.props.location.state.bookingSubRequest;
+        // check valid
+        let { firstName, lastName, phone, email, identifyNumber, pickingPlace } = this.state;
+        firstName = firstName.trim();
+        lastName = lastName.trim();
+        phone = phone.trim();
+        email = email.trim();
+        identifyNumber = identifyNumber.replace(/\s/g, ''). trim();
+
+        // valid flags for customer (who orders)
+        let firstNameValid = false, lastNameValid = false, phoneValid = false,
+        emailValid = false, identifyNumberValid = false, pickingPlaceValid = false;      
+
+        if(firstName !== '') firstNameValid = true;
+        if(lastName !== '') lastNameValid = true;
+        if(phone.match(this.phoneRegex)) phoneValid = true;
+        if(email.match(this.emailRegex)) emailValid = true;
+        if(this.identityNumValid(identifyNumber)) identifyNumberValid = true;
+
+        if(bookingSubRequest.startPoint.includes('CustomerPoint&')) {
+            if(pickingPlace !== '') {
+                pickingPlaceValid = true;
+            } else {
+                pickingPlaceValid = false;
+            }
+        } else {
+            pickingPlaceValid = true;
+        }
+        // set state for valid flags:
+        this.setState({
+            firstNameValid: firstNameValid,
+            lastNameValid: lastNameValid,
+            phoneValid: phoneValid,
+            emailValid: emailValid,
+            identifyNumberValid: identifyNumberValid,
+            pickingPlaceValid: pickingPlaceValid
+        })
+        
+        return firstNameValid && lastNameValid && phoneValid &&
+               emailValid && identifyNumberValid && pickingPlaceValid;
+    }
+
+    // valid members info
+    validMembers = () => {
+        const { adultsList, childrenList } = this.state; 
+        let membersValid = true;
+        // valid adults list
+        for(let i=0; i<adultsList.length; i++) {
+            if(this.checkAdultItem(i) === false) {
+                membersValid = false;
+            }
+            if(this.checkChildAge(adultsList[i].dob) === true) {
+                membersValid = false;
+            }
+        }
+        // valid children list
+        for(let i=0; i<childrenList.length; i++) {
+            if(this.checkChildItem(i) === false) {
+                membersValid = false;
+            }
+            if(this.checkChildAge(childrenList[i].dob) === false) {
+                membersValid = false;
+            }
+        }
+        return membersValid;
+    }
+
     // valid fields
-    valid = () => {
-         const bookingSubRequest = this.props.location.state.bookingSubRequest;
+    validOldFunction = () => {
+        const bookingSubRequest = this.props.location.state.bookingSubRequest;
         // check valid
         const { firstName, lastName, phone, email, identifyNumber, pickingPlace } = this.state;
-        const { adultsList, childrenList } = this.state;       
+        const { adultsList, childrenList } = this.state; 
+        // valid flags for customer (who orders)
+        let firstNameValid, lastNameValid, phoneValid,
+        emailValid, identifyNumberValid, pickingPlaceValid = false;      
+        let customerValid = false;
 
-        let customerValid = true;
-        if(firstName === '' || lastName === '' || phone === '' || email === '', identifyNumber === '') {
-            customerValid = false;
+        if(firstName !== '') firstNameValid = true;
+        if(lastName !== '') lastNameValid = true;
+        if(phone !== '') phoneValid = true;
+        if(email !== '') emailValid = true;
+        if(identifyNumber !== '') identifyNumberValid = true;
+
+        if(bookingSubRequest.startPoint.includes('CustomerPoint&')) {
+            if(pickingPlace !== '') {
+                pickingPlaceValid = true;
+            } else {
+                pickingPlaceValid = false;
+            }
+        } else {
+            pickingPlaceValid = true;
         }
+
+        // if(firstName === '' || lastName === '' || phone === '' || email === '', identifyNumber === '') {
+        //     customerValid = false;
+        // }
         if(bookingSubRequest.startPoint.includes('CustomerPoint&')) {
             if(pickingPlace === '') {
                 customerValid = false;
@@ -390,10 +558,39 @@ class Checkout extends React.Component {
 
         if(customerValid === false || listsValid === false) {
             toast.warning('Your information is invalid!');
-            console.log('toasted', 'invalid')
             return false;
         }
         return true;
+    }
+
+    // valid fields
+    valid = () => {
+        const customerValid = this.validCustomer();
+        const membersValid = this.validMembers();
+        return customerValid && membersValid;
+    }
+
+    // check if user is disabled or not
+    checkUserEnabled = async() => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            return true;
+        }
+        try {            
+            let res = await axios.get(
+                `${this.baseUrl}/api/Users/me/check-enabled`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );                     
+            return res.data.isEnabled;       
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+            }         
+            console.log(error)
+        }
     }
     
     render() {
@@ -404,6 +601,8 @@ class Checkout extends React.Component {
         const { invalidAdultItem, invalidChildItem } = this.state;
         const avatarUrl = `url('${this.baseUrl + bookingSubRequest.thumbnailUrl}')`;
         const { isLoading } = this.state;
+        // customer valid flags
+        const { firstNameValid, lastNameValid, phoneValid, emailValid, identifyNumberValid, pickingPlaceValid } = this.state;
         
         return (
             <div className="App">
@@ -514,6 +713,7 @@ class Checkout extends React.Component {
                                             value={firstName}
                                             onChange={this.handleInputChange}
                                         />
+                                        <span className={firstNameValid ? "valid-label" : "valid-label invalid"}>*This field is required.</span>
                                     </div>
                                     <div className="customer-form-group">
                                         <label className='input-label'>Last Name</label>
@@ -524,6 +724,7 @@ class Checkout extends React.Component {
                                             value={lastName}
                                             onChange={this.handleInputChange}
                                         />
+                                        <span className={lastNameValid ? "valid-label" : "valid-label invalid"}>*This field is required.</span>
                                     </div>
                                     <div className="customer-form-group">
                                         <label className='input-label'>Phone</label>
@@ -534,6 +735,7 @@ class Checkout extends React.Component {
                                             value={phone}
                                             onChange={this.handleInputChange}
                                         />
+                                        <span className={phoneValid ? "valid-label" : "valid-label invalid"}>*Invalid information.</span>
                                     </div>
                                     <div className="customer-form-group">
                                         <label className='input-label'>Email</label>
@@ -544,6 +746,7 @@ class Checkout extends React.Component {
                                             value={email}
                                             onChange={this.handleInputChange} 
                                         />
+                                        <span className={emailValid ? "valid-label" : "valid-label invalid"}>*Invalid information.</span>
                                     </div>
                                     <div className="customer-form-group">
                                         <label className='input-label'>Identity number</label>
@@ -555,6 +758,7 @@ class Checkout extends React.Component {
                                             value={identifyNumber}
                                             onChange={this.handleInputChange} 
                                         />
+                                        <span className={identifyNumberValid ? "valid-label" : "valid-label invalid"}>*Invalid information.</span>
                                     </div>
                                     {
                                         bookingSubRequest.startPoint.includes('CustomerPoint&') &&
@@ -576,7 +780,8 @@ class Checkout extends React.Component {
                                                     <span className='pick-up-range'>{bookingSubRequest.startPoint.split('&')[2]}.</span>
                                                 </div>
                                             </div>
-                                        </div>
+                                            <span className={pickingPlaceValid ? "valid-label" : "valid-label invalid"}>*This field is required.</span>
+                                        </div>                        
                                     }
                                 </div>                              
                             </div>
@@ -603,6 +808,7 @@ class Checkout extends React.Component {
                                                                     value={item.firstName}
                                                                     onChange={(event) => this.handleInputAdultsList(event, index)}
                                                                 />
+                                                                <span className={item.firstNameValid ? "valid-label" : "valid-label invalid"}>*This field is required.</span>
                                                             </div>
                                                             <div className="member-form-group">
                                                                 <label className='input-label'>Last Name</label>
@@ -614,6 +820,7 @@ class Checkout extends React.Component {
                                                                     value={item.lastName}
                                                                     onChange={(event) => this.handleInputAdultsList(event, index)}
                                                                 />
+                                                                <span className={item.firstNameValid ? "valid-label" : "valid-label invalid"}>*This field is required.</span>
                                                             </div>
                                                             <div className="member-form-group">
                                                                 <label className='input-label'>Identity number</label>
@@ -624,7 +831,8 @@ class Checkout extends React.Component {
                                                                     name='identityNumber'
                                                                     value={item.identifyNumber}
                                                                     onChange={(event) => this.handleInputAdultsList(event, index)} 
-                                                                />                                                              
+                                                                />        
+                                                                <span className={item.identityNumberValid ? "valid-label" : "valid-label invalid"}>*Invalid information.</span>                                                                                      
                                                             </div>
                                                             <div className="member-form-group">
                                                                 <label className='input-label'>Date of Birth</label>
@@ -687,6 +895,7 @@ class Checkout extends React.Component {
                                                                     value={item.firstName}
                                                                     onChange={(event) => this.handleInputChildrenList(event, index)}
                                                                 />
+                                                                <span className={item.firstNameValid ? "valid-label" : "valid-label invalid"}>*This field is required.</span>
                                                             </div>
                                                             <div className="member-form-group">
                                                                 <label className='input-label'>Last Name</label>
@@ -698,6 +907,7 @@ class Checkout extends React.Component {
                                                                     value={item.lastName}
                                                                     onChange={(event) => this.handleInputChildrenList(event, index)}
                                                                 />
+                                                                <span className={item.lastNameValid ? "valid-label" : "valid-label invalid"}>*This field is required.</span>
                                                             </div>
                                                             <div className="member-form-group">
                                                                 <label className='input-label'>Identity number</label>
@@ -709,6 +919,7 @@ class Checkout extends React.Component {
                                                                     value={item.identifyNumber}
                                                                     onChange={(event) => this.handleInputChildrenList(event, index)} 
                                                                 />
+                                                                <span className={item.identityNumberValid ? "valid-label" : "valid-label invalid"}>*Invalid information.</span>
                                                             </div>
                                                             <div className="member-form-group">
                                                                 <label className='input-label'>Date of Birth</label>
@@ -758,12 +969,20 @@ class Checkout extends React.Component {
                         </div>
                         <div className='check-out-controls'>
                             <button className='btn btn--cancel' onClick={this.handleCancel}>Cancel</button>
+                            <button className='btn btn--cancel' onClick={this.validMembers}>Valid</button>
                             <PayPalButtons
-                                onClick={(data, actions) => {
+                                onClick={async(data, actions) => {
                                     if(!this.valid()){
+                                        toast.warning('Check your information and try again.');
                                         return actions.reject();
                                     } else {
-                                        return actions.resolve();
+                                        if(await this.checkUserEnabled()) {                                          
+                                            return actions.resolve();
+                                        } else {
+                                            toast.info("Your account is disabled");
+                                            this.props.history.push("/");
+                                            return actions.reject();
+                                        }
                                     }
                                 }}
                                 createOrder={(data, actions) => {
