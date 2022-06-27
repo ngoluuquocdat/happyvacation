@@ -16,7 +16,7 @@ class ToursPage extends React.Component {
         totalPage: 2,
         totalCount: 18,
         page: 1,
-        perPage: 12,
+        perPage: 8,
         sort: "latest",
         isShowSortMenu: false,
         isLoading: false,

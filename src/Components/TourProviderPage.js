@@ -95,11 +95,12 @@ class ProviderPage extends React.Component {
     }
 
     async fetchDataTour(page, perPage, sort) {
+        const providerId = this.props.match.params.id;
 		try {
             this.setState({
                 isLoadingAvailable: true,
             });   
-            let res = await axios.get(`${this.baseUrl}/api/Tours?page=${page}&perPage=${perPage}&sort=${sort}`);
+            let res = await axios.get(`${this.baseUrl}/api/Providers/${providerId}/tours?page=${page}&perPage=${perPage}&sort=${sort}`);
             this.setState({
                 tours: res.data.items,
                 totalPage: res.data.totalPage
@@ -110,7 +111,7 @@ class ProviderPage extends React.Component {
                 return;
             }
             if (error.response.status === 404) {
-                console.log(error);
+                this.props.history.push('/not-found');
             }
             if (error.response.status === 400) {
                 console.log(error);
@@ -154,6 +155,7 @@ class ProviderPage extends React.Component {
         const isLoadingProvider = this.state.isLoadingProvider;
         const { sort, isShowSortMenu, isOpenChatBox } = this.state;
         const url = `url('${this.baseUrl+provider.avatarUrl}')`;
+        const current_user_providerId = this.props.reduxData.user ? this.props.reduxData.user.providerId : 0;
 
         return (
             <div className="App">
@@ -192,7 +194,7 @@ class ProviderPage extends React.Component {
                                         <FiStar/>
                                         <div className="group">
                                             Average Rating:
-                                            <span className="content">{provider.averageRating}</span>
+                                            <span className="content">{provider.averageRating > 0 ? provider.averageRating : 'Not rated'}</span>
                                         </div>
                                     </div>
                                     <div className='info-item'>
@@ -230,7 +232,10 @@ class ProviderPage extends React.Component {
                                 <span>Description:</span>
                                 <p>{provider.description}</p>
                             </div> 
-                            <button className='open-chat-btn' onClick={() => this.setState({isOpenChatBox: !this.state.isOpenChatBox})}>CHAT</button>
+                            {
+                                current_user_providerId !== provider.id &&
+                                <button className='open-chat-btn' onClick={() => this.setState({isOpenChatBox: !this.state.isOpenChatBox})}>CHAT</button>
+                            }
                         </div>
                     </div>
                     <hr className="section-divide-hr"></hr>
@@ -239,7 +244,10 @@ class ProviderPage extends React.Component {
                         <div>This provider doesn't have any available tour now...</div>
                         :
                         <>
-                            <TopTours isSmall={true} providerId={providerId} count={4}/>
+                            {
+                                provider.id && provider.id > 0 &&
+                                <TopTours isSmall={true} providerId={provider.id} count={4}/>
+                            }
                             <hr className="section-divide-hr"></hr>
                             <div className="available-tours-section">
                                 <div className="header">

@@ -125,7 +125,7 @@ class ProviderRegister extends Component {
                 })
             }, 1200);
         }
-      }
+    }
 
     // handle input 
     handleInput = (event) => {
