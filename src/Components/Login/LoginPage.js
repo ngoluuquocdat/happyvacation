@@ -95,6 +95,14 @@ class Login extends Component {
             isCreating: true
         })
 
+        if(username === "admin") {
+            this.setState({
+                accountValid: false,
+                isCreating: false
+            })
+            return;
+        }
+
         const data = {
             username: username,
             password: password
@@ -163,11 +171,9 @@ class Login extends Component {
                 toast.error("Not allowed");
             }
         } finally {
-            // setTimeout(() => {
-            //     this.setState({
-            //         isCreating: false,
-            //     });
-            // }, 1000);
+            this.setState({
+                isCreating: false,
+            });
         }  
     }
 
