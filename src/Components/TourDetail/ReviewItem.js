@@ -22,18 +22,26 @@ class ReviewItem extends Component {
                         <span className='comment-date'>{review.date}</span>
                     </div>
                     {
-                        review.rating > 0 ?
-                        <Rating
-                            name="simple-controlled"
-                            value={review.rating}
-                            precision={0.5}
-                            size="small"
-                            readOnly
-                        />
+                        review.isUserEnabled ?
+                        <>
+                            {
+                                review.rating > 0 ?
+                                <Rating
+                                    name="simple-controlled"
+                                    value={review.rating}
+                                    precision={0.5}
+                                    size="small"
+                                    readOnly
+                                />
+                                :
+                                <span className='not-rated-label'>Not rated</span>
+                            }
+                            <p className='comment-content'>{review.content}&nbsp;</p>
+                        </>
                         :
-                        <span className='not-rated-label'>Not rated</span>
+                        <p className='disabled-label'>This review is hidden.</p>
                     }
-                    <p className='comment-content'>{review.content}&nbsp;</p>
+                    
                 </div>
             </div>
         );
