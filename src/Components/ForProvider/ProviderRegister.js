@@ -146,7 +146,6 @@ class ProviderRegister extends Component {
 
     // handle register 
     handleRegister = async () => {
-
         // check token
         const token = localStorage.getItem('user-token');
         if(!token) {
@@ -184,7 +183,6 @@ class ProviderRegister extends Component {
                 isRegistered: true,
                 registration: res.data
             })      
-
         } catch (error) {
             if (!error.response) {
               toast.error("Network error");
@@ -204,6 +202,47 @@ class ProviderRegister extends Component {
                 isLoading: false
             })
         }  
+    }
+
+    // handle register again
+    registerAgain = async() => {
+        // check token
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login');
+        }
+        const registrationId = this.state.registration.id;
+        this.setState({
+            isLoading: true
+        })
+
+        try {
+            let res = await axios.delete(
+                `${this.baseUrl}/api/Providers/registrations/${registrationId}`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );             
+            
+            window.location.reload();
+        } catch (error) {
+            if (!error.response) {
+              toast.error("Network error");
+              console.log(error)
+              return;
+            }
+            if (error.response.status === 400) {
+              toast.error(error.response.data);
+            }
+            if (error.response.status === 401) {
+                console.log(error);
+                this.props.history.push('/login');
+            }
+        } finally {
+            this.setState({
+                isLoading: false
+            })
+        } 
     }
 
 
@@ -240,7 +279,12 @@ class ProviderRegister extends Component {
                                             onClick={() => this.props.history.push('/')}/>
                                     </div>
                                     <span className="main-notification">
-                                        You have already registered! 
+                                        {
+                                            registration.isRejected ? 
+                                            "Your registration has been rejected."
+                                            :
+                                            "You have already registered."
+                                        }                                      
                                     </span>
                                     <p>
                                         Your registration id: {registration.id}
@@ -250,6 +294,10 @@ class ProviderRegister extends Component {
                                     <p>Email:&nbsp;{registration.providerEmail}</p>
                                     <p>Phone:&nbsp;{registration.providerPhone}</p>
                                     <p>If you need any support, feel free to contact us.</p>
+                                    {
+                                        registration.isRejected &&
+                                        <button onClick={this.registerAgain}>Register again</button>
+                                    }
                                 </div>
                                 :
                                 <>
@@ -329,10 +377,10 @@ class ProviderRegister extends Component {
                                     
                                     <button 
                                     className={
-                                        (providerName != '' && contactPersonName != '' && isDataValid) ? 
+                                        (providerName !== '' && contactPersonName !== '' && isDataValid) ? 
                                         "submit-btn" : "submit-btn disabled"
                                     }
-                                    disabled={!(providerName != '' && contactPersonName != '' && isDataValid)}
+                                    disabled={!(providerName !== '' && contactPersonName !== '' && isDataValid)}
                                     onClick={this.handleRegister}
                                     >
                                         Send Request
