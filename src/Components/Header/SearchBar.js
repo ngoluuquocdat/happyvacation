@@ -48,7 +48,7 @@ const categories_temp = [
     { id: 19, categoryName: 'luxury tour' },
     { id: 20, categoryName: 'motorcycle tour' },
     { id: 21, categoryName: 'nature-based tour' },
-    { id: 22, categoryName: 'photography tour' },
+    { id: 29, categoryName: 'photography tour' },
     { id: 23, categoryName: 'relaxing tour' },
     { id: 24, categoryName: 'shopping tour' },
     { id: 25, categoryName: 'snorkeling tour' },

@@ -19,6 +19,9 @@ import '../../Styles/ForProvider/update-tour.scss'
 class UpdateTour extends React.Component {
 
     state = {
+        categories: [],
+        places: [],
+
         tourId: 0,
         tourName: '',
         overview: '',
@@ -62,8 +65,8 @@ class UpdateTour extends React.Component {
         imagesValid: true
     }
 
-    listPlaces = [];
-    categories =  [];
+    // places = [];
+    // categories =  [];
     baseUrl = this.props.reduxData.baseUrl;
 
     stringToDateTime(timeAsString) {
@@ -85,16 +88,11 @@ class UpdateTour extends React.Component {
 
     async componentDidMount() {
         // call api to get list categories, list places
-        // fake api response
-        const resCategories = categories_temp;
-        const resPlaces = listPlaces;
-        // set the checked states
-        // var checkedCategoryStates;
-        // var checkedPlaceStates;
-        // checkedCategoryStates = new Array(resCategories.length).fill(false);
-        // checkedPlaceStates = new Array(resPlaces.length).fill(false);
-        this.categories = resCategories;
-        this.listPlaces = resPlaces;
+        await this.getCategories();
+        await this.getPlaces();
+
+        const categories = this.state.categories;
+        const places = this.state.places;
 
         // get the tour by id
         const tourId = this.props.match.params.id
@@ -136,8 +134,8 @@ class UpdateTour extends React.Component {
                 itineraries: resTour.itineraries,
                 expenses: resTour.expenses,
                 durationUnit: resTour.duration >= 1 ? 'Days' : 'Hours',
-                checkedCategoryStates:  this.categories.map((item) => resTour.categories.filter((element)=>element.id===item.id).length > 0),
-                checkedPlaceStates: this.listPlaces.map((item) => resTour.places.filter((element)=>element.id===item.id).length > 0),
+                checkedCategoryStates:  categories.map((item) => resTour.categories.filter((element)=>element.id===item.id).length > 0),
+                checkedPlaceStates: places.map((item) => resTour.places.filter((element)=>element.id===item.id).length > 0),
                 images: resTour.images.map((item) => ({ id: item.id, url: item.url, newUrl: '', file: null, deleted: false }))
             })
         } catch (error) {
@@ -167,6 +165,33 @@ class UpdateTour extends React.Component {
             }, 1000)       
         }  
         
+    }
+
+    getCategories = async() => {
+        try {
+            let res = await axios.get(`${this.baseUrl}/api/Tours/categories`);
+            this.setState({
+                categories: res.data
+            }) 
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error!");            
+            } 
+        }
+    }
+
+    // get places
+    getPlaces = async() => {
+        try {
+          let res = await axios.get(`${this.baseUrl}/api/Places`);
+          this.setState({
+                places: res.data
+          }) 
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error!");       
+            } 
+        }
     }
 
     // input text change
@@ -481,7 +506,7 @@ class UpdateTour extends React.Component {
 
     valid = () => {
         const { tourName, overview} = this.state;
-        const { selectedCategories, selectedPlaces } = this.state;
+        const { categories, places, selectedCategories, selectedPlaces } = this.state;
         const { startingLocation, endingLocation, startingAddress, endingAddress, startingTime } = this.state;
         const { pickUpAsChoice, pickUpRange } = this.state;
         const { openStartingLocationField, openEndingLocationField } = this.state;
@@ -674,11 +699,9 @@ class UpdateTour extends React.Component {
     }
 
     render() {
-        const categories = this.categories;
-        const listPlaces = this.listPlaces;
         const { tourName, overview} = this.state;
         const { isPrivate, includeChildren } = this.state;
-        const { checkedCategoryStates, checkedPlaceStates } = this.state;
+        const { categories, places, checkedCategoryStates, checkedPlaceStates } = this.state;
         const { duration, durationUnit } = this.state;
         const { groupSize, minAdults, pricePerAdult, pricePerChild } = this.state;
         const { itineraries, expenses, images } = this.state;
@@ -766,7 +789,7 @@ class UpdateTour extends React.Component {
                                     className="places"
                                 >
                                     {
-                                        listPlaces.map((item, index) => {
+                                        places.map((item, index) => {
                                             return (
                                                 <div key={'place'+item.id} className='item-place'>
                                                     <input 
@@ -1140,7 +1163,7 @@ const categories_temp = [
     { id: 19, categoryName: 'luxury tour' },
     { id: 20, categoryName: 'motorcycle tour' },
     { id: 21, categoryName: 'nature-based tour' },
-    { id: 22, categoryName: 'photography tour' },
+    { id: 29, categoryName: 'photography tour' },
     { id: 23, categoryName: 'relaxing tour' },
     { id: 24, categoryName: 'shopping tour' },
     { id: 25, categoryName: 'snorkeling tour' },

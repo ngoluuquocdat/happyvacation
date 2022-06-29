@@ -12,6 +12,9 @@ import TourCardManage from './TourCardManage';
 class ProviderTour extends React.Component {
 
     state = {
+        places: [],
+        categories:  [],
+
         tours: [],
         totalPage: 2,
         totalCount: 0,
@@ -32,9 +35,40 @@ class ProviderTour extends React.Component {
         isLoading: false
     }
 
-    listPlaces = [];
-    categories =  [];
+    // listPlaces = [];
+    // categories =  [];
     baseUrl = this.props.reduxData.baseUrl;
+
+    getCategories = async() => {
+        try {
+            let res = await axios.get(`${this.baseUrl}/api/Tours/categories`);
+            let checkedCategoryStates = new Array(res.data.length).fill(false);
+            this.setState({
+                categories: res.data,
+                checkedCategoryStates:  checkedCategoryStates,
+            }) 
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error!");            
+            } 
+        }
+    }
+
+    // get places
+    getPlaces = async() => {
+        try {
+          let res = await axios.get(`${this.baseUrl}/api/Places`);
+          let checkedPlaceStates = new Array(res.data.length).fill(false);
+          this.setState({
+                places: res.data,
+                checkedPlaceStates: checkedPlaceStates
+          }) 
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error!");       
+            } 
+        }
+    }
 
     async getTours(token, tourId, tourName, selectedPlaces, selectedCategories, sort, page, perPage) {
         try {          
@@ -106,22 +140,23 @@ class ProviderTour extends React.Component {
         if(!token) {
             this.props.history.push('/login', {prevPath: this.props.location.pathname});
         }
-
         // call api to get list categories, list places
-        // fake api response
-        const resCategories = categories_temp;
-        const resPlaces = listPlaces;
-        // set the checked states
-        var checkedCategoryStates;
-        var checkedPlaceStates;
-        checkedCategoryStates = new Array(resCategories.length).fill(false);
-        checkedPlaceStates = new Array(resPlaces.length).fill(false);
-        this.categories = resCategories;
-        this.listPlaces = resPlaces;
-        this.setState({          
-            checkedCategoryStates:  checkedCategoryStates,
-            checkedPlaceStates: checkedPlaceStates
-        })
+        await this.getCategories();
+        await this.getPlaces();
+        // // fake api response
+        // const resCategories = categories_temp;
+        // const resPlaces = listPlaces;
+        // // set the checked states
+        // var checkedCategoryStates;
+        // var checkedPlaceStates;
+        // checkedCategoryStates = new Array(resCategories.length).fill(false);
+        // checkedPlaceStates = new Array(resPlaces.length).fill(false);
+        // this.categories = resCategories;
+        // this.listPlaces = resPlaces;
+        // this.setState({          
+        //     checkedCategoryStates:  checkedCategoryStates,
+        //     checkedPlaceStates: checkedPlaceStates
+        // })
         
         // call api to get provider's tours
         let { tourId, tourName, selectedPlaces, selectedCategories, sort, page, perPage } = this.state;
@@ -247,8 +282,8 @@ class ProviderTour extends React.Component {
             tourName: '',
             selectedCategories: [],
             selectedPlaces: [],
-            checkedCategoryStates: new Array(this.categories.length).fill(false),
-            checkedPlaceStates: new Array(this.listPlaces.length).fill(false)
+            checkedCategoryStates: new Array(this.state.categories.length).fill(false),
+            checkedPlaceStates: new Array(this.state.places.length).fill(false)
         })
     }
 
@@ -331,9 +366,7 @@ class ProviderTour extends React.Component {
     render() {
         const { tours, page, totalPage, totalCount, isLoading } = this.state;
         const { tourId, tourName } = this.state;
-        const categories = this.categories;
-        const listPlaces = this.listPlaces;
-        const { selectedPlaces, selectedCategories } = this.state;
+        const { categories, places, selectedPlaces, selectedCategories } = this.state;
         const { checkedCategoryStates, checkedPlaceStates } = this.state;
         const { showListPlace, showListCate } = this.state;
         const { priceArrow, ratingArrow, ordersArrow } = this.state;
@@ -370,7 +403,7 @@ class ProviderTour extends React.Component {
                                 showListPlace &&
                                 <div className='drop-down-list'>
                                     {
-                                        listPlaces.map((item, index) => {
+                                        places.map((item, index) => {
                                             return (
                                                 <div key={'place'+item.id} className='drop-down-item'>
                                                     <input 
@@ -558,7 +591,7 @@ const categories_temp = [
     { id: 19, categoryName: 'luxury tour' },
     { id: 20, categoryName: 'motorcycle tour' },
     { id: 21, categoryName: 'nature-based tour' },
-    { id: 22, categoryName: 'photography tour' },
+    { id: 29, categoryName: 'photography tour' },
     { id: 23, categoryName: 'relaxing tour' },
     { id: 24, categoryName: 'shopping tour' },
     { id: 25, categoryName: 'snorkeling tour' },
