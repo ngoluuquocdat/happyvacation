@@ -209,10 +209,10 @@ class ProviderMain extends React.Component {
                                     <Route path="/for-provider/orders" exact>
                                         <ProviderOrder />
                                     </Route >
-                                    <Route path="/for-provider/orders/pending">
+                                    <Route path="/for-provider/orders/departed">
                                         <ProviderOrder />
                                     </Route >
-                                    <Route path="/for-provider/orders/processed">
+                                    <Route path="/for-provider/orders/canceled">
                                         <ProviderOrder />
                                     </Route >
                                     <Route path="/for-provider/orders/tourists">

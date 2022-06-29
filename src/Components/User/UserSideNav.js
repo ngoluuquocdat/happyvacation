@@ -24,13 +24,13 @@ class UserSideNav extends React.Component {
                                 </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <NavLink className="item-link" to="/user/orders/pending">
-                                    Pending
+                                <NavLink className="item-link" to="/user/orders/departed">
+                                    Departed
                                 </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <NavLink className="item-link" to="/user/orders/processed">
-                                    Processed
+                                <NavLink className="item-link" to="/user/orders/canceled">
+                                    Canceled
                                 </NavLink>
                             </li>
                         </ul>

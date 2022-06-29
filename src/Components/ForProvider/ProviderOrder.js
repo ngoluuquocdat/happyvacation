@@ -59,7 +59,7 @@ class ProviderOrder extends React.Component {
                 isLoading: true,
             });
             let res = await axios.get(
-                `${this.baseUrl}/api/Providers/me/orders?state=${orderState}&page=1&perPage=3`,
+                `${this.baseUrl}/api/Providers/me/orders?state=${orderState}&page=1&perPage=2`,
                 {
                     headers: { Authorization:`Bearer ${token}` }
                 }
@@ -109,7 +109,7 @@ class ProviderOrder extends React.Component {
         if(prevProps.location.pathname !== this.props.location.pathname) {
             let orderState = (this.props.location.pathname.split('/').at(-1)).toLowerCase();
             console.log('order state: ', orderState)
-            if(orderState !== "pending" && orderState !== "confirmed" && orderState !== "canceled" && orderState !== "processed") {
+            if(orderState !== "departed" && orderState !== "confirmed" && orderState !== "canceled") {
                 orderState = '';
             }          
             try {
@@ -275,7 +275,7 @@ class ProviderOrder extends React.Component {
         }
         // get type of tab (all, pending or processed)
         let tabType = (this.props.location.pathname.split('/').at(-1)).toLowerCase();
-        if(tabType !== "pending" && tabType !== "confirmed" && tabType !== "canceled" && tabType !== "processed") {
+        if(tabType !== "departed" && tabType !== "confirmed" && tabType !== "canceled") {
             tabType = '';
         } 
         // post to api
@@ -497,9 +497,9 @@ class ProviderOrder extends React.Component {
         onMessageListener()
         .then((payload) => {
             this.getOrders()
-            .then(() => {
-                toast.success("New pending order.");
-            });       
+            // .then(() => {
+            //     toast.success("New pending order.");
+            // });       
         })
         .catch((err) => console.log('failed: ', err));
 

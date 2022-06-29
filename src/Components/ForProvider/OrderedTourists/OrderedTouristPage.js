@@ -213,7 +213,6 @@ class OrderedTouristPage extends React.Component {
                     </div>
                     <div className='button-area'>
                         <button className='btn-search' onClick={this.searchTourist}>Search</button>
-                        <button className='btn-reset' onClick={this.resetSearch}>Reset</button>
                     </div>
                 </div>
                 {

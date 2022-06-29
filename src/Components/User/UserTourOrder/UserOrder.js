@@ -104,7 +104,7 @@ class UserOrder extends React.Component {
         if(prevProps.location.pathname !== this.props.location.pathname) {
             let orderState = (this.props.location.pathname.split('/').at(-1)).toLowerCase();
             console.log('order state: ', orderState)
-            if(orderState !== "pending" && orderState !== "confirmed" && orderState !== "canceled" && orderState !== "processed") {
+            if(orderState !== "departed" && orderState !== "confirmed" && orderState !== "canceled") {
                 orderState = '';
             }          
             try {

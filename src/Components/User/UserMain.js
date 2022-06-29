@@ -113,11 +113,11 @@ class UserMain extends React.Component {
                                     <Route path="/user/orders">
                                         <UserOrder />
                                     </Route >
-                                    <Route path="/users/orders/pending" exact>
-                                        <UserOrder orderState="Pending"/>
+                                    <Route path="/users/orders/departed" exact>
+                                        <UserOrder/>
                                     </Route >
-                                    <Route path="/users/orders/processed" exact>
-                                        <UserOrder orderState="Processed"/>
+                                    <Route path="/users/orders/canceled" exact>
+                                        <UserOrder/>
                                     </Route >
                                     <Route path="/user/profile" exact>
                                         <UserProfile />

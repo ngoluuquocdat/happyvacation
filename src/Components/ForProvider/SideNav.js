@@ -30,13 +30,13 @@ class SideNav extends React.Component {
                                 </NavLink>
                             </li>
                             <li className='submenu-item'>
-                                <NavLink className="item-link" to="/for-provider/orders/pending">
-                                    Pending
+                                <NavLink className="item-link" to="/for-provider/orders/departed">
+                                    Departed
                                 </NavLink>
                             </li>
                             <li className='submenu-item'>
-                                <NavLink className="item-link" to="/for-provider/orders/processed">
-                                    Processed
+                                <NavLink className="item-link" to="/for-provider/orders/canceled">
+                                    Canceled
                                 </NavLink>
                             </li>
                             <li className='submenu-item'>
