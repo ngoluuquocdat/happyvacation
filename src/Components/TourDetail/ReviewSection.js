@@ -161,12 +161,12 @@ class ReviewSection extends Component {
     handleOnSubmitReview = async () => {
         const {rating, content} = this.state;
         const token = localStorage.getItem('user-token');
-        if(rating !== 0 || content !== '')
+        if(rating !== 0)
         {
             const review = {
                 tourId: this.tourId,
-                content: this.state.content,
-                rating: this.state.rating
+                content: content,
+                rating: rating
             }
             // post new review to api
             console.log(`POST tours/${review.tourId}/reviews`, review)
@@ -195,7 +195,7 @@ class ReviewSection extends Component {
                   return;
                 }
                 if (error.response.status === 400) {
-                  console.log(error)
+                    toast.warning("Please give rating value.");
                 }
                 if (error.response.status === 401) {
                   console.log(error);
@@ -206,9 +206,9 @@ class ReviewSection extends Component {
                 this.setState({
                     isPosting: false
                 })
-            }  
-
-            
+            }          
+        } else {
+            toast.warning("Please give your rating.");
         }
     }
 
