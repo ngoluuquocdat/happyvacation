@@ -54,6 +54,7 @@ class OrderCardManage extends Component {
                     <span>Order ID: </span>
                     <span>{order.id}</span>             
                 </div>
+                <p className='order-date'>Order date: {order.orderDate}</p>
                 <div className='order-content'>
                     <div className='left small'>
                         <div className="tour-thumbnail" style={{backgroundImage: avatarUrl}}>

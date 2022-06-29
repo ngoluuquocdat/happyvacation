@@ -37,6 +37,7 @@ class OrderCard extends Component {
                 <div className='provider-info'> 
                     <Link to={`/providers/${order.providerId}`} exact="true" className="link"><span>{order.providerName}</span></Link>             
                 </div>
+                <p className='order-date'>Order date: {order.orderDate}</p>
                 <div className='order-content'>
                     <div className='left'>
                         <div className="tour-thumbnail" style={{backgroundImage: avatarUrl}}></div>
