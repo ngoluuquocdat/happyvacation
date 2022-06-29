@@ -335,8 +335,8 @@ class PlacePage extends React.Component {
                         </span>
                     </div>
                     <div className='place-page__tourist-sites-section'>
-                        <h1 className='section__title'>Tourist sites</h1>
-                        <h3 className='section__sub-title'>Want to explore more? See some famous sites in {place.placeName}!</h3>
+                        <h1 className='section__title'>Tourist attractions</h1>
+                        <h3 className='section__sub-title'>Want to explore more? See some famous tourist attractions in {place.placeName}!</h3>
                         {
                             place.id &&
                             <TouristSiteList placeId={place.id} />

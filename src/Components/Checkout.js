@@ -87,6 +87,7 @@ class Checkout extends React.Component {
                 firstName: '', 
                 lastName: '', 
                 dob: new Date(),
+                identityNumberValid: true,
                 firstNameValid: true,
                 lastNameValid: true
             }),
@@ -969,7 +970,7 @@ class Checkout extends React.Component {
                         </div>
                         <div className='check-out-controls'>
                             <button className='btn btn--cancel' onClick={this.handleCancel}>Cancel</button>
-                            <button className='btn btn--cancel' onClick={this.validMembers}>Valid</button>
+                            {/* <button className='btn btn--cancel' onClick={this.validMembers}>Valid</button> */}
                             <PayPalButtons
                                 onClick={async(data, actions) => {
                                     if(!this.valid()){

@@ -25,9 +25,10 @@ import {
   BrowserRouter,
   Switch,
   Route,
-  Link
+  Link,
+  withRouter
 } from "react-router-dom";
-import { ToastContainer} from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import UserChatPage from './Components/User/UserChatPage';
 
 
@@ -49,6 +50,16 @@ class App extends Component {
   render() {
     const { width } = this.state;
     const mobileTablet = width <= 1100;
+     // receive firebase cloud message
+     onMessageListener()
+     .then((payload) => {
+        console.log("receive fcm")
+        toast.success("You have a new order.",
+        {
+          onClick: () => {window.location.href = '/for-provider/orders'}
+        });      
+     })
+     .catch((err) => console.log('failed: ', err));
 
     if (mobileTablet) {
       return (
