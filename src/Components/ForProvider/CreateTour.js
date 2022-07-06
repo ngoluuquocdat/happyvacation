@@ -65,22 +65,6 @@ class CreateTour extends React.Component {
         // call api to get list categories, list places
         await this.getCategories();
         await this.getPlaces();
-
-        // // fake api response
-        // const resCategories = categories_temp;
-        // const resPlaces = listPlaces;
-        // // set the checked states
-        // var checkedCategoryStates;
-        // var checkedPlaceStates;
-
-        // checkedCategoryStates = new Array(resCategories.length).fill(false);
-        // checkedPlaceStates = new Array(resPlaces.length).fill(false);
-        // this.categories = resCategories;
-        // this.listPlaces = resPlaces;
-        // this.setState({          
-        //     checkedCategoryStates:  checkedCategoryStates,
-        //     checkedPlaceStates: checkedPlaceStates
-        // })
     }
 
     getCategories = async() => {
@@ -242,7 +226,6 @@ class CreateTour extends React.Component {
     onChangeInputNumber = (event) => {
         const key = event.target.name;
         let value = event.target.value;
-        console.log('input number', value);
         if(Number(value) !== 0) {
             if(Number.isInteger(Number(value))) {
                 if(key === 'duration') {
@@ -357,15 +340,68 @@ class CreateTour extends React.Component {
         }
     }
 
+    // // image validation 
+    // imageValid = (imageFile) => {
+    //     if (!imageFile) {
+    //         console.log("image null")
+    //         return false;
+    //     }
+    //     if (!imageFile.name.match(/\.(jpg|jpeg|png)$/)) {
+    //         console.log("image extension invalid")
+    //         return false;
+    //     }
+    //     // valid image file content
+    //     // file reader for image validation 
+    //     let fileReader = new FileReader();
+    //     fileReader.onload = e => {
+    //         const img = new Image();
+    //         // img.onload = () => {
+    //         //     return true;
+    //         // };
+    //         img.onerror = () => {
+    //             console.log("image content invalid");
+    //             return false;
+    //         };
+    //         img.src = e.target.result;
+    //         // // if nothing wrong, return true
+    //         // return true;
+    //     };
+    //     fileReader.readAsDataURL(imageFile);      
+    // }
+
     // on image change
     onImageChange = (event, index) => {
         if (event.target.files && event.target.files[0]) {
-            let images = this.state.images;
-            images[index].url = URL.createObjectURL(event.target.files[0]);
-            images[index].file = event.target.files[0];
-            this.setState({
-                images: images
-            });
+            const imageFile = event.target.files[0];
+            // file extension check
+            if (!imageFile.name.match(/\.(jpg|jpeg|png)$/)) {
+                console.log("image extension invalid");
+                toast.warning("Please choose valid image file.");
+                return false;
+            }
+            // image file content check
+            // file reader for image validation 
+            let fileReader = new FileReader();
+            fileReader.onload = e => {
+                const img = new Image();
+                img.onload = () => {
+                    let images = this.state.images;
+                    images[index].url = URL.createObjectURL(imageFile);
+                    images[index].file = imageFile;
+                    this.setState({
+                        images: images
+                    });
+                };
+                img.onerror = () => {
+                    console.log("image content invalid");
+                    toast.warning("Please choose valid image file.");
+                    return false;
+                };
+                img.src = e.target.result;
+            };
+            fileReader.readAsDataURL(imageFile); 
+            // reset input 
+            event.target.value = null;
         }
     }
 
@@ -419,6 +455,13 @@ class CreateTour extends React.Component {
         if(itineraries.length > 0) itineraryValid = true;
         if(expenses.length > 0) expenseValid = true;
         if(images.length > 0) imagesValid = true;
+        // if(images.length > 0) {
+        //     // image content valid 
+        //     for(let i = 0; i < images.length; i++) {
+
+        //     }
+        // }
+
 
         // set state for valid flags:
         this.setState({
@@ -880,7 +923,13 @@ class CreateTour extends React.Component {
                                                 <label className='overlay-click' htmlFor={`image-${index}`}>
                                                     {item.url.length===0 && <VscAdd/>}
                                                 </label>
-                                                <input className='image-input' id={`image-${index}`} type='file' onChange={(event)=>this.onImageChange(event, index)}/>
+                                                <input 
+                                                    className='image-input' 
+                                                    id={`image-${index}`} 
+                                                    type='file' 
+                                                    accept="image/png, image/jpg, image/jpeg"
+                                                    onChange={(event)=>this.onImageChange(event, index)}
+                                                />
                                                 <span className='remove-image' onClick={()=>this.handleRemoveImageClick(index)}><GrClose/></span>
                                             </div>
                                             <span className='image-name'>{index===0 ? 'Thumbnail' : `Image ${index}`}</span>

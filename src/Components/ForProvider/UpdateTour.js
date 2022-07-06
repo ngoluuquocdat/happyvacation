@@ -480,14 +480,47 @@ class UpdateTour extends React.Component {
     // on image change
     onImageChange = (event, item) => {    
         if (event.target.files && event.target.files[0]) {
-            let images = this.state.images;
-            let index = images.findIndex(element=>element.id===item.id);
-            images[index].newUrl = URL.createObjectURL(event.target.files[0]);
-            images[index].file = event.target.files[0];
-            this.setState({
-                images: images
-            });
+            const imageFile = event.target.files[0];
+            // file extension check
+            if (!imageFile.name.match(/\.(jpg|jpeg|png)$/)) {
+                console.log("image extension invalid");
+                toast.warning("Please choose valid image file.");
+                return false;
+            }
+            // image file content check
+            // file reader for image validation 
+            let fileReader = new FileReader();
+            fileReader.onload = e => {
+                const img = new Image();
+                img.onload = () => {
+                    let images = this.state.images;
+                    let index = images.findIndex(element=>element.id===item.id);
+                    images[index].newUrl = URL.createObjectURL(imageFile);
+                    images[index].file = imageFile
+                    this.setState({
+                        images: images
+                    });
+                };
+                img.onerror = () => {
+                    console.log("image content invalid");
+                    toast.warning("Please choose valid image file.");
+                    return false;
+                };
+                img.src = e.target.result;
+            };
+            fileReader.readAsDataURL(imageFile); 
+            // reset input 
+            event.target.value = null;
         }
+        // if (event.target.files && event.target.files[0]) {
+        //     let images = this.state.images;
+        //     let index = images.findIndex(element=>element.id===item.id);
+        //     images[index].newUrl = URL.createObjectURL(event.target.files[0]);
+        //     images[index].file = event.target.files[0];
+        //     this.setState({
+        //         images: images
+        //     });
+        // }
     }
 
     // remove image
@@ -1098,7 +1131,13 @@ class UpdateTour extends React.Component {
                                                         <label className='overlay-click' htmlFor={`image-${index}`}>
                                                             {item.newUrl.length===0 && item.url.length===0 && <VscAdd/>}
                                                         </label>
-                                                        <input className='image-input' id={`image-${index}`} type='file' onChange={(event)=>this.onImageChange(event, item)}/>
+                                                        <input 
+                                                            className='image-input' 
+                                                            id={`image-${index}`} 
+                                                            type='file' 
+                                                            accept="image/png, image/jpg, image/jpeg"
+                                                            onChange={(event)=>this.onImageChange(event, item)}
+                                                        />
                                                         <span className='remove-image' onClick={()=>this.handleRemoveImageClick(item)}><GrClose/></span>
                                                     </div>
                                                     <span className='image-name'>{index===0 ? 'Thumbnail' : `Image ${index}`}</span>
