@@ -3,6 +3,7 @@ import axios from "axios";
 import { connect } from 'react-redux';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { withRouter } from "react-router-dom";
+import { toast } from 'react-toastify';
 import HeaderNav from '../../Header/HeaderNav';
 import ChatUserCard from './ChatUserCard';
 import ChatBox from './ChatBox';
@@ -21,7 +22,8 @@ class ProviderChatPage extends Component {
         userTyping: {
             id: 0,
             isTyping: false
-        }
+        },
+        isProviderEnabled: true
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -33,7 +35,12 @@ class ProviderChatPage extends Component {
         this.setState({
             list_users: list_users,
             withUser: (list_users && list_users.length > 0) ? list_users[0] : { id:0 }
-        })          
+        });
+        // check current user enable
+        let isProviderEnabled = await this.checkProviderEnabled();         
+        this.setState({
+            isProviderEnabled: isProviderEnabled
+        });          
     }
 
     async componentDidUpdate(prevProps, prevState) {       
@@ -49,6 +56,11 @@ class ProviderChatPage extends Component {
                 current_user_id: `provider${this.props.reduxData.user.providerId}`
             })
             await this.connectToChatHub();
+            // check current user enable
+            let isProviderEnabled = await this.checkProviderEnabled();         
+            this.setState({
+                isProviderEnabled: isProviderEnabled
+            });  
         }
         // get list messages
         if(prevState.withUser !== this.state.withUser) {
@@ -137,6 +149,38 @@ class ProviderChatPage extends Component {
                 await connection.invoke("ChangeTypingState", isTyping, senderId, receiverId);
             } catch(e) {
                 console.log(e);
+            }
+        }
+    }
+
+    // check provider enable
+    checkProviderEnabled = async() => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login', {prevPath: this.props.location.pathname});
+        }
+        try {            
+            let res = await axios.get(
+                `${this.baseUrl}/api/Providers/me/check-enabled`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );                     
+            return res.data.isEnabled;        
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+            }         
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
+            if (error.response.status === 403) {
+                console.log(error)
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+                toast.info("Only tour provider can visit the page.")
             }
         }
     }
@@ -257,7 +301,7 @@ class ProviderChatPage extends Component {
     }
     
     render() {
-        const { current_user_id, withUser, list_users, messages, userTyping } = this.state;
+        const { current_user_id, withUser, list_users, messages, userTyping, isProviderEnabled } = this.state;
         const { unseenSenderIds } = this.state;
 
         return (
@@ -294,6 +338,8 @@ class ProviderChatPage extends Component {
                                 sendMessage={this.sendMessage}
                                 userTyping={userTyping}
                                 changeTypingState={this.changeTypingState}
+                                isProviderChat={true}
+                                isProviderEnabled={isProviderEnabled}
                             />
                         }
                     </div>

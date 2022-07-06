@@ -35,8 +35,7 @@ class ChatBox extends Component {
     }
 
     // on image change
-    onImageChange = (event) => {  
-        console.log('on change image')     
+    onImageChange = (event) => {     
         if (event.target.files && event.target.files[0]) {
             let image = this.state.image;
             image.url = URL.createObjectURL(event.target.files[0]);
@@ -147,47 +146,63 @@ class ChatBox extends Component {
                     }
                 </div>
                 {
-                    withUser.isUserEnabled ?
-                    <div className="new-message-input">
-                        <div className="input-controls">
-                            <label className='control-label'>
-                                <BsFillPlusCircleFill className='icon'/>
-                            </label>
-                            <label className='control-label' htmlFor='input-image'>
-                                <BsCardImage className='icon' />
-                            </label>
-                            <label className='control-label'>
-                                <BsFillStickyFill className='icon'/>
-                            </label>
-                            <label className='control-label'>
-                                <RiFileGifFill className='icon'/>
-                            </label>    
-                        </div>
-                        <input 
-                            className='input-field' 
-                            placeholder='Your message...'
-                            value={message_content}
-                            onChange={this.inputMessage}
-                            onFocus={() => this.changeTypingState(true)}
-                            onBlur={() => this.changeTypingState(false)}
-                        />
-                        <input
-                            className='input-image'
-                            id='input-image'
-                            type='file'
-                            onChange={(event)=>this.onImageChange(event)}                            
-                        />
+                    (this.props.isUserChat && this.props.isUserEnabled) ||
+                    (this.props.isProviderChat && this.props.isProviderEnabled) ?
+                    <>
                         {
-                            image.url.length > 0 &&
-                            <div className='image-preview' style={{backgroundImage: `url('${image.url}')`}}>
-                                <div className='image-overlay'></div>
-                                <div className='remove-btn' onClick={this.handleRemoveImageClick}><AiOutlineCloseCircle/></div>
+                            withUser.isUserEnabled ?
+                            <div className="new-message-input">
+                                <div className="input-controls">
+                                    <label className='control-label'>
+                                        <BsFillPlusCircleFill className='icon'/>
+                                    </label>
+                                    <label className='control-label' htmlFor='input-image'>
+                                        <BsCardImage className='icon' />
+                                    </label>
+                                    <label className='control-label'>
+                                        <BsFillStickyFill className='icon'/>
+                                    </label>
+                                    <label className='control-label'>
+                                        <RiFileGifFill className='icon'/>
+                                    </label>    
+                                </div>
+                                <input 
+                                    className='input-field' 
+                                    placeholder='Your message...'
+                                    value={message_content}
+                                    onChange={this.inputMessage}
+                                    onFocus={() => this.changeTypingState(true)}
+                                    onBlur={() => this.changeTypingState(false)}
+                                />
+                                <input
+                                    className='input-image'
+                                    id='input-image'
+                                    type='file'
+                                    accept="image/png, image/jpg, image/jpeg"
+                                    onChange={(event)=>this.onImageChange(event)}                            
+                                />
+                                {
+                                    image.url.length > 0 &&
+                                    <div className='image-preview' style={{backgroundImage: `url('${image.url}')`}}>
+                                        <div className='image-overlay'></div>
+                                        <div className='remove-btn' onClick={this.handleRemoveImageClick}><AiOutlineCloseCircle/></div>
+                                    </div>
+                                }
+                                <button className='send-btn' onClick={this.sendMessage}>Send</button>
                             </div>
+                            :
+                            <div className='disabled-label'>This user has been disabled.</div>
                         }
-                        <button className='send-btn' onClick={this.sendMessage}>Send</button>
-                    </div>
+                    </>
                     :
-                    <div className='disabled-label'>This user has been disabled.</div>
+                    <>
+                        {
+                            this.props.isUserChat && <div className='disabled-label'>Your account has been disabled.</div>
+                        }
+                        {
+                            this.props.isProviderChat && <div className='disabled-label'>Your provider has been disabled.</div>
+                        }
+                    </>
                 }
             </div>
         )

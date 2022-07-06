@@ -155,7 +155,7 @@ class TourDetailPage extends React.Component {
     // handle adult add
     handleAdultsAdd = () => {
         let {adults, children} = this.state;
-        if(adults < this.state.tour.groupSize) {
+        if(adults < this.state.tour.groupSize - this.state.children) {
             adults += 1;
         } 
         this.setState({

@@ -3,6 +3,7 @@ import axios from "axios";
 import { connect } from 'react-redux';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { withRouter } from "react-router-dom";
+import { toast } from 'react-toastify';
 import HeaderNav from '../Header/HeaderNav';
 import ChatUserCard from '../ForProvider/ProviderChat/ChatUserCard';
 import ChatBox from '../ForProvider/ProviderChat/ChatBox';
@@ -23,7 +24,8 @@ class UserChatPage extends Component {
         userTyping: {
             id: 0,
             isTyping: false
-        }
+        },
+        isUserEnabled: true
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -34,7 +36,12 @@ class UserChatPage extends Component {
         this.setState({
             list_providers: list_providers,
             withUser: (list_providers && list_providers.length > 0) ? list_providers[0] : { id:0 }
-        })          
+        }); 
+        // check current user enable
+        let isUserEnabled = await this.checkUserEnabled();         
+        this.setState({
+            isUserEnabled: isUserEnabled
+        });
     }
 
     async componentDidUpdate(prevProps, prevState) {       
@@ -49,6 +56,11 @@ class UserChatPage extends Component {
                 current_user_id: `${this.props.reduxData.user.id}`
             })
             await this.connectToChatHub();
+            // check current user enable
+            let isUserEnabled = await this.checkUserEnabled();         
+            this.setState({
+                isUserEnabled: isUserEnabled
+            });
         }
         // get list messages
         if(prevState.withUser !== this.state.withUser) {
@@ -222,9 +234,36 @@ class UserChatPage extends Component {
             unseenSenderIds: this.state.unseenSenderIds.filter((item) => item !== withUser.id)
         })
     }
+
+    // check if user is disabled or not
+    checkUserEnabled = async() => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            return true;
+        }
+        try {            
+            let res = await axios.get(
+                `${this.baseUrl}/api/Users/me/check-enabled`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );                     
+            return res.data.isEnabled;       
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+                console.log(error)
+            }         
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login', {prevPath: this.props.location.pathname});
+            }
+        }
+    }
     
     render() {
-        const { current_user_id, withUser, list_providers, messages, userTyping } = this.state;
+        const { current_user_id, withUser, list_providers, messages, userTyping, isUserEnabled } = this.state;
         const { unseenSenderIds } = this.state;
 
         return (
@@ -261,6 +300,8 @@ class UserChatPage extends Component {
                                 sendMessage={this.sendMessage}
                                 userTyping={userTyping}
                                 changeTypingState={this.changeTypingState}
+                                isUserChat={true}
+                                isUserEnabled={isUserEnabled}
                             />
                         }
                     </div>
