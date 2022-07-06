@@ -238,7 +238,7 @@ class Checkout extends React.Component {
 
         if(child.firstName !== '') firstNameValid = true;
         if(child.lastName !== '') lastNameValid = true;
-        if(child.identityNumber === '' || child.identityNumber.match(this.passportRegex)) identityNumberValid = true;
+        if(child.identityNumber.match(this.cccdRegex) || child.identityNumber.match(this.passportRegex)) identityNumberValid = true;
 
         // set state for valid flags
         let childrenList = this.state.childrenList;
@@ -794,7 +794,7 @@ class Checkout extends React.Component {
                                         {
                                             adultsList.map((item, index) => {
                                                 return(
-                                                    <>
+                                                    <React.Fragment key={'adult'+index}>
                                                         <h4 key={'title-adult'+index} className='member-information__form-title' style={{display: index > showingAdultIndex ? 'none' : 'block'}}>
                                                              Adult {index+1}
                                                         </h4>
@@ -858,7 +858,7 @@ class Checkout extends React.Component {
                                                                 </div>
                                                             </div>
                                                         </div>                                                            
-                                                    </>
+                                                    </React.Fragment>
                                                 )
                                             })
                                         }
@@ -881,7 +881,7 @@ class Checkout extends React.Component {
                                         {
                                             childrenList.map((item, index) => {
                                                 return(
-                                                    <>
+                                                    <React.Fragment key={'child'+index}>
                                                         <h4 key={'title-child'+index} className='member-information__form-title' style={{display: index > showingChildIndex ? 'none' : 'block'}}> 
                                                             Children {index+1}
                                                         </h4>
@@ -915,7 +915,7 @@ class Checkout extends React.Component {
                                                                 <input 
                                                                     type="text" 
                                                                     className='input-field' 
-                                                                    placeholder='Citizen identification, passport,...'
+                                                                    placeholder='Passport, identifier code'
                                                                     name='identityNumber'
                                                                     value={item.identifyNumber}
                                                                     onChange={(event) => this.handleInputChildrenList(event, index)} 
@@ -945,7 +945,7 @@ class Checkout extends React.Component {
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </>
+                                                    </React.Fragment>
                                                 )
                                             })
                                         }
