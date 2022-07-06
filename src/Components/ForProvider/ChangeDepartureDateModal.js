@@ -38,6 +38,37 @@ class ChangeDepartureDateModal extends React.Component {
     }
 
     // save new departure date
+    // saveChange = async() => {
+    //     const token = localStorage.getItem('user-token');
+    //     if(!token) {
+    //         this.props.history.push('/login', {prevPath: this.props.location.pathname});
+    //     }
+
+    //     const newDate = this.state.newDate ? this.dateTimeToString(this.state.newDate) : this.props.currentDepartureDate;
+    //     const orderId = this.props.changingDepartureOrderId;
+
+    //     try {
+    //         this.setState({
+    //             isLoading: true
+    //         })
+    //         let res = await axios.put(
+    //             `${this.baseUrl}/api/Orders/${orderId}/departure`,  
+    //             {
+    //                 newDate: newDate
+    //             },            
+    //             {
+    //                 headers: { Authorization:`Bearer ${token}` }
+    //             }
+    //         );  
+    //         toast.success('Changed successfully');
+    //         this.props.updateNewDeparture(res.data.id, res.data.departureDate);
+    //     } catch(e) {
+    //         console.log(e);
+    //         toast.error('Error occurred');
+    //         this.closeChangeDateModal();
+    //     }
+    // }
+
     saveChange = async() => {
         const token = localStorage.getItem('user-token');
         if(!token) {
@@ -61,7 +92,7 @@ class ChangeDepartureDateModal extends React.Component {
                 }
             );  
             toast.success('Changed successfully');
-            this.props.updateNewDeparture(res.data.id, res.data.departureDate);
+            this.props.updateNewDeparture(res.data.id, res.data.departureDate, res.data.modifiedDate);
         } catch(e) {
             console.log(e);
             toast.error('Error occurred');

@@ -455,13 +455,14 @@ class ProviderOrder extends React.Component {
     }
 
     // update new departure date for an order
-    updateNewDeparture = (orderId, departureDate) => {
+    updateNewDeparture = (orderId, departureDate, modifiedDate) => {
         let orders = this.state.orders;
-        // set state with updated order if tab is not 'pending'
+        // set state with updated order
         const index = this.state.orders.findIndex((element) => element.id === orderId);
         orders[index] = {
             ...orders[index], 
-            departureDate: departureDate
+            departureDate: departureDate,
+            modifiedDate: modifiedDate
         };
 
         this.setState({
