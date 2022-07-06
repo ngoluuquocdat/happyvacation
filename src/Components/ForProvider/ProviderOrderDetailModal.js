@@ -198,6 +198,9 @@ class ProviderOrderDetailModal extends React.Component {
                                     <div className='tourist-information-wrap'>
                                         <p className='tour-order-price'><small>Customer Information</small></p>
                                         <p className='tour-order-description'>
+                                            Identity Num: {order.touristIdentityNum}
+                                        </p>
+                                        <p className='tour-order-description'>
                                             {order.touristName}
                                         </p>
                                         <p className='tour-order-description'>

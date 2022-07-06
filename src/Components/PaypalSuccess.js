@@ -31,7 +31,7 @@ class PaypalSuccess extends React.Component {
                     <HeaderNav />
                 </div>
                 <div className='paypal-payment-success__content'>
-                    <div className='green-check-icon'>
+                    <div className={!hasFailed ? 'green-check-icon' : 'red-cross-icon'}>
                         {
                             !hasFailed
                             ? <GiCheckMark />

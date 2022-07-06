@@ -497,9 +497,9 @@ class ProviderOrder extends React.Component {
         onMessageListener()
         .then((payload) => {
             this.getOrders()
-            // .then(() => {
-            //     toast.success("New pending order.");
-            // });       
+            .then(() => {
+                toast.success("You have a new order.");
+            });       
         })
         .catch((err) => console.log('failed: ', err));
 

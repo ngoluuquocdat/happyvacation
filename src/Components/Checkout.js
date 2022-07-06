@@ -1006,8 +1006,7 @@ class Checkout extends React.Component {
                                     await this.handleConfirm(transactionId);
                                 }}
                                 onCancel={(data, actions) => {
-                                    console.log('tat giua chung');
-
+                                    console.log('tat giua chung');                                   
                                 }}
                                 onError={(err) => {
                                     console.log("ERROR PAYPAL", err)
