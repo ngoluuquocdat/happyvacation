@@ -49,9 +49,9 @@ class Header extends Component {
               <li className={search_option === 'tours' ? "search-option-item active" : "search-option-item"} id="tours" onClick={this.handleChangeSearchOption}>
                 <span className="search-option-name" >Tours</span>
               </li>
-              <li className={search_option === 'hotels' ? "search-option-item active" : "search-option-item"} id="hotels" onClick={this.handleChangeSearchOption}>
+              {/* <li className={search_option === 'hotels' ? "search-option-item active" : "search-option-item"} id="hotels" onClick={this.handleChangeSearchOption}>
                 <span className="search-option-name">Hotels</span>
-              </li>
+              </li> */}
             </ul>
             {
               search_option === 'tours' ? 

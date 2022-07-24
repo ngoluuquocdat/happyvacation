@@ -290,36 +290,40 @@ class PlacePage extends React.Component {
                                 })
                             }
                         </div>
-                    </div>           
-                    <div className='place-page__360-video-section'>
-                        <h1 className='section__title'>Experience</h1>
-                        <h3 className='section__sub-title'>Take an overview look of {place.placeName} through a 360 view!</h3>
-                        {
-                            expandVideoSection &&
-                            <div className='video-wrapper'>
-                                {/* <dl8-video
-                                    title={place.placeName}
-                                    format="MONO_360"
-                                    className={'dl8-video-player'}
-                                    width={'100%'}
-                                    height={'80vh'}
-                                >
-                                    <source src={`${this.baseUrl+place.overviewVideoUrl}`} type="video/mp4" />
-                                </dl8-video> */}
-                            </div>
-                        }
-                        <button
-                            className={!expandVideoSection ? 'expand-collapse-video-section' : 'expand-collapse-video-section--close'}
-                            onClick={this.toggleExpandVideoSection}
-                        >
+                    </div> 
+                    {
+                        /*                                          
+                        <div className='place-page__360-video-section'>
+                            <h1 className='section__title'>Experience</h1>
+                            <h3 className='section__sub-title'>Take an overview look of {place.placeName} through a 360 view!</h3>
                             {
-                                !expandVideoSection ? 
-                                'Watch video!'
-                                :
-                                'Collapse'
+                                expandVideoSection &&
+                                <div className='video-wrapper'>
+                                    { <dl8-video
+                                        title={place.placeName}
+                                        format="MONO_360"
+                                        className={'dl8-video-player'}
+                                        width={'100%'}
+                                        height={'80vh'}
+                                    >
+                                        <source src={`${this.baseUrl+place.overviewVideoUrl}`} type="video/mp4" />
+                                    </dl8-video> }
+                                </div>
                             }
-                        </button>
-                    </div>
+                            <button
+                                className={!expandVideoSection ? 'expand-collapse-video-section' : 'expand-collapse-video-section--close'}
+                                onClick={this.toggleExpandVideoSection}
+                            >
+                                {
+                                    !expandVideoSection ? 
+                                    'Watch video!'
+                                    :
+                                    'Collapse'
+                                }
+                            </button>
+                        </div>
+                        */
+                    }          
                     <div className='place-page__top-tours-section'>
                         {
                             place.id &&
@@ -366,7 +370,10 @@ class ImageSlider extends React.Component {
                 backgroundImagesData &&
                 backgroundImagesData.map((item) => {
                     return (                      
-                        <BackgroundImageDiv key={item.id} url={baseUrl+item.url} />
+                        <BackgroundImageDiv 
+                            key={item.id} 
+                            url={item.url.includes('http') ? item.url : baseUrl+item.url}  
+                        />
                     )
                 })
             }

@@ -144,4 +144,12 @@
         display: flex;
         align-items: center;
     }
+    .loading-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        .loading-component {
+            margin: auto;                                          
+        }   
+    }
 }

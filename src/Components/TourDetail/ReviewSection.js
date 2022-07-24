@@ -223,7 +223,8 @@ class ReviewSection extends Component {
     checkUserEnabled = async() => {
         const token = localStorage.getItem('user-token');
         if(!token) {
-            this.props.history.push('/login');
+            // this.props.history.push('/login');\
+            return
         }
         try {            
             let res = await axios.get(

@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { withRouter } from "react-router-dom";
 import { toast } from 'react-toastify';
+import ReactLoading from "react-loading";
 import HeaderNav from '../../Header/HeaderNav';
 import ChatUserCard from './ChatUserCard';
 import ChatBox from './ChatBox';
@@ -23,7 +24,8 @@ class ProviderChatPage extends Component {
             id: 0,
             isTyping: false
         },
-        isProviderEnabled: true
+        isProviderEnabled: true,
+        isLoadingMessage: false
     }
 
     baseUrl = this.props.reduxData.baseUrl;
@@ -106,6 +108,9 @@ class ProviderChatPage extends Component {
             this.props.history.push('/login');
         } else {
             try {
+                this.setState({
+                    isLoadingMessage: true
+                })
                 const withUserId = this.state.withUser.id;
                 let res = await axios.get(
                     `${this.baseUrl}/api/Messages/for-providers?withUserId=${withUserId}`,
@@ -119,6 +124,10 @@ class ProviderChatPage extends Component {
     
             } catch(e) {
                 console.log(e)
+            } finally {
+                this.setState({
+                    isLoadingMessage: false
+                })
             }
         }
     }
@@ -303,6 +312,7 @@ class ProviderChatPage extends Component {
     render() {
         const { current_user_id, withUser, list_users, messages, userTyping, isProviderEnabled } = this.state;
         const { unseenSenderIds } = this.state;
+        const isLoadingMessage = this.state.isLoadingMessage;
 
         return (
             <div className="provider-chat-page-wrapper">
@@ -330,17 +340,33 @@ class ProviderChatPage extends Component {
                     </div>
                     <div className="provider-chat-page__right">
                         {
-                            withUser.id !== 0 &&
-                            <ChatBox 
-                                userId={current_user_id} 
-                                withUser={withUser} 
-                                messages={messages} 
-                                sendMessage={this.sendMessage}
-                                userTyping={userTyping}
-                                changeTypingState={this.changeTypingState}
-                                isProviderChat={true}
-                                isProviderEnabled={isProviderEnabled}
-                            />
+                            isLoadingMessage ?
+                            <div className="loading-container">
+                                <ReactLoading
+                                    className="loading-component"
+                                    type={"spin"}
+                                    color={"#df385f"}
+                                    height={40}
+                                    width={40}
+                                />
+                            </div>
+                            :
+                            <>
+                                {
+                                    withUser.id !== 0 &&
+                                    <ChatBox 
+                                        userId={current_user_id} 
+                                        withUser={withUser} 
+                                        messages={messages} 
+                                        sendMessage={this.sendMessage}
+                                        userTyping={userTyping}
+                                        changeTypingState={this.changeTypingState}
+                                        isProviderChat={true}
+                                        isProviderEnabled={isProviderEnabled}
+                                    />
+                                }   
+                            </>
+                            
                         }
                     </div>
                 </div>

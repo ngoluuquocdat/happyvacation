@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
@@ -21,16 +20,23 @@ class UserChatBox extends React.Component {
         userTyping: {
             id: 0,
             isTyping: false
-        }
+        },
+        isLoading: false
     }
 
     baseUrl = this.props.reduxData.baseUrl;
 
     async componentDidMount() {
+        this.setState({
+            isLoading: true
+        });
         // connect user to chat hub
         await this.connectToChatHub();
         // get list messages
         await this.getMessages();
+        this.setState({
+            isLoading: false
+        });
     }
 
     async componentWillUnmount() {
@@ -62,12 +68,34 @@ class UserChatBox extends React.Component {
     // on image change
     onImageChange = (event) => {
         if (event.target.files && event.target.files[0]) {
-            let image = this.state.image;
-            image.url = URL.createObjectURL(event.target.files[0]);
-            image.file = event.target.files[0];
-            this.setState({
-                image: image
-            });
+            const imageFile = event.target.files[0];
+            // file extension check
+            if (!imageFile.name.match(/\.(jpg|jpeg|png)$/)) {
+                console.log("image extension invalid");
+                return false;
+            }
+            // image file content check
+            // file reader for image validation 
+            let fileReader = new FileReader();
+            fileReader.onload = e => {
+                const img = new Image();
+                img.onload = () => {
+                    let image = this.state.image;
+                    image.url = URL.createObjectURL(imageFile);
+                    image.file = imageFile;
+                    this.setState({
+                        image: image
+                    });
+                };
+                img.onerror = () => {
+                    console.log("image content invalid");
+                    return false;
+                };
+                img.src = e.target.result;
+            };
+            fileReader.readAsDataURL(imageFile); 
+            // reset input 
+            event.target.value = null;         
         }
     }
 
@@ -95,7 +123,7 @@ class UserChatBox extends React.Component {
                 console.log(e)
             }
         } else {
-            try {
+            try {              
                 const withUserId = `provider${this.props.providerId}`;
                 let res = await axios.get(
                     `${this.baseUrl}/api/Messages?withUserId=${withUserId}`,
@@ -266,6 +294,7 @@ class UserChatBox extends React.Component {
 
     render() {
         const messages = this.state.messages;
+        const isLoading = this.state.isLoading;
         const { providerName, providerAvatar, closeChatBox } = this.props;
         const { current_user_id, userTyping } = this.state;
         const providerId = `provider${this.props.providerId}`;  // format: provider1
@@ -280,22 +309,34 @@ class UserChatBox extends React.Component {
                     <span className='provider-name'>{providerName}</span>
                     <span className='close-chat-box-btn' onClick={() => closeChatBox()}>X</span>
                 </div>
-                <div className='message-list'>
                 {
-                    showTypingEffect && 
-                    <div className="typing-effect">
-                        Typing
+                    isLoading ?
+                    <div className="loading-container">
                         <ReactLoading
                             className="loading-component"
-                            type={"bubbles"}
-                            color={"#000"}
-                            height={30}
+                            type={"spin"}
+                            color={"#df385f"}
+                            height={40}
                             width={40}
-                            delay={5}
-                            />
+                        />
                     </div>
-                }
-                {
+                    : 
+                    <div className='message-list'>
+                    {
+                        showTypingEffect && 
+                        <div className="typing-effect">
+                            Typing
+                            <ReactLoading
+                                className="loading-component"
+                                type={"bubbles"}
+                                color={"#000"}
+                                height={30}
+                                width={40}
+                                delay={5}
+                                />
+                        </div>
+                    }
+                    {
                         messages.length > 0 ?
                         messages.slice().reverse().map((item, index, array) => {
                             return (
@@ -310,9 +351,10 @@ class UserChatBox extends React.Component {
                             )
                         })
                         :
-                        <span>Nothing here yet! Say something!</span>
+                        <span style={{marginBottom: '10px'}}>Nothing here yet! Say something!</span>
                     }
-                </div>
+                    </div>
+                }
                 <div className='message-input-section'>
                     <label className='control-label' htmlFor='input-image'>
                         <BsCardImage className='icon' />

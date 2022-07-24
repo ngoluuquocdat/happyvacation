@@ -10,7 +10,14 @@ class TouristSiteCard extends Component {
     render() {
         const baseUrl = this.props.baseUrl;
         const site = this.props.site;
-        const thumbnailPath = `url(${baseUrl+site.thumbnailUrl})`;
+        // const thumbnailPath = `url(${baseUrl+site.thumbnailUrl})`;
+        let thumbnailPath = '';    
+        if(site.thumbnailUrl.includes('/storage')) {
+            thumbnailPath = `url(${baseUrl+site.thumbnailUrl})`             
+        }
+        if(site.thumbnailUrl.includes('http')) {
+            thumbnailPath = `url(${site.thumbnailUrl})`
+        }
         const isSlideItem = this.props.isSlideItem;
         // const wrapperClassName = isSlideItem
         //     ? "tour-card-wrapper slider-item"

@@ -16,10 +16,10 @@ import '../Styles/check-out.scss';
 class Checkout extends React.Component {
 
     state = {
-        firstName: this.props.reduxData.user ? this.props.reduxData.user.firstName : '',
-        lastName: this.props.reduxData.user ? this.props.reduxData.user.lastName : '',
-        phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
-        email: this.props.reduxData.user ? this.props.reduxData.user.email : '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        email: '',
         identifyNumber: '',
         pickingPlace: '',
         adultsList: [],
@@ -49,9 +49,9 @@ class Checkout extends React.Component {
     cccdRegex = /^[0-9]{12}$/;
 
     identityNumValid = (value) => {
-        console.log('match passport', value.match(this.passportRegex));
-        console.log('match cmnd', value.match(this.cmndRegex));
-        console.log('match cccd', value.match(this.cccdRegex));
+        // console.log('match passport', value.match(this.passportRegex));
+        // console.log('match cmnd', value.match(this.cmndRegex));
+        // console.log('match cccd', value.match(this.cccdRegex));
         return value.match(this.cmndRegex) || value.match(this.passportRegex) || value.match(this.cccdRegex);
     }
 
@@ -61,51 +61,123 @@ class Checkout extends React.Component {
             this.props.history.push('/login');
         }
         
-        if(!this.props.location.state.bookingSubRequest) {
-            this.props.history.push('/');
+        if(!this.props.location.state || !this.props.location.state.bookingSubRequest) {
+            this.props.history.push('/');   
         }
 
         // initiate adults and children list
         const { adults, children } = this.props.location.state.bookingSubRequest;
 
+        let firstName = '', lastName = '', phone = '', email = '', identifyNumber = '', pickingPlace = '';
+        let adultsList = []; let childrenList = [];
+        // let reduxCustomerInfo = this.props.reduxData.customerInfo;
+        // let reduxAdultsList = this.props.reduxData.adultsList;
+        // let reduxChildrenList = this.props.reduxData.childrenList;
+        let localStorageCustomerInfo = JSON.parse(localStorage.getItem('customer-info'));
+        let localStorageAdultsList = JSON.parse(localStorage.getItem('adults-list'));
+        let localStorageChildrenList = JSON.parse(localStorage.getItem('children-list'));
+        if(localStorageCustomerInfo) {
+            console.log("da nhap san")
+            // console.log(localStorageCustomerInfo)
+            // console.log(localStorageAdultsList);
+            firstName = localStorageCustomerInfo.firstName;
+            lastName = localStorageCustomerInfo.lastName;
+            phone = localStorageCustomerInfo.phone;
+            email = localStorageCustomerInfo.email;
+            identifyNumber = localStorageCustomerInfo.identifyNumber;
+            pickingPlace = localStorageCustomerInfo.pickingPlace;
+        } else {
+            console.log("chua nhap gi")
+            firstName = this.props.reduxData.user ? this.props.reduxData.user.firstName : '';
+            lastName = this.props.reduxData.user ? this.props.reduxData.user.lastName : '';
+            phone = this.props.reduxData.user ? this.props.reduxData.user.phone : '';
+            email = this.props.reduxData.user ? this.props.reduxData.user.email : '';
+            identifyNumber = '';
+            pickingPlace = '';
+        }
+        // if(reduxAdultsList) {
+        //     for(let i=0; i<reduxAdultsList.length; i++) {
+        //         reduxAdultsList[i].dob = new Date();
+        //     }
+        //     adultsList = reduxAdultsList;
+        if(localStorageAdultsList) {
+            for(let i=0; i<localStorageAdultsList.length; i++) {
+                localStorageAdultsList[i].dob = new Date(localStorageAdultsList[i].dob);
+            }
+            adultsList = localStorageAdultsList;
+        } else {
+            adultsList = new Array(adults).fill({
+                identityNumber: '', 
+                firstName: '', 
+                lastName: '', 
+                dob: new Date(),
+                identityNumberValid: true,
+                firstNameValid: true,
+                lastNameValid: true
+            });
+        }
+        if(localStorageChildrenList) {       
+            for(let i=0; i<localStorageChildrenList.length; i++) {
+                localStorageChildrenList[i].dob = new Date(localStorageChildrenList[i].dob);
+            }
+            childrenList = localStorageChildrenList;
+        } else {
+            childrenList = new Array(children).fill({
+                identityNumber: '', 
+                firstName: '', 
+                lastName: '', 
+                dob: new Date(),
+                identityNumberValid: true,
+                firstNameValid: true,
+                lastNameValid: true
+            });
+        }
         this.setState({
-            firstName: this.props.reduxData.user ? this.props.reduxData.user.firstName : '',
-            lastName: this.props.reduxData.user ? this.props.reduxData.user.lastName : '',
-            phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
-            email: this.props.reduxData.user ? this.props.reduxData.user.email : '',
-            adultsList: new Array(adults).fill({
-                identityNumber: '', 
-                firstName: '', 
-                lastName: '', 
-                dob: new Date(),
-                identityNumberValid: true,
-                firstNameValid: true,
-                lastNameValid: true
-            }),
-            childrenList: new Array(children).fill({
-                identityNumber: '', 
-                firstName: '', 
-                lastName: '', 
-                dob: new Date(),
-                identityNumberValid: true,
-                firstNameValid: true,
-                lastNameValid: true
-            }),
+            firstName: firstName,
+            lastName: lastName,
+            phone: phone,
+            email: email,
+            identifyNumber: identifyNumber,
+            pickingPlace: pickingPlace,
+            adultsList: adultsList,
+            childrenList: childrenList,
             showDatePickerAdult: new Array(adults).fill(false),
-            showDatePickerChild: new Array(adults).fill(false),
+            showDatePickerChild: new Array(children).fill(false),
         })
     }
     
     componentDidUpdate(prevProps, prevState) {
         if(prevProps.reduxData.user !== this.props.reduxData.user){
             // set state if new user data save in redux
-            this.setState({
-                firstName: this.props.reduxData.user ? this.props.reduxData.user.firstName : '',
-                lastName: this.props.reduxData.user ? this.props.reduxData.user.lastName : '',
-                phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
-                email: this.props.reduxData.user ? this.props.reduxData.user.email : '',
-            })
+            //let reduxCustomerInfo = this.props.reduxData.customerInfo;
+            let localStorageCustomerInfo = JSON.parse(localStorage.getItem('customer-info'));
+            if(!localStorageCustomerInfo) {
+                console.log("did update lay user tu redux")
+                this.setState({
+                    firstName: this.props.reduxData.user ? this.props.reduxData.user.firstName : '',
+                    lastName: this.props.reduxData.user ? this.props.reduxData.user.lastName : '',
+                    phone: this.props.reduxData.user ? this.props.reduxData.user.phone : '',
+                    email: this.props.reduxData.user ? this.props.reduxData.user.email : ''
+                })
+            } else {
+                // console.log("da nhap san did update")
+                // console.log(reduxCustomerInfo)
+                // this.setState({
+                //     firstName: reduxCustomerInfo.firstName,
+                //     lastName: reduxCustomerInfo.lastName,
+                //     phone: reduxCustomerInfo.phone,
+                //     email: reduxCustomerInfo.email,
+                //     // identifyNumber: existedCustomerInfo.identifyNumber,
+                //     // pickingPlace: existedCustomerInfo.pickingPlace,
+                //     // adultsList: reduxCustomerInfo.adultsList,
+                //     // childrenList: reduxCustomerInfo.childrenList
+                // })
+            }
         }
+    }
+
+    componentWillUnmount() {
+        console.log("unmount check out page")
     }
 
     // click date picker toggle in adults section
@@ -127,7 +199,7 @@ class Checkout extends React.Component {
 
     // dob adult select
     handleDobAdultSelect = (date, index) => {
-        let adultsList = this.state.adultsList;
+        let adultsList = this.state.adultsList.map(object => ({ ...object }));;
         let showDatePickerAdult = this.state.showDatePickerAdult;
         adultsList[index] = {
             ...adultsList[index],
@@ -138,10 +210,15 @@ class Checkout extends React.Component {
             adultsList: adultsList,
             showDatePickerAdult: showDatePickerAdult
         })
+        // save adults list to redux
+        //this.props.saveAdultsListRedux(adultsList);
+
+        // save adults list to local storage
+        localStorage.setItem('adults-list', JSON.stringify(adultsList))
     }
     // dob child select
     handleDobChildSelect = (date, index) => {
-        let childrenList = this.state.childrenList;
+        let childrenList = this.state.childrenList.map(object => ({ ...object }));;
         let showDatePickerChild = this.state.showDatePickerChild;
         childrenList[index] = {
             ...childrenList[index],
@@ -152,6 +229,11 @@ class Checkout extends React.Component {
             childrenList: childrenList,
             showDatePickerChild: showDatePickerChild
         })
+        // save adults list to redux
+        //this.props.saveChildrenListRedux(childrenList);
+
+        // save children list to local storage
+        localStorage.setItem('children-list', JSON.stringify(childrenList))
     }
 
     // text field handlers
@@ -161,11 +243,26 @@ class Checkout extends React.Component {
         this.setState({
             [key]: value
         })
+        // save customer info to redux
+        let customerInfo = {
+            firstName: this.state.firstName,
+            lastName: this.state.lastName,
+            phone: this.state.phone,
+            email: this.state.email,
+            identifyNumber: this.state.identifyNumber,
+            pickingPlace: this.state.pickingPlace,
+        }
+        customerInfo = {
+            ...customerInfo,
+            [key]: value
+        }
+        this.props.saveCustomerRedux(customerInfo);
+        localStorage.setItem('customer-info', JSON.stringify(customerInfo))
     }
 
     // text field adults list handlers
     handleInputAdultsList = (event, index) => {
-        let adultsList = this.state.adultsList;
+        let adultsList = this.state.adultsList.map(object => ({ ...object }));;
         const key = event.target.name;
         const value = event.target.value;
 
@@ -177,11 +274,16 @@ class Checkout extends React.Component {
         this.setState({
             adultsList: adultsList
         })
+        // save adults list to redux
+        //this.props.saveAdultsListRedux(adultsList);
+
+        // save adults list to local storage
+        localStorage.setItem('adults-list', JSON.stringify(adultsList))
     }
 
     // text field children list handlers
     handleInputChildrenList = (event, index) => {
-        let childrenList = this.state.childrenList;
+        let childrenList = this.state.childrenList.map(object => ({ ...object }));;
         const key = event.target.name;
         const value = event.target.value;
 
@@ -193,6 +295,11 @@ class Checkout extends React.Component {
         this.setState({
             childrenList: childrenList
         })
+        // save adults list to redux
+        //this.props.saveChildrenListRedux(childrenList);
+
+        // save children list to local storage
+        localStorage.setItem('children-list', JSON.stringify(childrenList))
     }
 
     // check adult item valid
@@ -305,10 +412,78 @@ class Checkout extends React.Component {
     dateTimeToString = (date) => {
         return `${("0" + date.getDate()).slice(-2)}/${("0" + (date.getMonth()+1)).slice(-2)}/${date.getFullYear()}`
     }
+    // convert string dd/MM/yyyy to date time
+    stringToDateTime = (str) => {
+        const [day, month, year] = str.split('/');
+        const date = new Date(+year, month - 1, +day);
+        return date;
+    }
 
     // handle cancel checkout
     handleCancel = () => {
+        // clear storage
+        // clear data in local storage 
+        localStorage.removeItem('customer-info');
+        localStorage.removeItem('adults-list');
+        localStorage.removeItem('children-list');
+        // redirect to tour detail page
         this.props.history.push(`/tours/${this.props.location.state.bookingSubRequest.tourId}`);
+    }
+
+    fakeBooking = () => {
+        console.log('fake booking')
+        const bookingSubRequest = this.props.location.state.bookingSubRequest;
+
+        let localStorageAdultsList = JSON.parse(localStorage.getItem('adults-list'));
+        // check valid
+        let { firstName, lastName, phone, email, identifyNumber, pickingPlace } = this.state;
+        firstName = firstName.trim();
+        lastName = lastName.trim();
+        phone = phone.trim();
+        email = email.trim();
+        identifyNumber = identifyNumber.replace(/\s/g, ''). trim();
+        // let adultsList = [...this.state.adultsList];   
+        // let childrenList = [...this.state.childrenList];    
+        let adultsList = this.state.adultsList.map(object => ({ ...object }));   
+        let childrenList = this.state.childrenList.map(object => ({ ...object }));
+        console.log('fake booking adults', adultsList);
+        console.log('fake booking children', childrenList);
+
+        // change date time format to string dd/MM/yyyy
+        for(let i=0; i<adultsList.length; i++) {
+            adultsList[i].dob = this.dateTimeToString(adultsList[i].dob);
+        }
+        for(let i=0; i<childrenList.length; i++) {
+            childrenList[i].dob = this.dateTimeToString(childrenList[i].dob);
+        }
+
+        // start point & end point
+        const startPoint = bookingSubRequest.startPoint.includes('CustomerPoint&') ?
+                           `CustomerPoint&${pickingPlace}&${bookingSubRequest.startPoint.split('&')[2]}`
+                            :
+                            bookingSubRequest.startPoint;
+        const endPoint = bookingSubRequest.endPoint.includes('CustomerPoint&') ?
+                         `CustomerPoint&${pickingPlace}&${bookingSubRequest.startPoint.split('&')[2]}`
+                            :
+                            bookingSubRequest.endPoint;                   
+
+        // submit to api
+        let bookingRequest = {
+            tourId: bookingSubRequest.tourId,
+            departureDate: bookingSubRequest.departureDate,
+            adults: bookingSubRequest.adults,
+            adultsList: adultsList,
+            childrenList: childrenList,
+            children: bookingSubRequest.children,
+            touristName: `${firstName} ${lastName}`,
+            touristPhone: phone,
+            touristEmail: email,
+            touristIdentity: identifyNumber,
+            startPoint: startPoint,
+            endPoint: endPoint,
+            transactionId: 111111
+        }
+        console.log('booking Request', bookingRequest);
     }
 
     // handle confirm booking, create order in database, called after successful capture payment
@@ -595,6 +770,9 @@ class Checkout extends React.Component {
     }
     
     render() {
+        if(!this.props.location.state) {
+            window.location.href = "/";
+        }
         const { bookingSubRequest } = this.props.location.state;
         const { firstName, lastName, phone, email, identifyNumber, pickingPlace } = this.state;
         const { adultsList, showingAdultIndex, childrenList, showingChildIndex } = this.state;
@@ -604,7 +782,7 @@ class Checkout extends React.Component {
         const { isLoading } = this.state;
         // customer valid flags
         const { firstNameValid, lastNameValid, phoneValid, emailValid, identifyNumberValid, pickingPlaceValid } = this.state;
-        
+
         return (
             <div className="App">
                 <div className="small-header">
@@ -789,7 +967,7 @@ class Checkout extends React.Component {
                             <div className='member-information'>
                                 <h3 className="section__title">Your members information</h3>
                                 {
-                                    adultsList.length > 0 &&
+                                    adultsList && adultsList.length > 0 &&
                                     <div className='member-information__adults'>
                                         {
                                             adultsList.map((item, index) => {
@@ -830,7 +1008,7 @@ class Checkout extends React.Component {
                                                                     className='input-field' 
                                                                     placeholder='Citizen identification, passport,...'
                                                                     name='identityNumber'
-                                                                    value={item.identifyNumber}
+                                                                    value={item.identityNumber}
                                                                     onChange={(event) => this.handleInputAdultsList(event, index)} 
                                                                 />        
                                                                 <span className={item.identityNumberValid ? "valid-label" : "valid-label invalid"}>*Invalid information.</span>                                                                                      
@@ -876,7 +1054,7 @@ class Checkout extends React.Component {
                                     </div>
                                 }
                                 {
-                                    childrenList.length > 0 &&
+                                    childrenList && childrenList.length > 0 &&
                                     <div className='member-information__children'>
                                         {
                                             childrenList.map((item, index) => {
@@ -917,7 +1095,7 @@ class Checkout extends React.Component {
                                                                     className='input-field' 
                                                                     placeholder='Passport, identifier code'
                                                                     name='identityNumber'
-                                                                    value={item.identifyNumber}
+                                                                    value={item.identityNumber}
                                                                     onChange={(event) => this.handleInputChildrenList(event, index)} 
                                                                 />
                                                                 <span className={item.identityNumberValid ? "valid-label" : "valid-label invalid"}>*Invalid information.</span>
@@ -970,7 +1148,7 @@ class Checkout extends React.Component {
                         </div>
                         <div className='check-out-controls'>
                             <button className='btn btn--cancel' onClick={this.handleCancel}>Cancel</button>
-                            {/* <button className='btn btn--cancel' onClick={this.validMembers}>Valid</button> */}
+                            <button className='btn btn--cancel' style={{display: "none"}} onClick={this.fakeBooking}>Valid</button>
                             <PayPalButtons
                                 onClick={async(data, actions) => {
                                     if(!this.valid()){
@@ -1009,8 +1187,15 @@ class Checkout extends React.Component {
                                     console.log('tat giua chung');                                   
                                 }}
                                 onError={(err) => {
-                                    console.log("ERROR PAYPAL", err)
-                                    //window.location.reload();
+                                    console.log("ERROR PAYPAL", err.message)
+                                    if(err.message.includes('Window is closed, can not determine type') ||
+                                       err.message.includes('Window closed before response') || 
+                                       err.message.includes('Component closed') ||
+                                       err.message.includes('Detected component window close') || 
+                                       err.message.includes('Detected popup close')){
+                                        // user just closed the pop up too soon, so do nothing
+                                        return;
+                                    }
                                     this.handleFailedPayment();
                                 }}
                             />
@@ -1028,4 +1213,13 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(withRouter(Checkout));
+const mapDispatchToProps = (dispatch) => {
+    return {
+        saveUserRedux: (user) => dispatch({type: 'SAVE_USER', payload: user}),
+        saveCustomerRedux: (customerInfo) => dispatch({type: 'SAVE_CUSTOMER', payload: customerInfo}),
+        saveAdultsListRedux: (adultsList) => dispatch({type: 'SAVE_ADULTS', payload: adultsList}),
+        saveChildrenListRedux: (childrenList) => dispatch({type: 'SAVE_CHILDREN', payload: childrenList}),
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Checkout));

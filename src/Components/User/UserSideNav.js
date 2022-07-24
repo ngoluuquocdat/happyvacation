@@ -43,12 +43,12 @@ class UserSideNav extends React.Component {
                         </div>
                         <ul className='side-nav-submenu'>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <NavLink className="item-link" to="/user/profile">
+                                <NavLink className="item-link" to="/user/profile" exact>
                                     Profile
                                 </NavLink>
                             </li>
                             <li className='submenu-item' onClick={this.handleItemSelect}>
-                                <NavLink className="item-link" to="/user/password">
+                                <NavLink className="item-link" to="/user/profile/password">
                                     Change password
                                 </NavLink>
                             </li>

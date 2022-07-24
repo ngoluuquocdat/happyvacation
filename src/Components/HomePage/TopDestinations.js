@@ -1,55 +1,82 @@
 import React, { Component } from 'react';
+import axios from "axios";
+import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom';
+import ReactLoading from "react-loading";
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../../Styles/top-destinations.scss';
 
 class TopDestinations extends Component {
 
+  state = {
+    topDestinations: [],
+    isLoading: false
+  }
+
+  baseUrl = this.props.reduxData.baseUrl;
+
+  componentDidMount = async() => {
+    await this.getPlaces();
+  }
+
   handlePlaceSelect = (item) => {
-    // const filter = {
-    //   selectedPlace: {
-    //     id: item.id,
-    //     placeName: item.placeName
-    //   },
-    //   startDate: new Date(),
-    //   endDate: new Date(),
-    //   keyword: '',
-    //   priceRange: [0, 3000],
-    //   selectedCategories: [],
-    //   isPrivate: false,
-    //   matchAll: false
-    // }
-    //this.props.history.push('/tours', {filter: filter});
     this.props.history.push(`places/${item.id}`);
   }
 
+  getPlaces = async() => {
+    try {
+      this.setState({
+        isLoading: true,
+      });
+      let res = await axios.get(`${this.baseUrl}/api/Places?count=6&sort=orders`);
+      this.setState({
+        topDestinations: res.data
+      })
+    } catch(e) {
+      this.setState({
+        topDestinations: topDestinations_temp
+      })
+    } finally {
+      this.setState({
+        isLoading: false
+      });
+    }
+  }
+
   render() {
+    const { topDestinations, isLoading } = this.state;
     return (
         <>
           <div className="top-dest-section">
             <h1 className="title">Top Destinations</h1>
             <h3 className="sub-title">See some interesting places you may like!</h3>
             <div className="top-dest-container">
-              <ul className="top-dest-list">
-                  {
-                    topDestinations.map((item) => {
-                        return (
-                            <li className="top-dest-item" key={item.id} onClick={() => this.handlePlaceSelect(item)}>
-                                {/* <Link
-                                    to={{ pathname: `/destinations/${item.id}` }}
-                                    className="link"
-                                >
-                                    <img src={item.thumbnailPath}></img>
-                                    <h4 className="item-name">{item.placeName}</h4>
-                                </Link> */}
-                                <img src={item.thumbnailPath}></img>
-                                <h4 className="item-name">{item.placeName}</h4>
-                            </li>
-                        )
-                    })
-                  }
-              </ul>
+              {
+                isLoading ?
+                <div className="loading-container">
+                  <ReactLoading
+                      className="loading-component"
+                      type={"spin"}
+                      color={"#df385f"}
+                      height={40}
+                      width={40}
+                  />
+                </div>
+                :
+                <ul className="top-dest-list">
+                    {
+                      topDestinations.map((item) => {
+                          return (
+                              <li className="top-dest-item" key={item.id} onClick={() => this.handlePlaceSelect(item)}>
+                                  <img src={this.baseUrl + item.thumbnailUrl}></img>
+                                  <h4 className="item-name">{item.placeName}</h4>
+                              </li>
+                          )
+                      })
+                    }
+                </ul>
+              }
             </div>
           </div>
           <hr className="section-divide-hr" />
@@ -58,7 +85,7 @@ class TopDestinations extends Component {
   }
 }
 
-const topDestinations = [
+const topDestinations_temp = [
     {
         id: 1,
         placeName: 'Da Nang',
@@ -216,4 +243,10 @@ const topCitiesData = [
   }
 ];
 
-export default withRouter(TopDestinations);
+const mapStateToProps = (state) => {
+  return {
+      reduxData: state,
+  };
+};
+
+export default connect(mapStateToProps)(withRouter(TopDestinations));

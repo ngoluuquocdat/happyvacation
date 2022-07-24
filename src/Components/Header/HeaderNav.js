@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-import {  subscribeToTopic, unSubscribeToTopic } from '../../firebase';
+import {  getCurrentTopics, subscribeToTopic, unSubscribeToTopic } from '../../firebase';
 import ReactLoading from "react-loading";
 import { withRouter } from 'react-router-dom';
 import { FaCaretDown } from 'react-icons/fa';
@@ -60,7 +60,9 @@ class HeaderNav extends Component {
         if(user.providerId !== 0) {
           const topic = `Tour_Provider_${user.providerId}`;
           subscribeToTopic(topic);
-        }
+        }      
+        // let topics_list = await getCurrentTopics();
+        // console.log("topics:", topics_list);
       } catch (error) {
         if (!error.response) {
           toast.error("Network error");
@@ -75,6 +77,14 @@ class HeaderNav extends Component {
             localStorage.removeItem('user-token');
             // set current user in redux to null
             this.props.saveUserRedux(null);
+            // un subscribe if exist any subscribed topic
+            let topics = await getCurrentTopics();
+            //console.log("topics:", topics_list);
+            if(topics.length > 0) {
+              for(let i=0; i<topics.length; i++) {
+                  unSubscribeToTopic(topics[i]);
+              }
+            }
           }
         }
       } finally {
@@ -151,12 +161,18 @@ class HeaderNav extends Component {
     }
 
     // sign out
-    signOut = () => {
-      //un subscribe To Topic
+    signOut = async () => {
+      //un subscribe To all Topics
       const current_user = this.props.reduxData.user;
       if(current_user.providerId !== 0) {
-        const topic = `Tour_Provider_${current_user.providerId}`;
-        unSubscribeToTopic(topic);
+        //const topic = `Tour_Provider_${current_user.providerId}`;
+        let topics = await getCurrentTopics();
+        //console.log("topics:", topics_list);
+        if(topics.length > 0) {
+          for(let i=0; i<topics.length; i++) {
+              unSubscribeToTopic(topics[i]);
+          }
+        }
       }
       localStorage.removeItem('user-token');
       // set current user in redux to null

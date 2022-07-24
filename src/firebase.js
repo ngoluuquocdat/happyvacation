@@ -40,13 +40,6 @@ export const onMessageListener = () =>
         });
     });
 
-// export const onBackgroundMessageListener = () =>
-// new Promise((resolve) => {
-//     messaging.onBackgroundMessage((payload) => {
-//         resolve(payload);
-//     });
-// });
-
 export const subscribeToTopic = (topicName, handler = () => {}) =>
     messaging.getToken( { vapidKey: "BCi_3lAlaiEN1U2kP-Z8Q65AQ28voEO1lGwipIEwFIjbtebUDFVo4ZhL3h21udY4CwxnSQvJilf2oTm-ofTijcw"})
     .then((currentToken) => {
@@ -98,4 +91,52 @@ export const subscribeToTopic = (topicName, handler = () => {}) =>
             })
         }
     });
+
+  // export const getCurrentTopics = (handler = () => {}) =>
+  //   messaging.getToken( { vapidKey: "BCi_3lAlaiEN1U2kP-Z8Q65AQ28voEO1lGwipIEwFIjbtebUDFVo4ZhL3h21udY4CwxnSQvJilf2oTm-ofTijcw"})
+  //   .then((currentToken) => {
+  //       if (currentToken) {
+  //         console.log('current token for client: ', currentToken);
+  //         const FCM_SERVER_KEY = "AAAAdu2dNuM:APA91bGsH2OY569rWyVyDUhOhxNYgGLj8l-rDLg_8S_KKCwjLTpSCfwcwY_zXZS5mulfjXyACMBDt0YXKOJwXDLEmTI7CuPl0aRQyQ8gdpj6VMGMXQvCqKBlfC4ZKq5b3qGCaae4cy1w";
+  //         // Subscribe to the topic
+  //         const get_topic_URL = `https://iid.googleapis.com/iid/info/${currentToken}?details=true`;
+  //         axios.get(
+  //           get_topic_URL,
+  //           {
+  //             headers: { Authorization:`key=${FCM_SERVER_KEY}` }
+  //           }
+  //         ).then((response) => {
+  //           console.log('Successfully get current topic: ', response);
+  //           return response.data.rel.topics
+  //         })
+  //         .catch(() => {
+  //           console.log('Cannot get current topic');
+  //         })
+  //       }
+  //   });  
+  export const getCurrentTopics = async (handler = () => {}) => {
+    let currentToken = await messaging.getToken( { vapidKey: "BCi_3lAlaiEN1U2kP-Z8Q65AQ28voEO1lGwipIEwFIjbtebUDFVo4ZhL3h21udY4CwxnSQvJilf2oTm-ofTijcw"})
+    if (currentToken) {
+      console.log('current token for client: ', currentToken);
+      const FCM_SERVER_KEY = "AAAAdu2dNuM:APA91bGsH2OY569rWyVyDUhOhxNYgGLj8l-rDLg_8S_KKCwjLTpSCfwcwY_zXZS5mulfjXyACMBDt0YXKOJwXDLEmTI7CuPl0aRQyQ8gdpj6VMGMXQvCqKBlfC4ZKq5b3qGCaae4cy1w";
+      const get_topic_URL = `https://iid.googleapis.com/iid/info/${currentToken}?details=true`;
+      try {      
+        let res = await axios.get(
+          get_topic_URL,
+          {
+            headers: { Authorization:`key=${FCM_SERVER_KEY}` }
+          }
+        )
+        //console.log('Successfully get current topics: ', res);
+        if(res.data.rel) {
+          return Object.keys(res.data.rel.topics);
+        } else {
+          return []
+        }
+      } catch(e) {
+        console.log('Cannot get current topics', e)
+      }
+    }
+  }
+    
 

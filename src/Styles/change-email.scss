@@ -77,8 +77,16 @@
 
             
         }
-    }
-    
-        
-    
+        .valid-label {
+            display: block;
+            margin-top: 5px; 
+            margin-left: 20px; 
+            visibility: hidden;   
+            text-align: left;  
+        }
+        .valid-label.invalid {
+            color: red;
+            visibility: visible;    
+        }
+    }  
 }

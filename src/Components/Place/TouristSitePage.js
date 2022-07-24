@@ -106,7 +106,15 @@ class TouristSitePage extends React.Component {
 
     render() {
         const { site, temperature, weatherIconUrl } = this.state;
-        const thumbnailUrl = site.images ? `url(${this.baseUrl+site.images[0].url})` : '';      
+        let thumbnailUrl = '';    
+        if(site.images) {
+            if(site.images[0].url.includes('/storage')) {
+                thumbnailUrl = `url(${this.baseUrl+site.images[0].url})`             
+            }
+            if(site.images[0].url.includes('http')) {
+                thumbnailUrl = `url(${site.images[0].url})`
+            }
+        }
         const { expandOverview, expandVideoSection } = this.state;
 
         return (         
@@ -160,9 +168,10 @@ class TouristSitePage extends React.Component {
                         </p>
                         <p className="tourist-site__open-close">
                             {
-                                site.openCloseTime &&
+                                site.openCloseTime && site.openCloseTime !== 'None' &&
                                 <>
                                     <BsClock className='icon-time'/> Open {site.openCloseTime.split('-')[0].trim()}
+                                    <span style={{display: 'inline-block', width: '40px'}}></span>
                                     <BsClock className='icon-time'/> Close {site.openCloseTime.split('-')[1].trim()}
                                 </>
                             }
@@ -187,13 +196,13 @@ class TouristSitePage extends React.Component {
                         }
                         </div> 
                     </div>
-                    <div className='tourist-site-page__360-video-section'>
+                    {/* <div className='tourist-site-page__360-video-section'>
                         <h1 className='section__title'>Experience</h1>
                         <h3 className='section__sub-title'>Take an overview look of this tourist site through a 360 view!</h3>
                         {
                             expandVideoSection &&
                             <div className='video-wrapper'>
-                                {/* <dl8-video
+                                <dl8-video
                                     title={site.siteName}
                                     format="MONO_360"
                                     className={'dl8-video-player'}
@@ -201,7 +210,7 @@ class TouristSitePage extends React.Component {
                                     height={'80vh'}
                                 >
                                     <source src={`${this.baseUrl+site.overviewVideoUrl}`} type="video/mp4" />
-                                </dl8-video> */}
+                                </dl8-video>
                             </div>
                         }
                         <button
@@ -215,7 +224,11 @@ class TouristSitePage extends React.Component {
                                 'Collapse'
                             }
                         </button>
+                    </div> */}
+                    <div className='tourist-site-page__360-video-section'>
+                        <h1 className='section__title'>Location</h1>
                     </div>
+                        {/* <h1 className='section__title'>Location</h1> */}
                     <div className='tourist-site__map'>
                         <div className='map-wrapper'>
                             {
@@ -268,7 +281,10 @@ class ImageSlider extends React.Component {
                 backgroundImagesData &&
                 backgroundImagesData.map((item) => {
                     return (                      
-                        <BackgroundImageDiv key={item.id} url={baseUrl+item.url} />
+                        <BackgroundImageDiv 
+                            key={item.id} 
+                            url={item.url.includes('http') ? item.url : baseUrl+item.url} 
+                        />
                     )
                 })
             }

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import axios from 'axios';
 import { Calendar } from 'react-date-range';
 import DonutChart from 'react-donut-chart';
+import { Pagination } from "@mui/material";
 import QuarterPicker from '../QuarterPicker';
 import {
     Chart as ChartJS,
@@ -27,13 +28,36 @@ class ProviderTour extends React.Component {
             monthLabels: [],
             revenue: []
         },
-        byQuarter: true
+        byQuarter: true,
+        quarter: 1,
+        month: 1,
+        year: 0,
+        tours_statistic: [],
+        page: 1,
+        perPage: 4,
+        totalPage: 0
     }
 
     baseUrl = this.props.reduxData.baseUrl;
 
     async componentDidMount() {
         await this.getOverallStatistic();
+    }
+
+    async componentDidUpdate(prevProps, prevState) {
+        // when page change
+        // if (prevState.page !== this.state.page && prevState.tours === this.state.tours) {
+        if (prevState.page !== this.state.page) {
+            if(this.state.byQuarter) {
+                const { page, perPage, quarter, year } = this.state;
+                // call api to get tours and set state
+                await this.getTourStatisticByQuarter(quarter, year, page, perPage);                
+            } else {
+                const { page, perPage, month, year } = this.state;
+                await this.getTourStatisticByMonth(month, year, page, perPage);      
+                console.log("call tour statistic by month");
+            }
+        }
     }
 
     // get overall statistic
@@ -95,6 +119,8 @@ class ProviderTour extends React.Component {
             );
             this.setState({
                 revenueReport: res.data,
+                quarter: quarter,
+                year: year
             });
         } catch (error) {
             if (!error.response) {
@@ -115,6 +141,7 @@ class ProviderTour extends React.Component {
             //     isLoadingProvider: false
             // })
         }
+        await this.getTourStatisticByQuarter(quarter, year, 1, 4);
     } 
 
     // get revenue by month
@@ -135,6 +162,8 @@ class ProviderTour extends React.Component {
             );
             this.setState({
                 revenueReport: res.data,
+                month: month,
+                year: year
             });
         } catch (error) {
             if (!error.response) {
@@ -155,10 +184,102 @@ class ProviderTour extends React.Component {
             //     isLoadingProvider: false
             // })
         }
+        await this.getTourStatisticByMonth(month, year, 1, 4);
     } 
 
+    // get tour statistic by quarter
+    getTourStatisticByQuarter = async(quarter, year, page, perPage) => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login');
+        }       
+		try {
+            // this.setState({
+            //     isLoadingProvider: true,
+            // });   
+            let res = await axios.get(
+                `${this.baseUrl}/api/Providers/me/tour-statistic/by-quarter?quarterIndex=${quarter}&year=${year}&page=${page}&perPage=${perPage}`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );
+            this.setState({
+                tours_statistic: res.data.items,
+                totalPage: res.data.totalPage,
+                page: page
+            });
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+            }
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login');
+            }
+            if (error.response.status === 403) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login');
+            }
+        } finally {
+            // this.setState({
+            //     isLoadingProvider: false
+            // })
+        }
+    }
+
+    // get tour statistic by quarter
+    getTourStatisticByMonth = async(month, year, page, perPage) => {
+        const token = localStorage.getItem('user-token');
+        if(!token) {
+            this.props.history.push('/login');
+        }       
+		try {
+            // this.setState({
+            //     isLoadingProvider: true,
+            // });   
+            let res = await axios.get(
+                `${this.baseUrl}/api/Providers/me/tour-statistic/by-month?month=${month}&year=${year}&page=${page}&perPage=${perPage}`,
+                {
+                    headers: { Authorization:`Bearer ${token}` }
+                }
+            );
+            this.setState({
+                tours_statistic: res.data.items,
+                totalPage: res.data.totalPage,
+                page: page
+            });
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");
+            }
+            if (error.response.status === 401) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login');
+            }
+            if (error.response.status === 403) {
+                console.log(error);
+                // redirect to login page or show notification
+                this.props.history.push('/login');
+            }
+        } finally {
+            // this.setState({
+            //     isLoadingProvider: false
+            // })
+        }
+    }
+
+    // change page
+    handleOnChangePage = (event, page) => {
+        this.setState({
+            page: page,
+        });
+    };
+
     render() {
-        const { overall, revenueReport, byQuarter } = this.state;
+        const { overall, revenueReport, byQuarter, tours_statistic, page, totalPage } = this.state;
 
         return (
             <div className='provider-statistic-wrapper'>
@@ -352,8 +473,8 @@ class ProviderTour extends React.Component {
                                         <div className="info-tour__row-item">Canceled</div>
                                     </div>
                                     {
-                                        revenueReport.topOrderedTours && 
-                                        revenueReport.topOrderedTours.map((item, index) => {
+                                        tours_statistic && 
+                                        tours_statistic.map((item, index) => {
                                             return (
                                                 <div className="statistic-row">
                                                     <div className="info-tour__row-item">{index+1}</div>
@@ -366,7 +487,20 @@ class ProviderTour extends React.Component {
                                             )
                                         })
                                     }
-                                </div>    
+                                </div>   
+                                {totalPage > 1 && (
+                                    <div className="pagination-container">
+                                        <Pagination
+                                            count={totalPage}
+                                            shape="rounded"
+                                            siblingCount={1}
+                                            page={page}
+                                            onChange={(event, page) =>
+                                                this.handleOnChangePage(event, page)
+                                            }
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>       

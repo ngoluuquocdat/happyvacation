@@ -18,6 +18,7 @@ import { VscLocation } from 'react-icons/vsc';
 import { BsClock, BsPeople, BsTag, BsHeart, BsHeartFill } from 'react-icons/bs';
 import { FiStar } from 'react-icons/fi';
 import { BiCategoryAlt } from 'react-icons/bi';
+import { HiFlag } from 'react-icons/hi';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../../Styles/tour-detail.scss'
@@ -194,6 +195,34 @@ class TourDetailPage extends React.Component {
             [key]: value
         })
     }
+
+    // check if this tour can be booked
+    canBookTour = async() => {
+        const tourId = this.state.tour.id;
+        try {
+            let res = await axios.get(
+                `${this.baseUrl}/api/Tours/${tourId}`
+            ); 
+            const resTour = res.data;
+            // check tour is providing
+            if(res.data.isAvailable === false) {
+                toast.info("This tour stops providing.");
+                return false;
+            }
+            if(res.data.isProviderEnabled === false) {
+                toast.info("This tour provider is disabled.");
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            if (!error.response) {
+                toast.error("Network error");          
+                return false;
+            } 
+        }
+    }
+
     // booking submit click
     handleBookingSubmit = async() => {
         const token = localStorage.getItem('user-token');
@@ -204,11 +233,34 @@ class TourDetailPage extends React.Component {
             });
             return;
         }
+        this.setState({
+            isBooking: true
+        })
         // check if user is disable
         if(!await this.checkUserEnabled()) {
             toast.info('Your account is disabled');
+            this.setState({
+                isBooking: false
+            })
             return;
         }
+        // check if this tour can be booked
+        if(!await this.canBookTour()){
+            this.setState({
+                isBooking: false
+            })
+            return;
+        }
+
+        // clear data in redux
+        this.props.saveCustomerRedux(null);
+        this.props.saveAdultsListRedux(null);
+        this.props.saveChildrenListRedux(null);
+        // clear data in local storage 
+        localStorage.removeItem('customer-info');
+        localStorage.removeItem('adults-list');
+        localStorage.removeItem('children-list');
+
         // redirect to check out page
         console.log('state date type', typeof this.state.date)
         console.log(this.state.tour.images[0].url)
@@ -227,6 +279,11 @@ class TourDetailPage extends React.Component {
             adults: this.state.adults,
             children: this.state.children
         }
+        
+        this.setState({
+            isBooking: false
+        })
+
         this.props.history.push('/checkout', {bookingSubRequest: bookingSubRequest});      
         
     }
@@ -395,9 +452,19 @@ class TourDetailPage extends React.Component {
                                     <div className='tour-categories'>
                                         <BsTag /> 
                                         {
-                                            tour.categories.map((item) => ` ${item.categoryName},`)
+                                            tour.categories.map((item, index) => 
+                                            index === tour.categories.length - 1 ? ` ${item.categoryName}`
+                                            : ` ${item.categoryName},`) 
+                                        }                              
+                                    </div>   
+                                    <div className='tour-categories'>
+                                        <HiFlag /> 
+                                        {
+                                            tour.places.map((item, index) => 
+                                            index === tour.places.length - 1 ? ` ${item.placeName}`
+                                            : ` ${item.placeName},`)
                                         }                               
-                                    </div>                        
+                                    </div>                       
                                 </div>
                                 <div className='tour-feature'>
                                     <div className='tour-feature-item'>
@@ -770,10 +837,19 @@ const tour = {
     providerAvatar: "https://hoianexpress.com.vn/wp-content/uploads/2020/09/logo-moi.png",
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        saveUserRedux: (user) => dispatch({type: 'SAVE_USER', payload: user}),
+        saveCustomerRedux: (customerInfo) => dispatch({type: 'SAVE_CUSTOMER', payload: customerInfo}),
+        saveAdultsListRedux: (adultsList) => dispatch({type: 'SAVE_ADULTS', payload: adultsList}),
+        saveChildrenListRedux: (childrenList) => dispatch({type: 'SAVE_CHILDREN', payload: childrenList}),
+    }
+}
+
 const mapStateToProps = (state) => {
     return {
         reduxData: state
     }
 }
 
-export default connect(mapStateToProps)(withRouter(TourDetailPage));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(TourDetailPage));

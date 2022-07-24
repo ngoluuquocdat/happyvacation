@@ -16,6 +16,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../Styles/user-main.scss';
 import UserChatPage from './UserChatPage';
+import ChangePassword from './UserProfile/ChangePassword';
 
 class UserMain extends React.Component {
 
@@ -102,14 +103,6 @@ class UserMain extends React.Component {
                             }
                             <div className='content-page'>
                                 <Switch>
-                                    <Route path="/for-provider/tours" exact>
-                                        <div>Your Tours</div>
-                                    </Route >
-                                    <Route path="/for-provider/tours/new">
-                                        <div>
-
-                                        </div>
-                                    </Route >
                                     <Route path="/user/orders">
                                         <UserOrder />
                                     </Route >
@@ -118,13 +111,16 @@ class UserMain extends React.Component {
                                     </Route >
                                     <Route path="/users/orders/canceled" exact>
                                         <UserOrder/>
-                                    </Route >
+                                    </Route >                                  
                                     <Route path="/user/profile" exact>
                                         <UserProfile />
                                     </Route >
+                                    <Route path="/user/profile/password" exact>
+                                        <ChangePassword />
+                                    </Route >
                                     <Route path="/user/profile/email" exact>
                                         <ChangeEmail />
-                                    </Route >
+                                    </Route >                                   
                                     <Route path="/user/favorite-tours" exact>
                                         <WishList />
                                     </Route >                                   
